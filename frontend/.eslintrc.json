@@ -1,0 +1,63 @@
+{
+  "extends": ["@remix-run/eslint-config", "@remix-run/eslint-config/node"],
+  "plugins": [ "simple-import-sort", "import-newlines", "no-relative-import-paths" ],
+  "rules": {
+    "quotes": ["error","single"],
+    "simple-import-sort/imports": "error",
+    "semi": "error",
+    "indent": ["error", 2, { "SwitchCase": 1 }],
+    "no-tabs": "error",
+    "@typescript-eslint/no-explicit-any": "warn",
+    "react/react-in-jsx-scope": "off",
+    "object-curly-spacing": ["error", "always"],
+    "no-console": "warn",
+    "comma-spacing": ["error", { "before": false, "after": true }],
+    "array-element-newline": ["error", {
+      "ArrayExpression": "consistent",
+      "ArrayPattern": { "minItems": 3 }
+    }],
+    "@typescript-eslint/member-delimiter-style": [
+      "warn",
+      {
+          "multiline": {
+              "delimiter": "semi",
+              "requireLast": true
+          },
+          "singleline": {
+              "delimiter": "semi",
+              "requireLast": false
+          }
+      }
+    ],
+    "object-curly-newline": ["error", {
+      "multiline": true, "consistent": true
+    }],
+    "import-newlines/enforce": [
+      "error",
+      {
+        "items": 2,
+        "max-len": 100,
+        "semi": false
+      }
+    ],
+    "max-len": ["warn", { "code": 80 }],
+    "react/jsx-max-props-per-line": [1, { "maximum": { "single": 2, "multi": 1 } }],
+    "prefer-const": "warn",
+    "key-spacing": ["error", { "beforeColon": false, "afterColon": true }],
+    "react/jsx-indent": ["error", 2],
+    "react/jsx-closing-bracket-location": ["error", "tag-aligned"],
+    "jsx-quotes": ["warn", "prefer-double"],
+    "no-relative-import-paths/no-relative-import-paths": [
+      "error",
+      { "allowSameFolder": true }
+    ],
+    "react/jsx-first-prop-new-line": ["warn", "multiline-multiprop"],
+    "prefer-destructuring": ["error", {
+      "array": false,
+      "object": true
+    }, {
+      "enforceForRenamedProperties": false
+    }],
+    "no-unneeded-ternary": ["error"]
+  }
+}

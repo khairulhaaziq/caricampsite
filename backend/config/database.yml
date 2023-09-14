@@ -1,0 +1,21 @@
+default: &default
+  adapter: postgresql
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  timeout: 5000
+  host: localhost
+
+development:
+  <<: *default
+  database: <%= ENV.fetch("DATABASE_NAME") { 'cari_campsite_dev' } %>
+  host: <%= ENV.fetch("DATABASE_HOST") %>
+
+test:
+  <<: *default
+  database: cari_campsite_test
+#
+production:
+  <<: *default
+  database: <%= ENV["CARI_CAMPSITE_DATABASE"] %>
+  username: <%= ENV["CARI_CAMPSITE_DATABASE_USERNAME"] %>
+  host: <%= ENV["CARI_CAMPSITE_DATABASE_HOST"] %>
+  password: <%= ENV["CARI_CAMPSITE_DATABASE_PASSWORD"] %>

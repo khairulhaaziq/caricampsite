@@ -1,0 +1,11 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  campsite: one
+  latitude: 9.99
+  longitude: 9.99
+
+two:
+  campsite: two
+  latitude: 9.99
+  longitude: 9.99
