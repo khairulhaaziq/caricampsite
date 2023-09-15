@@ -1,51 +1,71 @@
 class Api::V1::CampsitesController < ApplicationController
-  before_action :set_api_v1_campsite, only: %i[ show update destroy ]
+  before_action :ensure_record_exists, only: %i[ show update destroy ]
 
   # GET /api/v1/campsites
   def index
-    @api_v1_campsites = Campsite.all
+    records = Campsite
+      .filter(campsite_params)
+      .where(deleted_at: nil)
+      .order(created_at: :desc)
+      .page(params[:page])
+      .per(params[:limit])
 
-    render json: @api_v1_campsites
+    campsites = render_serializer(CampsiteSerializer, records)
+    render json: campsites, status: campsites[:code] || 200
   end
 
-  # GET /api/v1/campsites/1
   def show
-    render json: @api_v1_campsite
+    campsite = render_serializer(CampsiteSerializer, @record)
+    render json: campsite, status: campsite[:code] || 200
   end
 
-  # POST /api/v1/campsites
   def create
-    @api_v1_campsite = Campsite.new(api_v1_campsite_params)
+    record = Campsite.new group_params
 
-    if @api_v1_campsite.save
-      render json: @api_v1_campsite, status: :created, location: @api_v1_campsite
+    if record.save
+      campsite = render_serializer(CampsiteSerializer, record)
     else
-      render json: @api_v1_campsite.errors, status: :unprocessable_entity
+      error_message = record.errors.full_messages
+      campsite = error_json(400, error_message)
     end
+    render json: campsite, status: campsite[:code] || 200
   end
 
-  # PATCH/PUT /api/v1/campsites/1
   def update
-    if @api_v1_campsite.update(api_v1_campsite_params)
-      render json: @api_v1_campsite
+    if @record.update(update_params)
+      show
     else
-      render json: @api_v1_campsite.errors, status: :unprocessable_entity
+      campsite = error_json(400, @record.errors.full_messages)
+      render json: campsite, status: campsite[:code] || 200
     end
   end
 
-  # DELETE /api/v1/campsites/1
   def destroy
-    @api_v1_campsite.destroy
+    # soft delete instead of hard delete
+    if @record.update(deleted_at: Time.now)
+      render json: success_json, status: 200
+    else
+      campsite = error_json(400, @record.errors.full_messages)
+      render json: campsite, status: campsite[:code] || 400
+    end
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_api_v1_campsite
-      @api_v1_campsite = Campsite.find(params[:id])
+    def ensure_record_exists
+      @record = Campsite.find(params[:id])
+      render json: error_json(404), status: 404 unless @record
     end
 
-    # Only allow a list of trusted parameters through.
-    def api_v1_campsite_params
-      params.fetch(:api_v1_campsite, {})
+    def campsite_params
+      params.permit(
+        :verified,
+        :state,
+      )
+    end
+
+    def update_params
+      params.permit(
+        :name,
+      )
     end
 end

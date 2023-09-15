@@ -1,0 +1,43 @@
+version: "3.9"
+services:
+  db:
+    image: postgres
+    volumes:
+      - ./tmp/db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: cari_campsite_dev
+    ports:
+      - "5432:5432"
+  backend:
+    build:
+      context: ./backend
+    environment:
+      PROCESS_TYPE: backend
+      EB_ENV: staging
+      RAILS_ENV: development
+      DATABASE_HOST: db
+      DATABASE_NAME: cari_campsite_dev
+      DATABASE_USERNAME: postgres
+      DATABASE_PASSWORD: password
+      SECRET_KEY_BASE: a8nSg2dWxUPenPgV
+    volumes:
+      - .:/myapp
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    stdin_open: true
+    tty: true
+  frontend:
+    build: ./frontend
+    environment:
+      PROCESS_TYPE: frontend
+      API_BASE_URL: http://backend:3000/api/v1
+    ports:
+      - "3001:3001"
+    depends_on:
+      - backend
+    stdin_open: true
+    tty: true
+

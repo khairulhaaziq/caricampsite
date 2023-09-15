@@ -3,11 +3,15 @@ default: &default
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
   timeout: 5000
   host: localhost
+  username: postgres
+  password: password
 
 development:
   <<: *default
   database: <%= ENV.fetch("DATABASE_NAME") { 'cari_campsite_dev' } %>
   host: <%= ENV.fetch("DATABASE_HOST") %>
+  username: <%= ENV.fetch("DATABASE_USERNAME") %>
+  password: <%= ENV.fetch("DATABASE_PASSWORD") %>
 
 test:
   <<: *default
@@ -16,6 +20,6 @@ test:
 production:
   <<: *default
   database: <%= ENV["CARI_CAMPSITE_DATABASE"] %>
-  username: <%= ENV["CARI_CAMPSITE_DATABASE_USERNAME"] %>
   host: <%= ENV["CARI_CAMPSITE_DATABASE_HOST"] %>
+  username: <%= ENV["CARI_CAMPSITE_DATABASE_USERNAME"] %>
   password: <%= ENV["CARI_CAMPSITE_DATABASE_PASSWORD"] %>

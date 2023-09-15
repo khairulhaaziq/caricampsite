@@ -1,4 +1,6 @@
 class ApplicationController < ActionController::API
+  include ActionController::RequestForgeryProtection
+  protect_from_forgery with: :null_session
 
   def error_json(status_code, custom_message = nil, data = {})
     case status_code
@@ -62,9 +64,6 @@ class ApplicationController < ActionController::API
     }
   end
 
-  private
-
-  # helper method to access the current user from the token
   def set_current_user
     @current_user ||= User.find_by(id: doorkeeper_token[:resource_owner_id])
   end

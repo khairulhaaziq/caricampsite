@@ -33,7 +33,7 @@ end
     description: Faker::Lorem.paragraph,
     direction_instructions: Faker::Lorem.sentence,
     things_to_know: Faker::Lorem.sentence,
-    images: [5.times.map { Faker::LoremFlickr.image }],
+    images: 5.times.map { Faker::LoremFlickr.image },
     cover_image: Faker::LoremFlickr.image,
     status: [0, 1].sample, # Assuming 0 is for inactive and 1 is for active
     is_verified: [true, false].sample,
@@ -42,7 +42,7 @@ end
       twitter: Faker::Internet.url(host: 'twitter.com')
     },
     contacts: {
-      email: Faker::Internet.email,
+      name: Faker::Name.name,
       phone: Faker::PhoneNumber.phone_number
     }
   )
@@ -93,7 +93,7 @@ end
       campsite: campsite,
       user: User.all.sample,
       body: Faker::Lorem.paragraph,
-      images: [3.times.map { Faker::LoremFlickr.image }],
+      images: 3.times.map { Faker::LoremFlickr.image },
       rating: rand(1..5)
     )
   end
