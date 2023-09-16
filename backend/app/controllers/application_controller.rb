@@ -27,6 +27,7 @@ class ApplicationController < ActionController::API
       if obj.class.name == "ActiveRecord::AssociationRelation" || obj.class.name == "ActiveRecord::Relation"
         return render_collection_serializer(serializer, obj, options) unless options[:meta] && options[:meta][:pagination]
       end
+      # standard:enable Style/ClassEqualityComparison
 
       render_single_serializer(serializer, obj, options)
     else

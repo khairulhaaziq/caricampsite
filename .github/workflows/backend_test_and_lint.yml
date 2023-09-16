@@ -54,4 +54,4 @@ jobs:
         with:
           bundler-cache: true
       - name: Lint Ruby files
-        run: cd backend && bin/standardb
+        run: cd backend && rake exec rails standard
