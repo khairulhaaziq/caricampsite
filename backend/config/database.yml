@@ -15,7 +15,10 @@ development:
 
 test:
   <<: *default
-  database: cari_campsite_test
+  database: <%= ENV.fetch("DATABASE_NAME") { 'cari_campsite_test' } %>
+  host: <%= ENV.fetch("DATABASE_HOST") %>
+  username: <%= ENV.fetch("DATABASE_USERNAME") %>
+  password: <%= ENV.fetch("DATABASE_PASSWORD") %>
 #
 production:
   <<: *default
