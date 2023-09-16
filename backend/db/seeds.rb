@@ -1,11 +1,4 @@
-# This file should contain all the record creation needed to seed the database with its default values.
-# The data can then be loaded with the bin/rails db:seed command (or created alongside the database with db:setup).
-#
-# Examples:
-#
-#   movies = Movie.create([{ name: "Star Wars" }, { name: "Lord of the Rings" }])
-#   Character.create(name: "Luke", movie: movies.first)
-
+# Set doorkeeper oauth default app
 if Doorkeeper::Application.count.zero?
   Doorkeeper::Application.create(name: "remix-frontend", redirect_uri: "", scopes: "")
 end
@@ -29,7 +22,7 @@ end
 # Seed Campsites
 20.times do
   campsite = Campsite.create(
-    name: Faker::Lorem.words(number: 3).join(' '),
+    name: Faker::Lorem.words(number: 3).join(" "),
     description: Faker::Lorem.paragraph,
     direction_instructions: Faker::Lorem.sentence,
     things_to_know: Faker::Lorem.sentence,
@@ -38,8 +31,8 @@ end
     status: [0, 1].sample, # Assuming 0 is for inactive and 1 is for active
     is_verified: [true, false].sample,
     social_links: {
-      facebook: Faker::Internet.url(host: 'facebook.com'),
-      twitter: Faker::Internet.url(host: 'twitter.com')
+      facebook: Faker::Internet.url(host: "facebook.com"),
+      twitter: Faker::Internet.url(host: "twitter.com")
     },
     contacts: {
       name: Faker::Name.name,
@@ -54,14 +47,14 @@ end
     addressLine2: Faker::Address.secondary_address,
     city: Faker::Address.city,
     state: Faker::Address.state,
-    country: 'Malaysia',
+    country: "Malaysia",
     postcode: Faker::Address.zip_code
   )
 
   # Seed Campsite Fees
   CampsiteFee.create(
     campsite: campsite,
-    currency: 'MYR',
+    currency: "MYR",
     from: Faker::Number.decimal(l_digits: 2),
     to: Faker::Number.decimal(l_digits: 2)
   )
@@ -104,11 +97,11 @@ User.all.each do |user|
   UserProfile.create(
     user: user,
     about: Faker::Lorem.sentence,
-    name: user.email.split('@').first.capitalize,
+    name: user.email.split("@").first.capitalize,
     profile_picture: Faker::Avatar.image,
     social_links: {
-      facebook: Faker::Internet.url(host: 'facebook.com'),
-      twitter: Faker::Internet.url(host: 'twitter.com')
+      facebook: Faker::Internet.url(host: "facebook.com"),
+      twitter: Faker::Internet.url(host: "twitter.com")
     }
   )
 end
@@ -132,4 +125,3 @@ User.all.each do |user|
     )
   end
 end
-

@@ -6,7 +6,7 @@ class CreateCampsiteAddresses < ActiveRecord::Migration[7.0]
       t.string :addressLine2
       t.string :city, null: false
       t.string :state, null: false
-      t.string :country, null: false, default: 'Malaysia'
+      t.string :country, null: false, default: "Malaysia"
       t.integer :postcode, null: false
 
       t.timestamps

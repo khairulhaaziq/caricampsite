@@ -1,11 +1,22 @@
 class Api::V1::CampsitesController < ApplicationController
-  before_action :ensure_record_exists, only: %i[ show update destroy ]
+  before_action :ensure_record_exists, only: %i[update destroy]
+  before_action :doorkeeper_authorize!, :set_current_user, only: [:create, :put, :destroy]
+  before_action :set_campsite_by_current_user, only: [:put, :destroy]
 
-  # GET /api/v1/campsites
   def index
     records = Campsite
-      .filter(campsite_params)
+      .filter(filter_params)
       .where(deleted_at: nil)
+      .preload(
+        :visits,
+        :reviews,
+        :favourites,
+        :features,
+        :admins,
+        :campsite_fee,
+        :campsite_address,
+        :campsite_location
+      )
       .order(created_at: :desc)
       .page(params[:page])
       .per(params[:limit])
@@ -15,12 +26,16 @@ class Api::V1::CampsitesController < ApplicationController
   end
 
   def show
+    @record = Campsite
+      .preload(:visits, :reviews, :favourites, :features, :admins, :campsite_fee, :campsite_address, :campsite_location)
+      .find_by(slug: params[:slug])
+    render json: error_json(404), status: 404 unless @record
     campsite = render_serializer(CampsiteSerializer, @record)
     render json: campsite, status: campsite[:code] || 200
   end
 
   def create
-    record = Campsite.new group_params
+    record = Campsite.new create_params
 
     if record.save
       campsite = render_serializer(CampsiteSerializer, record)
@@ -51,21 +66,38 @@ class Api::V1::CampsitesController < ApplicationController
   end
 
   private
-    def ensure_record_exists
-      @record = Campsite.find(params[:id])
-      render json: error_json(404), status: 404 unless @record
-    end
 
-    def campsite_params
-      params.permit(
-        :verified,
-        :state,
-      )
-    end
+  def ensure_record_exists
+    @record = Campsite
+      .preload(:visits, :reviews, :favourites, :features, :admins, :campsite_fee, :campsite_address, :campsite_location)
+      .find(params[:id])
+    render json: error_json(404), status: 404 unless @record
+  end
 
-    def update_params
-      params.permit(
-        :name,
-      )
-    end
+  def set_campsite_by_current_user
+    @record =
+      @current_user.administered_campsites
+        .find_by(slug: params[:id]) ||
+      @current_user.administered_campsites
+        .find(params[:id].to_i)
+  end
+
+  def filter_params
+    params.permit(
+      :verified,
+      :state
+    )
+  end
+
+  def update_params
+    params.permit(
+      :name
+    )
+  end
+
+  def create_params
+    params.permit(
+      :name
+    )
+  end
 end

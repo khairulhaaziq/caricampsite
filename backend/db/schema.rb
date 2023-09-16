@@ -10,9 +10,25 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_09_14_235918) do
+ActiveRecord::Schema[7.0].define(version: 2023_09_15_070906) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "campsite_accessibilities", force: :cascade do |t|
+    t.bigint "campsite_id", null: false
+    t.integer "accessibility_feature", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["campsite_id"], name: "index_campsite_accessibilities_on_campsite_id"
+  end
+
+  create_table "campsite_activities", force: :cascade do |t|
+    t.bigint "campsite_id", null: false
+    t.integer "activity", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["campsite_id"], name: "index_campsite_activities_on_campsite_id"
+  end
 
   create_table "campsite_addresses", force: :cascade do |t|
     t.bigint "campsite_id", null: false
@@ -25,6 +41,22 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_14_235918) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["campsite_id"], name: "index_campsite_addresses_on_campsite_id"
+  end
+
+  create_table "campsite_amenities", force: :cascade do |t|
+    t.bigint "campsite_id", null: false
+    t.integer "amenity", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["campsite_id"], name: "index_campsite_amenities_on_campsite_id"
+  end
+
+  create_table "campsite_categories", force: :cascade do |t|
+    t.bigint "campsite_id", null: false
+    t.integer "category", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["campsite_id"], name: "index_campsite_categories_on_campsite_id"
   end
 
   create_table "campsite_fees", force: :cascade do |t|
@@ -50,7 +82,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_14_235918) do
     t.string "name", null: false
     t.text "description", null: false
     t.text "direction_instructions"
-    t.text "things_to_know"
+    t.text "notes"
     t.string "slug", null: false
     t.string "images", default: [], array: true
     t.string "cover_image"
@@ -171,7 +203,11 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_14_235918) do
     t.index ["user_id"], name: "index_visits_on_user_id"
   end
 
+  add_foreign_key "campsite_accessibilities", "campsites"
+  add_foreign_key "campsite_activities", "campsites"
   add_foreign_key "campsite_addresses", "campsites"
+  add_foreign_key "campsite_amenities", "campsites"
+  add_foreign_key "campsite_categories", "campsites"
   add_foreign_key "campsite_fees", "campsites"
   add_foreign_key "campsite_locations", "campsites"
   add_foreign_key "campsites_admins", "campsites"

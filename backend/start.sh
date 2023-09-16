@@ -15,7 +15,7 @@ if [[ "$PROCESS_TYPE" == "worker" ]]; then
   bundle exec sidekiq -e ${RAILS_ENV} -C ${PWD}/config/sidekiq.yml
 elif [[ "$PROCESS_TYPE" == "backend" ]] || [[ "$PROCESS_TYPE" == "web" ]]; then
   echo "Starting backend process"
-  rm -f tmp/pids/server.pid && bundle exec rake db:migrate && bundle exec rake db:seed && bundle exec rails s -p 3000 -b '0.0.0.0'
+  rm -f tmp/pids/server.pid && bundle exec rake rails db:migrate && bundle exec rails s -p 3000 -b '0.0.0.0'
 else
   echo "Invalid process type ${PROCESS_TYPE}"
   exit 1
