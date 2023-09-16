@@ -42,6 +42,7 @@ class Api::V1::ReviewsController < ApplicationController
 
   def set_campsite
     @campsite = Campsite.find(params[:campsite_id])
+    render json: error_json(422, "Campsite not found"), status: :unprocessable_entity unless @campsite
   end
 
   def set_review

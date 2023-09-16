@@ -9,7 +9,7 @@ export default function Index() {
   const { attributes } = data;
 
   return (
-    <div className="flex justify-center px-6 sm:px-8 md:px-10 lg:px-14 xl:px-16 2xl:px-20">
+    <div className="flex justify-center px-6 sm:px-8 md:px-10 lg:px-14 xl:px-16 2xl:px-20 pt-20 pb-16">
       <div className="w-full max-w-6xl flex flex-col gap-5">
         <Header name={attributes.name} />
         <ImageGrid />

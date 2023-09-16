@@ -4,15 +4,15 @@ import { type ReactNode, useMemo } from 'react';
 export default function WithTopbar({ children }: {children?: ReactNode}) {
   return (
     <>
-      <Topbar />
       {children}
+      <Topbar />
     </>
   );
 }
 
 function Topbar() {
   const memoedTopbar = useMemo(()=>(
-    <div className="h-20 border-b border-neutral-200">
+    <div className="h-20 border-b border-neutral-200 fixed top-0 left-0 right-0 bg-white">
       <div className="flex justify-center px-6 sm:px-8 md:px-10 lg:px-14 xl:px-16 2xl:px-20 h-full">
         <div className="max-w-6xl w-full flex items-center justify-between">
           <Link to="/">

@@ -21,16 +21,16 @@ export default function CampsitesNew() {
   }, [searchParams]);
 
   return (
-    <div className="flex justify-center sm:px-8 md:px-10 lg:px-14 xl:px-16 2xl:px-20 min-h-[calc(100vh-80px)] pb-10">
+    <div className="flex justify-center sm:px-8 md:px-10 lg:px-14 xl:px-16 2xl:px-20 min-h-screen pt-20 pb-24">
       <div className="w-full max-w-6xl flex flex-col items-center gap-5 relative">
         <FormStepper currentStep={currentStep} />
         <Card>
           {steps.find(i=>i.stepName.toLowerCase() === currentStep)?.component}
-          <div className="flex justify-between items-center">
-            <Link>Back</Link>
-            <FormButton label="Continue" />
-          </div>
         </Card>
+      </div>
+      <div className="flex justify-between items-center fixed bottom-0 left-0 right-0 bg-white px-8 py-4 border-t border-neutral-300">
+        <Link>Back</Link>
+        <FormButton label="Continue" />
       </div>
     </div>
   );
@@ -38,7 +38,7 @@ export default function CampsitesNew() {
 
 function Card({ children }: {children?: ReactNode} = {}) {
   return (
-    <div className="w-full max-w-[480px] rounded-3xl px-6 sm:px-8 py-8 bg-white flex flex-col gap-7">
+    <div className="w-full max-w-[600px] rounded-3xl px-6 sm:px-8 py-8 bg-white flex flex-col gap-7">
       {children}
     </div>
   );
@@ -46,7 +46,7 @@ function Card({ children }: {children?: ReactNode} = {}) {
 
 function FormStepper({ currentStep }: {currentStep: string}) {
   return (
-    <div className='absolute left-6 top-8 max-md:hidden'>
+    <div className="absolute left-6 top-8 max-md:hidden">
       <div className="flex flex-col gap-4 pb-6 overflow-x-scroll">
         {steps.map((i, index)=>(
           <Link to={`?step=${i.stepName.toLowerCase()}`} className="flex items-center gap-2">
@@ -72,6 +72,72 @@ function FormDetails() {
         <FormTextField label="Name" />
         <FormTextField label="Description" textarea />
         <FormTextField label="Category" />
+      </div>
+      <div className="contents">
+        <div className="flex flex-col gap-0.5 mt-6">
+          <h1 className="text-2xl font-bold">Your campsite location</h1>
+          <p className="text-neutral-500">Let's get you set up!</p>
+        </div>
+        <div className="flex flex-col gap-4">
+          <FormTextField label="Address Line 1" />
+          <FormTextField label="Address Line 2" />
+          <FormTextField label="City" />
+          <FormTextField label="State" />
+          <FormTextField label="Country" />
+        </div>
+      </div>
+
+      <div className="contents">
+        <div className="flex flex-col gap-0.5 mt-6">
+          <h1 className="text-2xl font-bold">Your campsite location</h1>
+          <p className="text-neutral-500">Let's get you set up!</p>
+        </div>
+        <div className="flex flex-col gap-4">
+          <FormTextField label="Address Line 1" />
+          <FormTextField label="Address Line 2" />
+          <FormTextField label="City" />
+          <FormTextField label="State" />
+          <FormTextField label="Country" />
+        </div>
+      </div>
+
+      <div className="contents">
+        <div className="flex flex-col gap-0.5 mt-6">
+          <h1 className="text-2xl font-bold">Your campsite location</h1>
+          <p className="text-neutral-500">Let's get you set up!</p>
+        </div>
+        <div className="flex flex-col gap-4">
+          <FormTextField label="Address Line 1" />
+          <FormTextField label="Address Line 2" />
+          <FormTextField label="City" />
+          <FormTextField label="State" />
+          <FormTextField label="Country" />
+        </div>
+      </div>
+
+      <div className="contents">
+        <div className="flex flex-col gap-0.5 mt-6">
+          <h1 className="text-2xl font-bold">Your campsite contacts</h1>
+          <p className="text-neutral-500">Let's get you set up!</p>
+        </div>
+        <div className="flex flex-col gap-4">
+          <FormTextField label="Name" />
+          <FormTextField label="Mobile No." />
+
+          <FormTextField label="Instagram" />
+        </div>
+      </div>
+
+      <div className="contents">
+        <div className="flex flex-col gap-0.5 mt-6">
+          <h1 className="text-2xl font-bold">Additional information</h1>
+          <p className="text-neutral-500">Let's get you set up!</p>
+        </div>
+        <div className="flex flex-col gap-4">
+          <FormTextField label="Description" />
+          <FormTextField label="Things to know" />
+          <FormTextField label="Direction instructions" />
+        </div>
       </div>
     </div>
   );
