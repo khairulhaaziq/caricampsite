@@ -32,12 +32,10 @@ class Campsite < ApplicationRecord
   validates :cover_image, presence: true
   # validates :campsite_fee, presence: true
   # validates :campsite_address, presence: true
-  # validates :campsites_admins, presence: true
-  # validates :campsite_categories, presence: true
-  # validates :campsites_features, presence: true
-  # validates :campsite_amenities, presence: true
-  # validates :campsite_activities, presence: true
-  # validates :campsite_accessibilities, presence: true
+  # validates :admins, presence: true
+  # validates :categories, presence: true
+
+  accepts_nested_attributes_for :campsite_fee, update_only: true
 
   scope :filter_by_verified, ->(value) { where(is_verified: value) }
   scope :filter_by_state, ->(value) { joins(:campsite_address).where(campsite_addresses: {state: value}) }

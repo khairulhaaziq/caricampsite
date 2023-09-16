@@ -8,8 +8,8 @@ class User < ApplicationRecord
   has_many :visits
   has_many :reviews
   has_many :favourites
-  has_many :campsite_admins
-  has_many :administered_campsites, through: :campsite_admins, source: :campsite
+  has_many :campsites_admins
+  has_many :administered_campsites, through: :campsites_admins, source: :campsite
 
   has_one :user_profile
 

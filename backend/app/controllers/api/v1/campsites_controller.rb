@@ -56,10 +56,11 @@ class Api::V1::CampsitesController < ApplicationController
 
   def update
     if @record.update(update_params)
-      show
+      campsite = render_serializer(CampsiteSerializer, @record)
+      render json: campsite, status: campsite[:code] || 200
     else
       campsite = error_json(400, @record.errors.full_messages)
-      render json: campsite, status: campsite[:code] || 200
+      render json: campsite, status: campsite[:code] || 400
     end
   end
 
@@ -85,8 +86,10 @@ class Api::V1::CampsitesController < ApplicationController
   def set_campsite_by_current_user
     @record =
       @current_user.administered_campsites
+        .where(deleted_at: nil)
         .find_by(slug: params[:id]) ||
       @current_user.administered_campsites
+        .where(deleted_at: nil)
         .find(params[:id].to_i)
   end
 
@@ -95,7 +98,29 @@ class Api::V1::CampsitesController < ApplicationController
   end
 
   def update_params
-    params.permit(:name)
+    params.require(:campsites)
+      .permit(
+        :name,
+        :description,
+        :direction_instructions,
+        :notes,
+        :images,
+        :cover_image,
+        :status,
+        :social_links,
+        :contacts,
+        # one
+        campsite_fee_attributes: [:currency, :from, :to],
+        campsite_address_attributes: [:addressLine1, :addressLine2, :city, :state, :postcode, :country],
+        campsite_location_attributes: [:latitude, :longitude]
+        # joined tables
+        # :admins,
+        # :features,
+        # :amenities,
+        # :activities,
+        # :categories,
+        # :accessibility_features
+      )
   end
 
   def create_params

@@ -14,6 +14,10 @@ class CampsiteSerializer
     :is_verified,
     :social_links,
     :contacts,
+    # one
+    :campsite_fee,
+    :campsite_address,
+    :campsite_location,
     # many
     :visits,
     :reviews,
@@ -27,15 +31,15 @@ class CampsiteSerializer
     :accessibility_features
   )
 
-  attribute :campsite_address do |obj|
-    obj.campsite_address&.slice(:id)
-  end
+  # attribute :campsite_address do |obj|
+  #   obj.campsite_address&.slice(:id)
+  # end
 
-  attribute :campsite_fee do |obj|
-    obj.campsite_fee&.slice(:id)
-  end
+  # attribute :campsite_fee do |obj|
+  #   obj.campsite_fee&.slice(:id)
+  # end
 
-  attribute :campsite_location do |obj|
-    obj.campsite_location&.slice(:id)
-  end
+  # attribute :campsite_location do |obj|
+  #   obj.campsite_location&.slice(:id)
+  # end
 end
