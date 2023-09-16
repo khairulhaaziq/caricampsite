@@ -37,7 +37,7 @@ class Api::V1::ReviewsController < ApplicationController
   private
 
   def review_params
-    params.require(:review).permit(:body, :rating, :images)
+    params.require(:review).permit(:body, :rating, images: [])
   end
 
   def set_campsite
