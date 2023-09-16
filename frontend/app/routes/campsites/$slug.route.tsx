@@ -28,7 +28,7 @@ function Header({ name }: { name: string }) {
   return (
     <div className="flex justify-between pt-8">
       <div className="text-neutral-500">
-        <h1 className="font-semibold text-3xl capitalize text-black">
+        <h1 className="font-bold text-2xl sm:text-3xl capitalize text-black">
           {name}
         </h1>
         <p>Category, Category</p>
