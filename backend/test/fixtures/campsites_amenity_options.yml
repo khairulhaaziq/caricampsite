@@ -2,8 +2,8 @@
 
 one:
   campsite: one
-  activity: 1
+  amenity_options: one
 
 two:
   campsite: two
-  activity: 1
+  amenity_options: two

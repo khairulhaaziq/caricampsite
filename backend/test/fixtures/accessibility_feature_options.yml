@@ -1,9 +1,7 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  campsite: one
-  accessibility_feature: 1
+  name: MyString
 
 two:
-  campsite: two
-  accessibility_feature: 1
+  name: MyString

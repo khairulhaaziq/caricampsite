@@ -1,6 +1,6 @@
 require "test_helper"
 
-class CampsiteAmenityTest < ActiveSupport::TestCase
+class CategoryOptionTest < ActiveSupport::TestCase
   # test "the truth" do
   #   assert true
   # end

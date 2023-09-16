@@ -15,7 +15,11 @@ class Api::V1::CampsitesController < ApplicationController
         :admins,
         :campsite_fee,
         :campsite_address,
-        :campsite_location
+        :campsite_location,
+        :amenities,
+        :activities,
+        :categories,
+        :accessibility_features
       )
       .order(created_at: :desc)
       .page(params[:page])

@@ -10,9 +10,27 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_09_15_070906) do
+ActiveRecord::Schema[7.0].define(version: 2023_09_16_222843) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "accessibility_feature_options", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "activity_options", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "amenity_options", force: :cascade do |t|
+    t.string "name", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "campsite_accessibilities", force: :cascade do |t|
     t.bigint "campsite_id", null: false
@@ -97,6 +115,24 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_15_070906) do
     t.index ["slug"], name: "index_campsites_on_slug", unique: true
   end
 
+  create_table "campsites_accessibility_feature_options", force: :cascade do |t|
+    t.bigint "campsite_id", null: false
+    t.bigint "accessibility_feature_option_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["accessibility_feature_option_id"], name: "index_campsites_accessibility_options_on_option_id"
+    t.index ["campsite_id"], name: "index_campsites_accessibility_feature_options_on_campsite_id"
+  end
+
+  create_table "campsites_activity_options", force: :cascade do |t|
+    t.bigint "campsite_id", null: false
+    t.bigint "activity_option_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["activity_option_id"], name: "index_campsites_activity_options_on_activity_option_id"
+    t.index ["campsite_id"], name: "index_campsites_activity_options_on_campsite_id"
+  end
+
   create_table "campsites_admins", force: :cascade do |t|
     t.bigint "campsite_id", null: false
     t.bigint "user_id", null: false
@@ -104,6 +140,33 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_15_070906) do
     t.datetime "updated_at", null: false
     t.index ["campsite_id"], name: "index_campsites_admins_on_campsite_id"
     t.index ["user_id"], name: "index_campsites_admins_on_user_id"
+  end
+
+  create_table "campsites_amenity_options", force: :cascade do |t|
+    t.bigint "campsite_id", null: false
+    t.bigint "amenity_option_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["amenity_option_id"], name: "index_campsites_amenity_options_on_amenity_option_id"
+    t.index ["campsite_id"], name: "index_campsites_amenity_options_on_campsite_id"
+  end
+
+  create_table "campsites_category_options", force: :cascade do |t|
+    t.bigint "campsite_id", null: false
+    t.bigint "category_option_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["campsite_id"], name: "index_campsites_category_options_on_campsite_id"
+    t.index ["category_option_id"], name: "index_campsites_category_options_on_category_option_id"
+  end
+
+  create_table "campsites_feature_options", force: :cascade do |t|
+    t.bigint "campsite_id", null: false
+    t.bigint "feature_option_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["campsite_id"], name: "index_campsites_feature_options_on_campsite_id"
+    t.index ["feature_option_id"], name: "index_campsites_feature_options_on_feature_option_id"
   end
 
   create_table "campsites_features", force: :cascade do |t|
@@ -115,6 +178,12 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_15_070906) do
     t.index ["feature_id"], name: "index_campsites_features_on_feature_id"
   end
 
+  create_table "category_options", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "favourites", force: :cascade do |t|
     t.bigint "campsite_id", null: false
     t.bigint "user_id", null: false
@@ -122,6 +191,12 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_15_070906) do
     t.datetime "updated_at", null: false
     t.index ["campsite_id"], name: "index_favourites_on_campsite_id"
     t.index ["user_id"], name: "index_favourites_on_user_id"
+  end
+
+  create_table "feature_options", force: :cascade do |t|
+    t.string "name", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "features", force: :cascade do |t|
@@ -210,8 +285,18 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_15_070906) do
   add_foreign_key "campsite_categories", "campsites"
   add_foreign_key "campsite_fees", "campsites"
   add_foreign_key "campsite_locations", "campsites"
+  add_foreign_key "campsites_accessibility_feature_options", "accessibility_feature_options"
+  add_foreign_key "campsites_accessibility_feature_options", "campsites"
+  add_foreign_key "campsites_activity_options", "activity_options"
+  add_foreign_key "campsites_activity_options", "campsites"
   add_foreign_key "campsites_admins", "campsites"
   add_foreign_key "campsites_admins", "users"
+  add_foreign_key "campsites_amenity_options", "amenity_options"
+  add_foreign_key "campsites_amenity_options", "campsites"
+  add_foreign_key "campsites_category_options", "campsites"
+  add_foreign_key "campsites_category_options", "category_options"
+  add_foreign_key "campsites_feature_options", "campsites"
+  add_foreign_key "campsites_feature_options", "feature_options"
   add_foreign_key "campsites_features", "campsites"
   add_foreign_key "campsites_features", "features"
   add_foreign_key "favourites", "campsites"

@@ -8,25 +8,19 @@ class Campsite < ApplicationRecord
     closed: 3
   }, _prefix: :status
 
-  has_many :visits
-  has_many :reviews
-  has_many :favourites
-  has_many :campsites_admins
-  has_many :admins, through: :campsites_admins, source: :user
-  has_many :campsite_categories
-  has_many :categories, through: :campsite_categories
-  has_many :campsites_features
-  has_many :features, through: :campsites_features
-  has_many :campsite_amenities
-  has_many :amenities, through: :campsite_amenities
-  has_many :campsite_activities
-  has_many :activities, through: :campsite_activities
-  has_many :campsite_accessibilities
-  has_many :accessibility_features, through: :campsite_accessibilities
-
   has_one :campsite_fee
   has_one :campsite_address
   has_one :campsite_location
+
+  has_many :visits
+  has_many :reviews
+  has_many :favourites
+  has_many :admins, class_name: "CampsitesAdmin", foreign_key: "campsite_id"
+  has_many :features, class_name: "CampsitesFeatureOption", foreign_key: "campsite_id"
+  has_many :amenities, class_name: "CampsitesAmenityOption", foreign_key: "campsite_id"
+  has_many :activities, class_name: "CampsitesActivityOption", foreign_key: "campsite_id"
+  has_many :categories, class_name: "CampsitesCategoryOption", foreign_key: "campsite_id"
+  has_many :accessibility_features, class_name: "CampsitesAccessibilityFeatureOption", foreign_key: "campsite_id"
 
   before_validation :assign_slug, on: :create
 

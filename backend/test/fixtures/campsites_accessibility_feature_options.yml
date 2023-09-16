@@ -2,8 +2,8 @@
 
 one:
   campsite: one
-  category: 1
+  accessibility_feature_options: one
 
 two:
   campsite: two
-  category: 1
+  accessibility_feature_options: two
