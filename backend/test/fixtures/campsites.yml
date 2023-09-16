@@ -4,24 +4,24 @@ one:
   name: MyString
   description: MyText
   direction_instructions: MyText
-  things_to_know: MyText
+  notes: MyText
   slug: MyString
   images: MyString
   cover_image: MyString
   status: 1
   is_verified: false
-  social_links: 
-  contacts: 
+  social_links:
+  contacts:
 
 two:
   name: MyString
   description: MyText
   direction_instructions: MyText
-  things_to_know: MyText
+  notes: MyText
   slug: MyString
   images: MyString
   cover_image: MyString
   status: 1
   is_verified: false
-  social_links: 
-  contacts: 
+  social_links:
+  contacts:
