@@ -21,6 +21,10 @@ class ApplicationController < ActionController::API
     {message: message, code: 200, data: data}
   end
 
+  def render_success
+    render json: success_json, status: :ok
+  end
+
   def render_serializer(serializer, obj, options = {})
     if obj
       # standard:disable Style/ClassEqualityComparison

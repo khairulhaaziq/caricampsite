@@ -1,12 +1,15 @@
 Rails.application.routes.draw do
+  resources :visits
   use_doorkeeper do
     skip_controllers :authorizations, :applications, :authorized_applications
   end
 
   namespace :api do
     namespace :v1 do
-      resources :reviews
-      resources :campsites, except: :show
+      resources :campsites, except: :show do
+        resource :reviews, only: [:create, :update, :destroy]
+        resource :visits, only: [:create, :destroy]
+      end
       get "campsites/:slug", to: "campsites#show"
     end
   end

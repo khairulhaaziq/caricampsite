@@ -1,52 +1,51 @@
 class Api::V1::ReviewsController < ApplicationController
-  before_action :set_review, only: %i[show update destroy]
+  before_action :doorkeeper_authorize!, :set_current_user
+  before_action :set_campsite
+  before_action :set_review, only: [:update, :destroy]
 
-  # GET /api/v1/reviews
-  def index
-    @reviews = Review.all
-
-    render json: @reviews
-  end
-
-  # GET /api/v1/reviews/1
-  def show
-    render json: @review
-  end
-
-  # POST /api/v1/reviews
   def create
-    @review = Review.new(review_params)
+    review = @campsite.reviews.find_by(user_id: @current_user.id)
 
-    if @review.save
-      render json: @review, status: :created, location: @review
+    if review
+      render json: error_json(422, "Review already exists"), status: :unprocessable_entity
     else
-      render json: @review.errors, status: :unprocessable_entity
+      review = @campsite.reviews.new(review_params.merge(user: @current_user))
+      if review.save
+        render_success
+      else
+        render json: error_json(422, review.errors.full_messages), status: :unprocessable_entity
+      end
     end
   end
 
-  # PATCH/PUT /api/v1/reviews/1
   def update
     if @review.update(review_params)
-      render json: @review
+      render_success
     else
-      render json: @review.errors, status: :unprocessable_entity
+      render json: error_json(422, @review.errors.full_messages), status: :unprocessable_entity
     end
   end
 
-  # DELETE /api/v1/reviews/1
   def destroy
-    @review.destroy
+    if @review.destroy
+      render_success
+    else
+      render json: error_json(422, @review.errors.full_messages), status: :unprocessable_entity
+    end
   end
 
   private
 
-  # Use callbacks to share common setup or constraints between actions.
-  def set_review
-    @review = Review.find(params[:id])
+  def review_params
+    params.require(:review).permit(:body, :rating, :images)
   end
 
-  # Only allow a list of trusted parameters through.
-  def review_params
-    params.fetch(:review, {})
+  def set_campsite
+    @campsite = Campsite.find(params[:campsite_id])
+  end
+
+  def set_review
+    @review = @campsite.reviews.find_by(user_id: @current_user.id)
+    render json: error_json(422, "Review not found"), status: :unprocessable_entity unless @review
   end
 end
