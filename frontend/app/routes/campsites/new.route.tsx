@@ -3,6 +3,7 @@ import { type ReactNode, useMemo } from 'react';
 
 import FormButton from '~/components/form/FormButton';
 import FormTextField from '~/components/form/FormTextField';
+import { ChoiceboxItem } from '~/components/ui/Choicebox';
 
 const steps = [
   { index: 0, stepName: 'Details', component: (<FormDetails />) },
@@ -98,6 +99,25 @@ function FormDetails() {
           <FormTextField label="City" />
           <FormTextField label="State" />
           <FormTextField label="Country" />
+          <div className="flex gap-2 items-center">
+            <ChoiceboxItem
+              multiple
+              label="Single payment"
+              name="choiceboxcheckboxgroup"
+              value="choiceboxcheck1"
+              onCheckedChange={(val) => console.log(val)}
+              description="One-time payment"
+              className="mt-0.5"
+            />
+            <ChoiceboxItem
+              multiple
+              label="Single payment"
+              name="choiceboxcheckboxgroup"
+              value="choiceboxcheck1"
+              description="One-time payment"
+              className="mt-0.5"
+            />
+          </div>
         </div>
       </div>
 
