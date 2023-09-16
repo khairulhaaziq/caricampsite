@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_09_16_222843) do
+ActiveRecord::Schema[7.0].define(version: 2023_09_16_225228) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -32,22 +32,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_16_222843) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "campsite_accessibilities", force: :cascade do |t|
-    t.bigint "campsite_id", null: false
-    t.integer "accessibility_feature", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["campsite_id"], name: "index_campsite_accessibilities_on_campsite_id"
-  end
-
-  create_table "campsite_activities", force: :cascade do |t|
-    t.bigint "campsite_id", null: false
-    t.integer "activity", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["campsite_id"], name: "index_campsite_activities_on_campsite_id"
-  end
-
   create_table "campsite_addresses", force: :cascade do |t|
     t.bigint "campsite_id", null: false
     t.string "addressLine1", null: false
@@ -59,22 +43,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_16_222843) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["campsite_id"], name: "index_campsite_addresses_on_campsite_id"
-  end
-
-  create_table "campsite_amenities", force: :cascade do |t|
-    t.bigint "campsite_id", null: false
-    t.integer "amenity", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["campsite_id"], name: "index_campsite_amenities_on_campsite_id"
-  end
-
-  create_table "campsite_categories", force: :cascade do |t|
-    t.bigint "campsite_id", null: false
-    t.integer "category", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["campsite_id"], name: "index_campsite_categories_on_campsite_id"
   end
 
   create_table "campsite_fees", force: :cascade do |t|
@@ -169,15 +137,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_16_222843) do
     t.index ["feature_option_id"], name: "index_campsites_feature_options_on_feature_option_id"
   end
 
-  create_table "campsites_features", force: :cascade do |t|
-    t.bigint "campsite_id", null: false
-    t.bigint "feature_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["campsite_id"], name: "index_campsites_features_on_campsite_id"
-    t.index ["feature_id"], name: "index_campsites_features_on_feature_id"
-  end
-
   create_table "category_options", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
@@ -194,12 +153,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_16_222843) do
   end
 
   create_table "feature_options", force: :cascade do |t|
-    t.string "name", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "features", force: :cascade do |t|
     t.string "name", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -278,11 +231,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_16_222843) do
     t.index ["user_id"], name: "index_visits_on_user_id"
   end
 
-  add_foreign_key "campsite_accessibilities", "campsites"
-  add_foreign_key "campsite_activities", "campsites"
   add_foreign_key "campsite_addresses", "campsites"
-  add_foreign_key "campsite_amenities", "campsites"
-  add_foreign_key "campsite_categories", "campsites"
   add_foreign_key "campsite_fees", "campsites"
   add_foreign_key "campsite_locations", "campsites"
   add_foreign_key "campsites_accessibility_feature_options", "accessibility_feature_options"
@@ -297,8 +246,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_16_222843) do
   add_foreign_key "campsites_category_options", "category_options"
   add_foreign_key "campsites_feature_options", "campsites"
   add_foreign_key "campsites_feature_options", "feature_options"
-  add_foreign_key "campsites_features", "campsites"
-  add_foreign_key "campsites_features", "features"
   add_foreign_key "favourites", "campsites"
   add_foreign_key "favourites", "users"
   add_foreign_key "oauth_access_tokens", "oauth_applications", column: "application_id"
