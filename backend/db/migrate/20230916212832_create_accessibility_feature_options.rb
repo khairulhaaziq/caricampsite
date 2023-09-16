@@ -5,5 +5,6 @@ class CreateAccessibilityFeatureOptions < ActiveRecord::Migration[7.0]
 
       t.timestamps
     end
+    add_index :accessibility_feature_options, :name, unique: true
   end
 end

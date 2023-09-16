@@ -5,5 +5,6 @@ class CreateActivityOptions < ActiveRecord::Migration[7.0]
 
       t.timestamps
     end
+    add_index :activity_options, :name, unique: true
   end
 end

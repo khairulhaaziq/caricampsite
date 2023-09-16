@@ -5,5 +5,6 @@ class CreateFeatureOptions < ActiveRecord::Migration[7.0]
 
       t.timestamps
     end
+    add_index :feature_options, :name, unique: true
   end
 end
