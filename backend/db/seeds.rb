@@ -3,6 +3,13 @@ if Doorkeeper::Application.count.zero?
   Doorkeeper::Application.create(name: "remix-frontend", redirect_uri: "", scopes: "")
 end
 
+# Seed Example User
+User.create(
+  email: "test@example.com",
+  password: "Password123",
+  role: [0, 1].sample # Assuming 0 is for regular users and 1 is for admins
+)
+
 # Seed Users
 10.times do
   User.create(
@@ -13,7 +20,7 @@ end
 end
 
 # Seed Features
-5.times do
+10.times do
   Feature.create(
     name: Faker::Lorem.word
   )
@@ -25,7 +32,7 @@ end
     name: Faker::Lorem.words(number: 3).join(" "),
     description: Faker::Lorem.paragraph,
     direction_instructions: Faker::Lorem.sentence,
-    things_to_know: Faker::Lorem.sentence,
+    notes: Faker::Lorem.sentence,
     images: 5.times.map { Faker::LoremFlickr.image },
     cover_image: Faker::LoremFlickr.image,
     status: [0, 1].sample, # Assuming 0 is for inactive and 1 is for active
@@ -73,10 +80,38 @@ end
   )
 
   # Seed Campsite Features (Assign random features to the campsite)
-  rand(1..3).times do
+  rand(1..5).times do
     CampsitesFeature.create(
       campsite: campsite,
       feature: Feature.all.sample
+    )
+  end
+
+  rand(1..10).times do
+    CampsiteAmenity.create(
+      campsite: campsite,
+      amenity: rand(0..24)
+    )
+  end
+
+  rand(1..9).times do
+    CampsiteActivity.create(
+      campsite: campsite,
+      activity: rand(1..30)
+    )
+  end
+
+  rand(1..3).times do
+    CampsiteCategory.create(
+      campsite: campsite,
+      category: rand(1..24)
+    )
+  end
+
+  rand(1..2).times do
+    CampsiteAccessibility.create(
+      campsite: campsite,
+      accessibility_feature: rand(0..2)
     )
   end
 
