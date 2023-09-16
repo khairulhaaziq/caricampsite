@@ -83,21 +83,14 @@ class Api::V1::CampsitesController < ApplicationController
   end
 
   def filter_params
-    params.permit(
-      :verified,
-      :state
-    )
+    params.permit(:verified, :state)
   end
 
   def update_params
-    params.permit(
-      :name
-    )
+    params.permit(:name)
   end
 
   def create_params
-    params.permit(
-      :name
-    )
+    params.permit(:name)
   end
 end
