@@ -38,14 +38,16 @@ jobs:
         with:
           bundler-cache: true
       - name: Bundle Install
-        run: cd backend && bundle install
+        run: bundle install
         working-directory: backend
       # Add or replace database setup steps here
       - name: Set up database schema
-        run: cd backend && bin/rails db:schema:load
+        run: bin/rails db:schema:load
+        working-directory: backend
       # Add or replace test runners here
       - name: Run tests
-        run: cd backend && bin/rake
+        run: bin/rake
+        working-directory: backend
 
   lint:
     runs-on: ubuntu-latest
@@ -57,7 +59,8 @@ jobs:
         with:
           bundler-cache: true
       - name: Bundle Install
-        run: cd backend && bundle install
+        run: bundle install
         working-directory: backend
       - name: Lint Ruby files
-        run: cd backend && rake exec rails standard
+        run: rake exec rails standard
+        working-directory: backend
