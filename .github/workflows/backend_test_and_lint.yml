@@ -62,5 +62,5 @@ jobs:
         run: bundle install
         working-directory: backend
       - name: Lint Ruby files
-        run: rake exec rails standard
+        run: bin/rails standard
         working-directory: backend
