@@ -1,9 +1,9 @@
 import type { DataFunctionArgs, LoaderFunctionArgs } from '@remix-run/node';
-import { json, redirect } from '@remix-run/node';
+import { json } from '@remix-run/node';
 import { Link, useSearchParams } from '@remix-run/react';
 import { withZod } from '@remix-validated-form/with-zod';
 import { ofetch } from 'ofetch';
-import { type ReactNode, useMemo } from 'react';
+import { type ReactNode } from 'react';
 import { useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import {

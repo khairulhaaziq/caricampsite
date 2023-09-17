@@ -15,6 +15,7 @@ class Campsite < ApplicationRecord
   has_many :visits
   has_many :reviews
   has_many :favourites
+  has_many :images, class_name: "CampsiteImage", foreign_key: "campsite_id", dependent: :destroy
   has_many :admins, class_name: "CampsitesAdmin", foreign_key: "campsite_id"
   has_many :features, class_name: "CampsitesFeatureOption", foreign_key: "campsite_id"
   has_many :amenities, class_name: "CampsitesAmenityOption", foreign_key: "campsite_id"

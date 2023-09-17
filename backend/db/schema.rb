@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_09_16_222843) do
+ActiveRecord::Schema[7.0].define(version: 2023_09_17_135207) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -58,6 +58,14 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_16_222843) do
     t.index ["campsite_id"], name: "index_campsite_fees_on_campsite_id"
   end
 
+  create_table "campsite_images", force: :cascade do |t|
+    t.bigint "campsite_id", null: false
+    t.string "image_url", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["campsite_id"], name: "index_campsite_images_on_campsite_id"
+  end
+
   create_table "campsite_locations", force: :cascade do |t|
     t.bigint "campsite_id", null: false
     t.decimal "latitude", null: false
@@ -73,7 +81,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_16_222843) do
     t.text "direction_instructions"
     t.text "notes"
     t.string "slug", null: false
-    t.string "images", default: [], array: true
     t.string "cover_image"
     t.integer "status"
     t.boolean "is_verified", default: false
@@ -238,6 +245,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_16_222843) do
 
   add_foreign_key "campsite_addresses", "campsites"
   add_foreign_key "campsite_fees", "campsites"
+  add_foreign_key "campsite_images", "campsites"
   add_foreign_key "campsite_locations", "campsites"
   add_foreign_key "campsites_accessibility_feature_options", "accessibility_feature_options"
   add_foreign_key "campsites_accessibility_feature_options", "campsites"

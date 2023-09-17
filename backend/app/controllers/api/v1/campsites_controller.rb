@@ -12,6 +12,7 @@ class Api::V1::CampsitesController < ApplicationController
         :campsite_fee,
         :campsite_address,
         :campsite_location,
+        :images,
         visits: :user,
         favourites: :user,
         admins: :user,
@@ -37,6 +38,7 @@ class Api::V1::CampsitesController < ApplicationController
         :campsite_fee,
         :campsite_address,
         :campsite_location,
+        :images,
         visits: :user,
         favourites: :user,
         admins: :user,
@@ -59,12 +61,18 @@ class Api::V1::CampsitesController < ApplicationController
   def create
     record = Campsite.new(create_params)
     admin = CampsitesAdmin.new(user: @current_user, campsite: record)
+    campsite_image_urls = params.dig(:campsites, :images) || []
+    built_images = campsite_image_urls.map { |image_url| CampsiteImage.new(image_url: image_url, campsite: record) }
     record.admins << admin
+    record.images << built_images
 
     if record.valid? && admin.valid?
       ActiveRecord::Base.transaction do
         record.save
         admin.save
+        built_images.each do |image|
+          image.save
+        end
       end
 
       campsite_json = render_serializer(CampsiteSerializer, record)
@@ -77,6 +85,7 @@ class Api::V1::CampsitesController < ApplicationController
 
   def update
     if @record.update(update_params)
+      # TODO: Handle bulk update images
       campsite = render_serializer(CampsiteSerializer, @record)
       render json: campsite, status: campsite[:code] || 200
     else
@@ -125,7 +134,6 @@ class Api::V1::CampsitesController < ApplicationController
         :description,
         :direction_instructions,
         :notes,
-        :images,
         :cover_image,
         :status,
         :social_links,
@@ -155,7 +163,6 @@ class Api::V1::CampsitesController < ApplicationController
         :status,
         :social_links,
         :contacts,
-        images: [],
         # one
         campsite_fee_attributes: [:currency, :from, :to],
         campsite_address_attributes: [:addressLine1, :addressLine2, :city, :state, :postcode, :country],
