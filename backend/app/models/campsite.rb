@@ -28,11 +28,11 @@ class Campsite < ApplicationRecord
   validates :description, presence: true
   validates :slug, presence: true
   validates :slug, uniqueness: true
-  validates :images, presence: true
+  validate :images_not_empty
   validates :cover_image, presence: true
   # validates :campsite_fee, presence: true
   # validates :campsite_address, presence: true
-  # validates :admins, presence: true
+  validates :admins, presence: true
   # validates :categories, presence: true
 
   accepts_nested_attributes_for :campsite_fee, update_only: true
@@ -58,5 +58,11 @@ class Campsite < ApplicationRecord
     end
 
     self.slug = slug
+  end
+
+  def images_not_empty
+    if images.blank? || images.all?(&:blank?)
+      errors.add(:images, "Must contain at least one image")
+    end
   end
 end

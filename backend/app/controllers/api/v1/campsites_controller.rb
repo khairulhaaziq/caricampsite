@@ -1,5 +1,5 @@
 class Api::V1::CampsitesController < ApplicationController
-  before_action :ensure_record_exists, only: %i[update destroy]
+  before_action :ensure_record_exists, only: [:update, :destroy]
   before_action :doorkeeper_authorize!, :set_current_user, only: [:create, :update, :destroy]
   before_action :set_campsite_by_current_user, only: [:update, :destroy]
 
@@ -43,15 +43,22 @@ class Api::V1::CampsitesController < ApplicationController
   end
 
   def create
-    record = Campsite.new create_params
+    record = Campsite.new(create_params)
+    admin = CampsitesAdmin.new(user: @current_user, campsite: record)
+    record.admins << admin
 
-    if record.save
-      campsite = render_serializer(CampsiteSerializer, record)
+    if record.valid? && admin.valid?
+      ActiveRecord::Base.transaction do
+        record.save
+        admin.save
+      end
+
+      campsite_json = render_serializer(CampsiteSerializer, record)
+      render json: campsite_json, status: :ok
     else
-      error_message = record.errors.full_messages
-      campsite = error_json(400, error_message)
+      campsite_json = error_json(400, record.errors.full_messages + admin.errors.full_messages)
+      render json: campsite_json, status: 400
     end
-    render json: campsite, status: campsite[:code] || 200
   end
 
   def update
@@ -67,7 +74,7 @@ class Api::V1::CampsitesController < ApplicationController
   def destroy
     # soft delete instead of hard delete
     if @record.update(deleted_at: Time.now)
-      render json: success_json, status: 200
+      render_success
     else
       campsite = error_json(400, @record.errors.full_messages)
       render json: campsite, status: campsite[:code] || 400
@@ -124,6 +131,28 @@ class Api::V1::CampsitesController < ApplicationController
   end
 
   def create_params
-    params.permit(:name)
+    params.require(:campsites)
+      .permit(
+        :name,
+        :description,
+        :direction_instructions,
+        :notes,
+        :cover_image,
+        :status,
+        :social_links,
+        :contacts,
+        images: [],
+        # one
+        campsite_fee_attributes: [:currency, :from, :to],
+        campsite_address_attributes: [:addressLine1, :addressLine2, :city, :state, :postcode, :country],
+        campsite_location_attributes: [:latitude, :longitude]
+        # joined tables
+        # :admins,
+        # :features,
+        # :amenities,
+        # :activities,
+        # :categories,
+        # :accessibility_features
+      )
   end
 end
