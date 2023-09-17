@@ -36,6 +36,8 @@ class Campsite < ApplicationRecord
   # validates :categories, presence: true
 
   accepts_nested_attributes_for :campsite_fee, update_only: true
+  accepts_nested_attributes_for :campsite_address, update_only: true
+  accepts_nested_attributes_for :campsite_location, update_only: true
 
   scope :filter_by_verified, ->(value) { where(is_verified: value) }
   scope :filter_by_state, ->(value) { joins(:campsite_address).where(campsite_addresses: {state: value}) }
