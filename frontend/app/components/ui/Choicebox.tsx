@@ -12,14 +12,14 @@ const choiceboxVariantsClass = tv({
     },
   },
   slots: {
-    root: 'group text-sm flex gap-2 px-4 py-3 shadow-[0_0_0_1px_inset_var(--outline),0px_1px_4px_0px_rgba(0,0,0,0.05)] hover:shadow-[0_0_0_1px_inset_var(--outline-hover)] rounded-md w-52 data-[state=checked]:shadow-[0_0_0_2px_inset_var(--primary)] data-[state=checked]:focus:shadow-[0_0_0_2px_inset_var(--primary),0_0_0_2px_#655bf25C] box-border transition-all duration-200  focus:shadow-[0_0_0_2px_#655bf25C] outline-none',
+    root: 'group relative flex gap-2 items-end h-20 px-4 py-4 shadow-[0_0_0_1px_inset_var(--outline),0px_1px_4px_0px_rgba(0,0,0,0.05)] hover:shadow-[0_0_0_1px_inset_var(--outline-hover)] rounded-md w-full data-[state=checked]:shadow-[0_0_0_2px_inset_var(--black)] data-[state=checked]:focus:shadow-[0_0_0_2px_inset_var(--black),0_0_0_2px_rgba(0,0,0,0.2)] box-border transition-all duration-200  focus:shadow-[0_0_0_2px_rgba(0,0,0,0.3)] outline-none',
     indicatorBox:
-      'bg-white flex flex-none h-5 w-5 appearance-none items-center justify-center rounded-full group-data-[state=unchecked]:border-2 border-outline group-data-[state=checked]:bg-primary text-white shadow-[0_2px_10px] outline-none',
+      'absolute right-3 top-3 bg-white flex flex-none h-5 w-5 appearance-none items-center justify-center rounded-full group-data-[state=unchecked]:border-2 border-outline group-data-[state=checked]:bg-black text-white shadow-[0_2px_10px] outline-none',
     indicator: '',
     radioIndicatorBox:
-      'flex flex-none h-5 w-5 appearance-none items-center justify-center rounded-full box-border border-2 border-outline group-data-[state=checked]:border-primary group-data-[state=checked]:bg-white text-white shadow-[0_2px_10px] outline-none',
-    radioIndicator: 'h-2.5 w-2.5 bg-primary rounded-full',
-    labelClass: 'text-left',
+      'absolute right-3 top-3 flex flex-none h-5 w-5 appearance-none items-center justify-center rounded-full box-border border-2 border-outline group-data-[state=checked]:border-black group-data-[state=checked]:bg-white text-white shadow-[0_2px_10px] outline-none',
+    radioIndicator: 'h-2.5 w-2.5 bg-black rounded-full',
+    labelClass: 'text-left font-semibold',
     descriptionClass: 'text-dim text-left',
   },
   defaultVariants: {

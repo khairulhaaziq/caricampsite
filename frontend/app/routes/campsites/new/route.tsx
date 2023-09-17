@@ -1,12 +1,13 @@
 import type { DataFunctionArgs, LoaderFunctionArgs } from '@remix-run/node';
 import { json } from '@remix-run/node';
-import { Link, useSearchParams } from '@remix-run/react';
+import { Link } from '@remix-run/react';
 import { withZod } from '@remix-validated-form/with-zod';
 import { ofetch } from 'ofetch';
 import { type ReactNode } from 'react';
 import { useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import {
+  useField,
   useFormContext,
   ValidatedForm,
   validationError
@@ -20,6 +21,13 @@ import { Auth } from '~/modules/auth/auth.server';
 import { commitSession, getSession } from '~/utils/sessions.server';
 
 import { schema } from './schema';
+import {
+  AccessibilityFeatureOption,
+  ActivityOption,
+  AmenityOption,
+  CategoryOption,
+  FeatureOption
+} from './types';
 
 const validator = withZod(schema);
 
@@ -50,6 +58,7 @@ export const action = async ({ request }: DataFunctionArgs) => {
       );
 
       const tokenValidated = await Auth.validateToken(request);
+
       if (!tokenValidated) {
         session.flash(
           'error',
@@ -77,12 +86,12 @@ export const action = async ({ request }: DataFunctionArgs) => {
 
       console.log(formResult.data);
 
-      const { name, description, images, cover_image } = formResult.data;
+      const { ...formData } = formResult.data;
 
       const result = await ofetch(
         `${API_BASE_URL}/campsites`, {
           method: 'POST',
-          body: { campsites: { name, description, images, cover_image } },
+          body: { campsites: formData },
           headers: {
             'Authorization': `Bearer ${token}`
           },
@@ -137,7 +146,7 @@ export const action = async ({ request }: DataFunctionArgs) => {
 };
 
 export default function CampsitesNew() {
-  const [searchParams, setSearchParams] = useSearchParams();
+  // const [searchParams, setSearchParams] = useSearchParams();
 
   // const currentStep = useMemo(()=>{
   //   return searchParams.get('step') || 'details';
@@ -181,13 +190,13 @@ function Card({ children }: {children?: ReactNode} = {}) {
 // }
 
 function FormDetails() {
-  const { validate } = useFormContext('form-details');
-
-  async function handleSubmit(e: SubmitEvent) {
-    e.preventDefault();
-    const result = await validate();
-    console.log(result);
-  }
+  const formId = 'form-details';
+  const { validate, getValues, ...formContext  } = useFormContext(formId);
+  const { error: featureFieldError } = useField('features', { formId });
+  const { error: amenityFieldError } = useField('amenities', { formId });
+  const { error: categoryFieldError } = useField('categories', { formId });
+  const { error: activityFieldError } = useField('activities', { formId });
+  const { error: accessibilityFeatureFieldError } = useField('accessibility_features', { formId });
 
   return (
     <div className="contents">
@@ -196,7 +205,7 @@ function FormDetails() {
         <p className="text-neutral-500">Let's get you set up!</p>
       </div>
       <ValidatedForm
-        id="form-details"
+        id={formId}
         validator={validator}
         className="contents"
         method="post"
@@ -211,64 +220,148 @@ function FormDetails() {
           <ImageDropzone />
 
         </div>
-        <div className="contents">
+        {/*<div className="contents">
           <div className="flex flex-col gap-0.5 mt-6">
             <h1 className="text-2xl font-bold">Your campsite location</h1>
             <p className="text-neutral-500">Let's get you set up!</p>
           </div>
           <div className="flex flex-col gap-4">
-            <FormTextField label="Address Line 1" />
-            <FormTextField label="Address Line 2" />
-            <FormTextField label="City" />
-            <FormTextField label="State" />
-            <FormTextField label="Country" />
+            <FormTextField name="addressLine1" label="Address Line 1" />
+            <FormTextField name="addressLine2" label="Address Line 2" />
+            <FormTextField name="city" label="City" />
+            <FormTextField name="postcode" label="Postcode" />
+            <FormTextField name="state" label="State" />
+            <FormTextField name="country" label="Country" />
+          </div>
+        </div>*/}
+
+        <div className="contents">
+          <div className="flex flex-col gap-0.5 mt-6">
+            <h1 className="text-2xl font-bold">Features</h1>
+            <p className="text-neutral-500">Select your campsite features</p>
+            {featureFieldError && (
+              <p className="text-danger flex gap-1 items-center">
+                {featureFieldError}
+              </p>
+            )}
+          </div>
+          <div className="grid grid-cols-2 gap-4 items-center">
+            {FeatureOption.map(featureOption=>{
+              return (
+                <ChoiceboxItem
+                  key={featureOption.id}
+                  multiple
+                  label={featureOption.name}
+                  name="features"
+                  value={featureOption.id}
+                  onCheckedChange={(val) => console.log(val)}
+                />
+              );
+            })}
           </div>
         </div>
 
         <div className="contents">
           <div className="flex flex-col gap-0.5 mt-6">
-            <h1 className="text-2xl font-bold">Your campsite location</h1>
-            <p className="text-neutral-500">Let's get you set up!</p>
+            <h1 className="text-2xl font-bold">Amenities</h1>
+            <p className="text-neutral-500">Select your campsite amenities</p>
+            {amenityFieldError && (
+              <p className="text-danger flex gap-1 items-center">
+                {amenityFieldError}
+              </p>
+            )}
           </div>
-          <div className="flex flex-col gap-4">
-            <FormTextField label="Address Line 1" />
-            <FormTextField label="Address Line 2" />
-            <FormTextField label="City" />
-            <FormTextField label="State" />
-            <FormTextField label="Country" />
-            <div className="flex gap-2 items-center">
-              <ChoiceboxItem
-                multiple
-                label="Single payment"
-                name="choiceboxcheckboxgroup"
-                value="choiceboxcheck1"
-                onCheckedChange={(val) => console.log(val)}
-                description="One-time payment"
-                className="mt-0.5"
-              />
-              <ChoiceboxItem
-                multiple
-                label="Single payment"
-                name="choiceboxcheckboxgroup"
-                value="choiceboxcheck1"
-                description="One-time payment"
-                className="mt-0.5"
-              />
-            </div>
+          <div className="grid grid-cols-2 gap-4 items-center">
+            {AmenityOption.map(amenityOption=>{
+              return (
+                <ChoiceboxItem
+                  key={amenityOption.id}
+                  multiple
+                  label={amenityOption.name}
+                  name="amenities"
+                  value={amenityOption.id}
+                  onCheckedChange={(val) => console.log(val)}
+                />
+              );
+            })}
           </div>
         </div>
 
         <div className="contents">
           <div className="flex flex-col gap-0.5 mt-6">
-            <h1 className="text-2xl font-bold">Your campsite location</h1>
-            <p className="text-neutral-500">Let's get you set up!</p>
+            <h1 className="text-2xl font-bold">Categories</h1>
+            <p className="text-neutral-500">Select your campsite categories</p>
+            {categoryFieldError && (
+              <p className="text-danger flex gap-1 items-center">
+                {categoryFieldError}
+              </p>
+            )}
           </div>
-          <div className="flex flex-col gap-4">
-            <FormTextField label="Address Line 1" />
-            <FormTextField label="Address Line 2" />
-            <FormTextField label="City" />
-            <FormTextField label="State" />
-            <FormTextField label="Country" />
+          <div className="grid grid-cols-2 gap-4 items-center">
+            {CategoryOption.map(categoryOption=>{
+              return (
+                <ChoiceboxItem
+                  key={categoryOption.id}
+                  multiple
+                  label={categoryOption.name}
+                  name="categories"
+                  value={categoryOption.id}
+                  onCheckedChange={(val) => console.log(val)}
+                />
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="contents">
+          <div className="flex flex-col gap-0.5 mt-6">
+            <h1 className="text-2xl font-bold">Activities</h1>
+            <p className="text-neutral-500">Select your campsite activities</p>
+            {activityFieldError && (
+              <p className="text-danger flex gap-1 items-center">
+                {activityFieldError}
+              </p>
+            )}
+          </div>
+          <div className="grid grid-cols-2 gap-4 items-center">
+            {ActivityOption.map((activityOption)=>{
+              return (
+                <ChoiceboxItem
+                  key={activityOption.id}
+                  multiple
+                  label={activityOption.name}
+                  name="activities"
+                  value={activityOption.id}
+                  onCheckedChange={(val) => console.log(val)}
+                />
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="contents">
+          <div className="flex flex-col gap-0.5 mt-6">
+            <h1 className="text-2xl font-bold">accessibilityFeatures</h1>
+            <p className="text-neutral-500">Select your campsite accessibilityFeatures</p>
+            {accessibilityFeatureFieldError && (
+              <p className="text-danger flex gap-1 items-center">
+                {accessibilityFeatureFieldError}
+              </p>
+            )}
+          </div>
+          <div className="grid grid-cols-2 gap-4 items-center">
+            {AccessibilityFeatureOption.map((accessibilityFeatureOption)=>{
+              return (
+                <ChoiceboxItem
+                  key={accessibilityFeatureOption.id}
+                  multiple
+                  label={accessibilityFeatureOption.name}
+                  name="accessibility_features"
+                  value={accessibilityFeatureOption.id}
+                  onCheckedChange={(val) => console.log(val)}
+                />
+              );
+            })}
           </div>
         </div>
 
@@ -278,10 +371,10 @@ function FormDetails() {
             <p className="text-neutral-500">Let's get you set up!</p>
           </div>
           <div className="flex flex-col gap-4">
-            <FormTextField label="Name" />
-            <FormTextField label="Mobile No." />
+            <FormTextField name='contacts[0].name' label="Name" />
+            <FormTextField name='contacts[0].mobileNo' label="Mobile No." />
 
-            <FormTextField label="Instagram" />
+            <FormTextField name='social_links[0].instagram' label="Instagram" />
           </div>
         </div>
 
@@ -291,15 +384,22 @@ function FormDetails() {
             <p className="text-neutral-500">Let's get you set up!</p>
           </div>
           <div className="flex flex-col gap-4">
-            <FormTextField label="Description" />
-            <FormTextField label="Things to know" />
-            <FormTextField label="Direction instructions" />
+            <FormTextField name='notes' label="Notes" />
+            <FormTextField name='direction_instructions' label="Direction instructions" />
           </div>
         </div>
 
         <div className="flex justify-between items-center fixed bottom-0 left-0 right-0 bg-white px-8 py-4 border-t border-neutral-300">
           <Link>Back</Link>
-          <FormButton label="Continue" onSubmit={handleSubmit} />
+          <button
+            type="button"
+            onClick={()=>{
+              const formValues = Object.fromEntries(getValues());
+              console.log(formContext);
+              console.log(formValues);
+            }}
+          >Test button</button>
+          <FormButton label="Continue" />
         </div>
       </ValidatedForm>
     </div>
@@ -308,14 +408,13 @@ function FormDetails() {
 
 function ImageDropzone() {
   const [files, setFiles] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const onDrop = useCallback(async (acceptedFiles) => {
     const form = new FormData();
 
     for (const file of acceptedFiles){
       const modifiedFileName = new Date().toISOString() + '_' + file.name;
-
-      setFiles((prevFiles) => [...prevFiles, { preview: URL.createObjectURL(file), fileName: modifiedFileName }]);
 
       const modifiedFile = new File([file], modifiedFileName, {
         type: file.type,
@@ -328,18 +427,33 @@ function ImageDropzone() {
   }, []);
 
   async function uploadFiles(form) {
-    await fetch('new/images',
+    setIsLoading(true);
+    let error = false;
+
+    const result = await fetch('new/images',
       {
         method: 'POST',
         body: form,
       })
       .then(async (res) => {
         const json = await res.json();
+
         console.log(json);
+        return json;
       })
-      .catch((err) =>
-        console.error(err)
-      );
+      .catch((err) =>{
+        error = true;
+        console.error(err);
+        return err;
+      });
+
+    if (!error) {
+      result.result.fileUrls.forEach(fileUrl=>{
+        setFiles((prevFiles) => [...prevFiles, { preview: fileUrl }]);
+      });
+    }
+
+    setIsLoading(false);
   }
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
@@ -356,6 +470,7 @@ function ImageDropzone() {
         type="hidden"
         hidden
         name={`images[${index}]`}
+        defaultValue=""
         value={file.preview}
       />
       <p className="absolute bottom-2 left-2">{file.fileName}</p>
@@ -366,6 +481,7 @@ function ImageDropzone() {
     <>
       <div className="grid grid-cols-3 gap-4">
         {thumbs}
+        {isLoading && 'Loading...'}
         <div className="border border-dashed border-2 border-neutral-200 bg-neutral-50 rounded-lg aspect-square flex-none">
           <div {...getRootProps()} className="flex items-center justify-center text-center h-full px-4">
             <input {...getInputProps()} />

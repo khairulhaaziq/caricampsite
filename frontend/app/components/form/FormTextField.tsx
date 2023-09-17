@@ -25,7 +25,7 @@ export default function FormTextField({
               {...getInputProps({ id: name })}
               {...props as TextareaTextFieldAttributes}
               placeholder={label ? label : props.placeholder}
-              className="rounded-xl bg-[#EDEDED] h-32 pl-5 pt-3.5"
+              className={`rounded-xl ${error ? 'bg-red-50' : 'bg-[#EDEDED]'} h-32 pl-5 pt-3.5`}
             />
           ) : (
             <input
