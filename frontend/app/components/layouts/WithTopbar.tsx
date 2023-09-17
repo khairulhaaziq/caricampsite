@@ -1,4 +1,8 @@
-import { Form, Link } from '@remix-run/react';
+import {
+  Form,
+  Link,
+  useRouteLoaderData
+} from '@remix-run/react';
 import { type ReactNode, useMemo } from 'react';
 
 export default function WithTopbar({ children }: {children?: ReactNode}) {
@@ -11,6 +15,8 @@ export default function WithTopbar({ children }: {children?: ReactNode}) {
 }
 
 function Topbar() {
+  const { user } = useRouteLoaderData('root');
+
   const memoedTopbar = useMemo(()=>(
     <div className="h-20 border-b border-neutral-200 fixed top-0 left-0 right-0 bg-white">
       <div className="flex justify-center px-6 sm:px-8 md:px-10 lg:px-14 xl:px-16 2xl:px-20 h-full">
@@ -24,16 +30,20 @@ function Topbar() {
                 Add a campsite
               </div>
             </Link>
-            <Link to="/login">
-              <div className="font-semibold bg-neutral-200 rounded-md h-10 px-3 flex items-center justify-center">
-                Login
-              </div>
-            </Link>
-            <Form action="/logout" method="POST">
-              <button className="font-semibold bg-neutral-200 rounded-md h-10 px-3 flex items-center justify-center">
-                Logout
-              </button>
-            </Form>
+            {!user
+              ?
+              (<Link to="/login">
+                <div className="font-semibold bg-neutral-200 rounded-md h-10 px-3 flex items-center justify-center">
+                  Login
+                </div>
+              </Link>)
+              :
+              (<Form action="/logout" method="POST">
+                <button className="font-semibold bg-neutral-200 rounded-md h-10 px-3 flex items-center justify-center">
+                  Logout
+                </button>
+              </Form>)
+            }
           </div>
         </div>
       </div>

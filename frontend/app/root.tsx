@@ -15,6 +15,7 @@ import { toast, Toaster } from 'sonner';
 
 import styles from '~/tailwind.css';
 
+import { User } from './modules/user/user.server';
 import { commitSession, getSession } from './utils/sessions.server';
 
 export const links: LinksFunction = () => [
@@ -29,8 +30,10 @@ export const loader = async ({ request, }: LoaderFunctionArgs) => {
   const message = session.get('globalMessage') || null;
   const toastErrorMessage = session.get('error') || null;
 
+  const user = await User.getUser(request);
+
   return json(
-    { message, toastErrorMessage },
+    { message, toastErrorMessage, user },
     {
       headers: {
         'Set-Cookie': await commitSession(session),
@@ -40,14 +43,19 @@ export const loader = async ({ request, }: LoaderFunctionArgs) => {
 };
 
 export default function App() {
-  const { message, toastErrorMessage } = useLoaderData();
+  const { message, toastErrorMessage, user } = useLoaderData();
+
+  useEffect(()=>{
+    if (user)
+      console.log(user);
+  }, [user]);
 
   useEffect(()=>{
     if (toastErrorMessage) {
       toast.custom((t) => (
         <div className="flex items-center justify-center w-[356px]">
           <div className="rounded-full h-12 px-5 bg-red-500 text-white items-center flex text-center">
-            {toastErrorMessage} <button className='pl-4 pr-2' onClick={() => toast.dismiss(t)}>X</button>
+            {toastErrorMessage} <button className="pl-4 pr-2" onClick={() => toast.dismiss(t)}>X</button>
           </div>
         </div>
       ));
@@ -58,7 +66,7 @@ export default function App() {
       toast.custom((t) => (
         <div className="flex items-center justify-center w-[356px]">
           <div className="rounded-full h-12 px-5 bg-[#31B5FF] text-white items-center flex text-center">
-            {message} <button className='pl-4 pr-2' onClick={() => toast.dismiss(t)}>X</button>
+            {message} <button className="pl-4 pr-2" onClick={() => toast.dismiss(t)}>X</button>
           </div>
         </div>
       ));
