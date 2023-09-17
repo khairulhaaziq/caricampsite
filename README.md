@@ -23,12 +23,12 @@ TODO
 
 ### Seeding database
 
-Working with empty databases isnt fun.
+Working with empty databases isn't fun.
 If you went to `http://localhost:3001` you probably dont see any listings, that is because there arent any listings!
-To seed you database and have a working example, just run:
+To seed your database and have a working example, just run:
 
-> ***Info***
-You need to run this in the docker container terminal if you used docker.
+> **Note**
+> You need to run this in the docker container terminal if you used docker.
 
 1. Go to your backend root directory: `/backend`
 
