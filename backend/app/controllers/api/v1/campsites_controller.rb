@@ -61,18 +61,34 @@ class Api::V1::CampsitesController < ApplicationController
   def create
     record = Campsite.new(create_params)
     admin = CampsitesAdmin.new(user: @current_user, campsite: record)
-    campsite_image_urls = params.dig(:campsites, :images) || []
-    built_images = campsite_image_urls.map { |image_url| CampsiteImage.new(image_url: image_url, campsite: record) }
+
+    associations = {
+      images: {association: :images, model: CampsiteImage, column: :image_url},
+      features: {association: :features, model: CampsitesFeatureOption, column: :feature_option_id},
+      amenities: {association: :amenities, model: CampsitesAmenityOption, column: :amenity_option_id},
+      categories: {association: :categories, model: CampsitesCategoryOption, column: :category_option_id},
+      activities: {association: :activities, model: CampsitesActivityOption, column: :activity_option_id},
+      accessibility_features: {association: :accessibility_features, model: CampsitesAccessibilityFeatureOption, column: :accessibility_option_id}
+    }
+
+    built_associations = {}
+
+    associations.each do |param_key, options|
+      param_values = params.dig(:campsites, param_key) || []
+      built_associations[param_key] = param_values.map { |param_value| options[:model].new(:campsite => record, options[:column] => param_value) }
+    end
+
     record.admins << admin
-    record.images << built_images
+
+    built_associations.each do |param_key, built_records|
+      record.send("#{param_key}=", built_records)
+    end
 
     if record.valid? && admin.valid?
       ActiveRecord::Base.transaction do
         record.save
         admin.save
-        built_images.each do |image|
-          image.save
-        end
+        built_associations.values.flatten.each(&:save)
       end
 
       campsite_json = render_serializer(CampsiteSerializer, record)
@@ -169,7 +185,6 @@ class Api::V1::CampsitesController < ApplicationController
         campsite_location_attributes: [:latitude, :longitude]
         # joined tables
         # :admins,
-        # :features,
         # :amenities,
         # :activities,
         # :categories,
