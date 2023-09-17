@@ -1,4 +1,4 @@
-import { Link } from '@remix-run/react';
+import { Form, Link } from '@remix-run/react';
 import { type ReactNode, useMemo } from 'react';
 
 export default function WithTopbar({ children }: {children?: ReactNode}) {
@@ -29,6 +29,11 @@ function Topbar() {
                 Login
               </div>
             </Link>
+            <Form action="/logout" method="POST">
+              <button className="font-semibold bg-neutral-200 rounded-md h-10 px-3 flex items-center justify-center">
+                Logout
+              </button>
+            </Form>
           </div>
         </div>
       </div>

@@ -1,9 +1,15 @@
 import { Link, useSearchParams } from '@remix-run/react';
+import { withZod } from '@remix-validated-form/with-zod';
 import { type ReactNode, useMemo } from 'react';
+import { ValidatedForm } from 'remix-validated-form';
 
 import FormButton from '~/components/form/FormButton';
 import FormTextField from '~/components/form/FormTextField';
 import { ChoiceboxItem } from '~/components/ui/Choicebox';
+
+import { schema } from './schema';
+
+const validator = withZod(schema);
 
 const steps = [
   { index: 0, stepName: 'Details', component: (<FormDetails />) },
@@ -28,10 +34,6 @@ export default function CampsitesNew() {
         <Card>
           {steps.find(i=>i.stepName.toLowerCase() === currentStep)?.component}
         </Card>
-      </div>
-      <div className="flex justify-between items-center fixed bottom-0 left-0 right-0 bg-white px-8 py-4 border-t border-neutral-300">
-        <Link>Back</Link>
-        <FormButton label="Continue" />
       </div>
     </div>
   );
@@ -69,96 +71,112 @@ function FormDetails() {
         <h1 className="text-2xl font-bold">Basic Information</h1>
         <p className="text-neutral-500">Let's get you set up!</p>
       </div>
-      <div className="flex flex-col gap-4">
-        <FormTextField label="Name" />
-        <FormTextField label="Description" textarea />
-        <FormTextField label="Category" />
-      </div>
-      <div className="contents">
-        <div className="flex flex-col gap-0.5 mt-6">
-          <h1 className="text-2xl font-bold">Your campsite location</h1>
-          <p className="text-neutral-500">Let's get you set up!</p>
-        </div>
+      <ValidatedForm
+        validator={validator}
+        className="contents"
+        method="post"
+      >
         <div className="flex flex-col gap-4">
-          <FormTextField label="Address Line 1" />
-          <FormTextField label="Address Line 2" />
-          <FormTextField label="City" />
-          <FormTextField label="State" />
-          <FormTextField label="Country" />
-        </div>
-      </div>
+          <FormTextField name="name" label="Name" />
+          <FormTextField
+            name="description"
+            label="Description"
+            textarea
+          />
+          <FormTextField name="category" label="Category" />
 
-      <div className="contents">
-        <div className="flex flex-col gap-0.5 mt-6">
-          <h1 className="text-2xl font-bold">Your campsite location</h1>
-          <p className="text-neutral-500">Let's get you set up!</p>
         </div>
-        <div className="flex flex-col gap-4">
-          <FormTextField label="Address Line 1" />
-          <FormTextField label="Address Line 2" />
-          <FormTextField label="City" />
-          <FormTextField label="State" />
-          <FormTextField label="Country" />
-          <div className="flex gap-2 items-center">
-            <ChoiceboxItem
-              multiple
-              label="Single payment"
-              name="choiceboxcheckboxgroup"
-              value="choiceboxcheck1"
-              onCheckedChange={(val) => console.log(val)}
-              description="One-time payment"
-              className="mt-0.5"
-            />
-            <ChoiceboxItem
-              multiple
-              label="Single payment"
-              name="choiceboxcheckboxgroup"
-              value="choiceboxcheck1"
-              description="One-time payment"
-              className="mt-0.5"
-            />
+        <div className="contents">
+          <div className="flex flex-col gap-0.5 mt-6">
+            <h1 className="text-2xl font-bold">Your campsite location</h1>
+            <p className="text-neutral-500">Let's get you set up!</p>
+          </div>
+          <div className="flex flex-col gap-4">
+            <FormTextField label="Address Line 1" />
+            <FormTextField label="Address Line 2" />
+            <FormTextField label="City" />
+            <FormTextField label="State" />
+            <FormTextField label="Country" />
           </div>
         </div>
-      </div>
 
-      <div className="contents">
-        <div className="flex flex-col gap-0.5 mt-6">
-          <h1 className="text-2xl font-bold">Your campsite location</h1>
-          <p className="text-neutral-500">Let's get you set up!</p>
+        <div className="contents">
+          <div className="flex flex-col gap-0.5 mt-6">
+            <h1 className="text-2xl font-bold">Your campsite location</h1>
+            <p className="text-neutral-500">Let's get you set up!</p>
+          </div>
+          <div className="flex flex-col gap-4">
+            <FormTextField label="Address Line 1" />
+            <FormTextField label="Address Line 2" />
+            <FormTextField label="City" />
+            <FormTextField label="State" />
+            <FormTextField label="Country" />
+            <div className="flex gap-2 items-center">
+              <ChoiceboxItem
+                multiple
+                label="Single payment"
+                name="choiceboxcheckboxgroup"
+                value="choiceboxcheck1"
+                onCheckedChange={(val) => console.log(val)}
+                description="One-time payment"
+                className="mt-0.5"
+              />
+              <ChoiceboxItem
+                multiple
+                label="Single payment"
+                name="choiceboxcheckboxgroup"
+                value="choiceboxcheck1"
+                description="One-time payment"
+                className="mt-0.5"
+              />
+            </div>
+          </div>
         </div>
-        <div className="flex flex-col gap-4">
-          <FormTextField label="Address Line 1" />
-          <FormTextField label="Address Line 2" />
-          <FormTextField label="City" />
-          <FormTextField label="State" />
-          <FormTextField label="Country" />
-        </div>
-      </div>
 
-      <div className="contents">
-        <div className="flex flex-col gap-0.5 mt-6">
-          <h1 className="text-2xl font-bold">Your campsite contacts</h1>
-          <p className="text-neutral-500">Let's get you set up!</p>
+        <div className="contents">
+          <div className="flex flex-col gap-0.5 mt-6">
+            <h1 className="text-2xl font-bold">Your campsite location</h1>
+            <p className="text-neutral-500">Let's get you set up!</p>
+          </div>
+          <div className="flex flex-col gap-4">
+            <FormTextField label="Address Line 1" />
+            <FormTextField label="Address Line 2" />
+            <FormTextField label="City" />
+            <FormTextField label="State" />
+            <FormTextField label="Country" />
+          </div>
         </div>
-        <div className="flex flex-col gap-4">
-          <FormTextField label="Name" />
-          <FormTextField label="Mobile No." />
 
-          <FormTextField label="Instagram" />
-        </div>
-      </div>
+        <div className="contents">
+          <div className="flex flex-col gap-0.5 mt-6">
+            <h1 className="text-2xl font-bold">Your campsite contacts</h1>
+            <p className="text-neutral-500">Let's get you set up!</p>
+          </div>
+          <div className="flex flex-col gap-4">
+            <FormTextField label="Name" />
+            <FormTextField label="Mobile No." />
 
-      <div className="contents">
-        <div className="flex flex-col gap-0.5 mt-6">
-          <h1 className="text-2xl font-bold">Additional information</h1>
-          <p className="text-neutral-500">Let's get you set up!</p>
+            <FormTextField label="Instagram" />
+          </div>
         </div>
-        <div className="flex flex-col gap-4">
-          <FormTextField label="Description" />
-          <FormTextField label="Things to know" />
-          <FormTextField label="Direction instructions" />
+
+        <div className="contents">
+          <div className="flex flex-col gap-0.5 mt-6">
+            <h1 className="text-2xl font-bold">Additional information</h1>
+            <p className="text-neutral-500">Let's get you set up!</p>
+          </div>
+          <div className="flex flex-col gap-4">
+            <FormTextField label="Description" />
+            <FormTextField label="Things to know" />
+            <FormTextField label="Direction instructions" />
+          </div>
         </div>
-      </div>
+
+        <div className="flex justify-between items-center fixed bottom-0 left-0 right-0 bg-white px-8 py-4 border-t border-neutral-300">
+          <Link>Back</Link>
+          <FormButton label="Continue" />
+        </div>
+      </ValidatedForm>
     </div>
   );
 }
