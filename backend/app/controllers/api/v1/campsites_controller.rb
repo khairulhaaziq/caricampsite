@@ -68,7 +68,7 @@ class Api::V1::CampsitesController < ApplicationController
       amenities: {association: :amenities, model: CampsitesAmenityOption, column: :amenity_option_id},
       categories: {association: :categories, model: CampsitesCategoryOption, column: :category_option_id},
       activities: {association: :activities, model: CampsitesActivityOption, column: :activity_option_id},
-      accessibility_features: {association: :accessibility_features, model: CampsitesAccessibilityFeatureOption, column: :accessibility_option_id}
+      accessibility_features: {association: :accessibility_features, model: CampsitesAccessibilityFeatureOption, column: :accessibility_feature_option_id}
     }
 
     built_associations = {}
@@ -158,13 +158,6 @@ class Api::V1::CampsitesController < ApplicationController
         campsite_fee_attributes: [:currency, :from, :to],
         campsite_address_attributes: [:addressLine1, :addressLine2, :city, :state, :postcode, :country],
         campsite_location_attributes: [:latitude, :longitude]
-        # joined tables
-        # :admins,
-        # :features,
-        # :amenities,
-        # :activities,
-        # :categories,
-        # :accessibility_features
       )
   end
 
