@@ -1,4 +1,5 @@
-class AuthenticationController < ApplicationController
+class Auth::AuthenticationController < ApplicationController
+  before_action :set_client_app
   before_action :doorkeeper_authorize!, :set_current_user, except: [:register, :login]
 
   def me
@@ -7,21 +8,16 @@ class AuthenticationController < ApplicationController
   end
 
   def logout
-    client_app = Doorkeeper::Application.find_by(name: "remix-frontend")
-
-    Doorkeeper::AccessToken.revoke_all_for(client_app.id, @current_user)
+    Doorkeeper::AccessToken.revoke_all_for(@client_app.id, @current_user)
 
     render json: {response: "ok", message: "Successfully revoked user's token(s)."}, status: 200
   end
 
   def register
     user = User.new(email: user_params[:email], password: user_params[:password])
-    client_app = Doorkeeper::Application.find_by(name: "remix-frontend")
-
-    return render(json: {error: "Invalid client ID"}, status: 403) unless client_app
 
     if user.save
-      access_token = generate_access_token(user, client_app)
+      access_token = generate_access_token(user, @client_app)
       render(json: {
         user: {
           id: user.id,
@@ -42,8 +38,8 @@ class AuthenticationController < ApplicationController
     user = User.authenticate(params[:email], params[:password])
 
     if user
-      client_app = Doorkeeper::Application.find_by(name: "remix-frontend")
-      access_token = generate_access_token(user, client_app)
+      Doorkeeper::AccessToken.revoke_all_for(@client_app.id, @current_user) # Revoke all previous token
+      access_token = generate_access_token(user, @client_app)
       render(json: {
         user: {
           id: user.id,
@@ -61,6 +57,12 @@ class AuthenticationController < ApplicationController
   end
 
   private
+
+  def set_client_app
+    @client_app = Doorkeeper::Application.find_by(name: "remix-frontend")
+
+    render(json: {error: "Invalid client ID"}, status: 403) unless @client_app
+  end
 
   def user_params
     params.permit(:email, :password)

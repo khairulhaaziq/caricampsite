@@ -14,9 +14,12 @@ Rails.application.routes.draw do
     end
   end
 
-  delete "/auth/logout", to: "authentication#logout"
-  post "/auth/register", to: "authentication#register"
-  post "/auth/login", to: "authentication#login"
-  get "/auth/me", to: "authentication#me"
+  namespace :auth do
+    delete "/tokens", to: "authentication#logout"
+    post "/tokens/register", to: "authentication#register"
+    post "/tokens", to: "authentication#login"
+    get "/me", to: "authentication#me"
+  end
+
   get "/health_check", to: "health_check#index"
 end
