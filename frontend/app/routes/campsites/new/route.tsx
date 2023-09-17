@@ -166,7 +166,7 @@ export default function CampsitesNew() {
 
 function Card({ children }: {children?: ReactNode} = {}) {
   return (
-    <div className="w-full max-w-[600px] rounded-3xl px-6 sm:px-8 py-8 bg-white flex flex-col gap-7">
+    <div className="w-full max-w-[1000px] rounded-3xl px-6 sm:px-8 py-8 bg-white flex flex-col gap-7">
       {children}
     </div>
   );
@@ -192,6 +192,7 @@ function Card({ children }: {children?: ReactNode} = {}) {
 function FormDetails() {
   const formId = 'form-details';
   const { validate, getValues, ...formContext  } = useFormContext(formId);
+  const { error: imageFieldError } = useField('images', { formId });
   const { error: featureFieldError } = useField('features', { formId });
   const { error: amenityFieldError } = useField('amenities', { formId });
   const { error: categoryFieldError } = useField('categories', { formId });
@@ -224,9 +225,9 @@ function FormDetails() {
           <div className="flex flex-col gap-0.5 mt-6">
             <h1 className="text-2xl font-bold">Images</h1>
             <p className="text-neutral-500">Upload your best images</p>
-            {featureFieldError && (
+            {imageFieldError && (
               <p className="text-danger flex gap-1 items-center">
-                {featureFieldError}
+                {imageFieldError}
               </p>
             )}
           </div>
@@ -259,7 +260,7 @@ function FormDetails() {
               </p>
             )}
           </div>
-          <div className="grid grid-cols-2 gap-4 items-center">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 items-center">
             {FeatureOption.map(featureOption=>{
               return (
                 <ChoiceboxItem
@@ -285,7 +286,7 @@ function FormDetails() {
               </p>
             )}
           </div>
-          <div className="grid grid-cols-2 gap-4 items-center">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 items-center">
             {AmenityOption.map(amenityOption=>{
               return (
                 <ChoiceboxItem
@@ -311,7 +312,7 @@ function FormDetails() {
               </p>
             )}
           </div>
-          <div className="grid grid-cols-2 gap-4 items-center">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 items-center">
             {CategoryOption.map(categoryOption=>{
               return (
                 <ChoiceboxItem
@@ -337,7 +338,7 @@ function FormDetails() {
               </p>
             )}
           </div>
-          <div className="grid grid-cols-2 gap-4 items-center">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 items-center">
             {ActivityOption.map((activityOption)=>{
               return (
                 <ChoiceboxItem
@@ -355,15 +356,15 @@ function FormDetails() {
 
         <div className="contents">
           <div className="flex flex-col gap-0.5 mt-6">
-            <h1 className="text-2xl font-bold">accessibilityFeatures</h1>
-            <p className="text-neutral-500">Select your campsite accessibilityFeatures</p>
+            <h1 className="text-2xl font-bold">Accessibility Features</h1>
+            <p className="text-neutral-500">Select your campsite accessibility features</p>
             {accessibilityFeatureFieldError && (
               <p className="text-danger flex gap-1 items-center">
                 {accessibilityFeatureFieldError}
               </p>
             )}
           </div>
-          <div className="grid grid-cols-2 gap-4 items-center">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 items-center">
             {AccessibilityFeatureOption.map((accessibilityFeatureOption)=>{
               return (
                 <ChoiceboxItem
@@ -493,23 +494,42 @@ function ImageDropzone() {
 
   return (
     <>
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-5 gap-4">
         {thumbs}
         {isLoading && (
           <div className="border-dashed border-2 border-neutral-200 bg-neutral-50 rounded-lg aspect-square flex-none items-center justify-center">
             'Uploading your image'
           </div>
         )}
-        <div className="border-dashed border-2 border-neutral-200 bg-neutral-50 rounded-lg aspect-square flex-none">
-          <div {...getRootProps()} className="flex items-center justify-center text-center h-full px-4">
-            <input {...getInputProps()} />
-            {
-              isDragActive ?
-                <p>Drop the files here ...</p> :
-                <p className="text-neutral-600">Add a photo</p>
-            }
-          </div>
-        </div>
+        {files.length < 5 ? (
+          <>
+            {Array.from({ length: 5 - files.length }, (_, i) => i + 1).map((i)=>(
+              <div className="border-dashed border-2 border-neutral-200 bg-neutral-50 rounded-lg aspect-square flex-none">
+                <div {...getRootProps()} className="flex items-center justify-center text-center h-full px-4">
+                  <input {...getInputProps()} />
+                  {
+                    isDragActive ?
+                      <p>Drop the files here ...</p> :
+                      <p className="text-neutral-600">Add a photo</p>
+                  }
+                </div>
+              </div>
+            ))}
+          </>
+        ) : (
+          <>
+            <div className="border-dashed border-2 border-neutral-200 bg-neutral-50 rounded-lg aspect-square flex-none">
+              <div {...getRootProps()} className="flex items-center justify-center text-center h-full px-4">
+                <input {...getInputProps()} />
+                {
+                  isDragActive ?
+                    <p>Drop the files here ...</p> :
+                    <p className="text-neutral-600">Add a photo</p>
+                }
+              </div>
+            </div>
+          </>
+        )}
         <input
           type="hidden"
           hidden

@@ -26,7 +26,7 @@ export default function Index() {
           <CategoriesNav />
           {data && (
             <div>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-5 gap-y-8">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-x-5 gap-y-8">
                 {data.map((i, index)=>(
                   <Link key={i.id} to={`/campsites/${i.attributes.slug}`}>
                     <div className="flex flex-col flex-none gap-2">
