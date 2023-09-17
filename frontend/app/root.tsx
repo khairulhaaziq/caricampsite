@@ -46,7 +46,7 @@ export default function App() {
     if (toastErrorMessage) {
       toast.custom((t) => (
         <div className="flex items-center justify-center w-[356px]">
-          <div className="rounded-full h-12 px-5 bg-red-500 text-white items-center flex">
+          <div className="rounded-full h-12 px-5 bg-red-500 text-white items-center flex text-center">
             {toastErrorMessage} <button className='pl-4 pr-2' onClick={() => toast.dismiss(t)}>X</button>
           </div>
         </div>
@@ -57,7 +57,7 @@ export default function App() {
     if (message) {
       toast.custom((t) => (
         <div className="flex items-center justify-center w-[356px]">
-          <div className="rounded-full h-12 px-5 bg-[#31B5FF] text-white items-center flex">
+          <div className="rounded-full h-12 px-5 bg-[#31B5FF] text-white items-center flex text-center">
             {message} <button className='pl-4 pr-2' onClick={() => toast.dismiss(t)}>X</button>
           </div>
         </div>
