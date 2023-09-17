@@ -36,9 +36,9 @@ export default function Index() {
                       />
                       <div className="text-sm text-neutral-500">
                         <p className="capitalize text-base text-black font-medium">{i.attributes.name}</p>
-                        <p>Category, Category</p>
+                        <p>{i.attributes.categories.map((category, index)=>(<>{category}{ index !== i.attributes.categories.length - 1 && ', '}</>))}</p>
                         <p>Jarak</p>
-                        <p>Rating</p>
+                        <p>{i.attributes.rating}</p>
                       </div>
                     </div>
                   </Link>

@@ -64,6 +64,15 @@ class CampsiteSerializer
     obj.accessibility_features.map { |x| x.accessibility_feature_option.name }
   end
 
+  attribute :rating do |obj|
+    if obj.reviews.present?
+      total_rating = obj.reviews.sum(&:rating)
+      (total_rating.to_f / obj.reviews.length).round(2)
+    else
+      0  # Default to 0 if there are no reviews
+    end
+  end
+
   # attribute :campsite_address do |obj|
   #   obj.campsite_address&.slice(:id)
   # end
