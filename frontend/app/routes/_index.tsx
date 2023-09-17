@@ -31,7 +31,7 @@ export default function Index() {
                   <Link key={i.id} to={`/campsites/${i.attributes.slug}`}>
                     <div className="flex flex-col flex-none gap-2">
                       <img
-                        className="aspect-square w-full flex-none bg-gray-200 rounded-xl"
+                        className="aspect-square w-full flex-none bg-gray-200 rounded-xl object-cover"
                         src={`${i.attributes.cover_image}?lock=${index}`}
                       />
                       <div className="text-sm text-neutral-500">

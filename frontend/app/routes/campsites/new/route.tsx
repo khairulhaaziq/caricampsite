@@ -217,9 +217,23 @@ function FormDetails() {
             label="Description"
             textarea
           />
-          <ImageDropzone />
 
         </div>
+
+        <div className="contents">
+          <div className="flex flex-col gap-0.5 mt-6">
+            <h1 className="text-2xl font-bold">Images</h1>
+            <p className="text-neutral-500">Upload your best images</p>
+            {featureFieldError && (
+              <p className="text-danger flex gap-1 items-center">
+                {featureFieldError}
+              </p>
+            )}
+          </div>
+          <ImageDropzone />
+        </div>
+
+
         {/*<div className="contents">
           <div className="flex flex-col gap-0.5 mt-6">
             <h1 className="text-2xl font-bold">Your campsite location</h1>
@@ -371,10 +385,10 @@ function FormDetails() {
             <p className="text-neutral-500">Let's get you set up!</p>
           </div>
           <div className="flex flex-col gap-4">
-            <FormTextField name='contacts[0].name' label="Name" />
-            <FormTextField name='contacts[0].mobileNo' label="Mobile No." />
+            <FormTextField name="contacts[0].name" label="Name" />
+            <FormTextField name="contacts[0].mobileNo" label="Mobile No." />
 
-            <FormTextField name='social_links[0].instagram' label="Instagram" />
+            <FormTextField name="social_links[0].instagram" label="Instagram" />
           </div>
         </div>
 
@@ -384,8 +398,8 @@ function FormDetails() {
             <p className="text-neutral-500">Let's get you set up!</p>
           </div>
           <div className="flex flex-col gap-4">
-            <FormTextField name='notes' label="Notes" />
-            <FormTextField name='direction_instructions' label="Direction instructions" />
+            <FormTextField name="notes" label="Notes" />
+            <FormTextField name="direction_instructions" label="Direction instructions" />
           </div>
         </div>
 
@@ -479,16 +493,20 @@ function ImageDropzone() {
 
   return (
     <>
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 gap-4">
         {thumbs}
-        {isLoading && 'Loading...'}
-        <div className="border border-dashed border-2 border-neutral-200 bg-neutral-50 rounded-lg aspect-square flex-none">
+        {isLoading && (
+          <div className="border-dashed border-2 border-neutral-200 bg-neutral-50 rounded-lg aspect-square flex-none items-center justify-center">
+            'Uploading your image'
+          </div>
+        )}
+        <div className="border-dashed border-2 border-neutral-200 bg-neutral-50 rounded-lg aspect-square flex-none">
           <div {...getRootProps()} className="flex items-center justify-center text-center h-full px-4">
             <input {...getInputProps()} />
             {
               isDragActive ?
                 <p>Drop the files here ...</p> :
-                <p>Drag or drop to add a photo</p>
+                <p className="text-neutral-600">Add a photo</p>
             }
           </div>
         </div>

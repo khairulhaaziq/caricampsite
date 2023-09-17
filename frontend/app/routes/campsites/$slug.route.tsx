@@ -12,7 +12,7 @@ export default function Index() {
     <div className="flex justify-center px-6 sm:px-8 md:px-10 lg:px-14 xl:px-16 2xl:px-20 pt-20 pb-16">
       <div className="w-full max-w-6xl flex flex-col gap-5">
         <Header name={attributes.name} />
-        <ImageGrid />
+        <ImageGrid images={attributes.images} />
 
         <p>{attributes.description}</p>
         Hello
@@ -44,19 +44,19 @@ function Header({ name }: { name: string }) {
   );
 }
 
-function ImageGrid() {
+function ImageGrid({ images, cover_image }: {images: string[]; cover_image?: string }) {
   return (
     <>
       <div className="hidden md:grid md:grid-cols-8 gap-3">
         <img
-          className="w-full aspect-square bg-gray-200 rounded-xl flex-none col-span-4 row-span-2"
-          src={'https://loremflickr.com/300/300?lock=1'}
+          className="w-full aspect-square bg-gray-200 rounded-xl flex-none col-span-4 row-span-2 object-cover"
+          src={cover_image || images[0]?.image_url || `https://loremflickr.com/300/300?lock=${Math.random()*100}`}
         />
         {[...Array(4).keys()].map((i, index)=>(
           <img
             key={index}
-            className="aspect-square w-full flex-none bg-gray-200 rounded-xl col-span-2"
-            src={`https://loremflickr.com/300/300?lock=${index + 2}`}
+            className="aspect-square w-full flex-none bg-gray-200 rounded-xl col-span-2 object-cover"
+            src={images[i + 1]?.image_url || `https://loremflickr.com/300/300?lock=${index + 2}`}
           />
         ))}
 
