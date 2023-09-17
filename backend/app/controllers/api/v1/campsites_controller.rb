@@ -40,6 +40,7 @@ class Api::V1::CampsitesController < ApplicationController
         visits: :user,
         favourites: :user,
         admins: :user,
+        features: :feature_option,
         amenities: :amenity_option,
         activities: :activity_option,
         categories: :category_option,
