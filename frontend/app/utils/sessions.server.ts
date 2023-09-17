@@ -7,6 +7,7 @@ type SessionData = {
 };
 
 type SessionFlashData = {
+  globalMessage: string;
   error: string;
 };
 

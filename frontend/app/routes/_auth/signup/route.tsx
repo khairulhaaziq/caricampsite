@@ -1,6 +1,6 @@
 import type { DataFunctionArgs, LoaderFunctionArgs } from '@remix-run/node';
 import { json, redirect } from '@remix-run/node';
-import { Link } from '@remix-run/react';
+import { Link, useActionData } from '@remix-run/react';
 import { withZod } from '@remix-validated-form/with-zod';
 import { ValidatedForm, validationError } from 'remix-validated-form';
 import { z } from 'zod';
@@ -44,9 +44,14 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 export const action = async ({ request }: DataFunctionArgs) => {
   switch (request.method) {
     case 'POST': {
+      const session = await getSession(
+        request.headers.get('Cookie')
+      );
+
       const result = await validator.validate(
         await request.formData()
       );
+
       if (result.error)
         return validationError(result.error, result.submittedData);
 
@@ -54,32 +59,36 @@ export const action = async ({ request }: DataFunctionArgs) => {
 
       const user = await Auth.register(email, password);
 
-      if (!user) {
+      if (!user || user.error) {
+        session.flash(
+          'error',
+          'Failed to register!'
+        );
+
         return json({
           fieldErrors: { password: 'Invalid email or password' },
           repopulateFields: result.submittedData
+        }, {
+          headers: {
+            'Set-Cookie': await commitSession(session),
+          }
         });
       }
 
-      if (user.error) {
-        return json({
-          fieldErrors: { password: 'Server Error. Please try again.' },
-          repopulateFields: result.submittedData
-        });
-      }
-
-      // Stores auth token in session
-      const session = await getSession(
-        request.headers.get('Cookie')
-      );
       session.set('token', user);
 
-      return json({}, {
+      session.flash(
+        'globalMessage',
+        'Successfully logged in!'
+      );
+
+      return redirect('/', {
         headers: {
           'Set-Cookie': await commitSession(session),
         }
       });
     }
+
     default: {
       return json(
         { error: { message: 'Method Not Allowed' } },
@@ -89,6 +98,8 @@ export const action = async ({ request }: DataFunctionArgs) => {
 };
 
 export default function Signup() {
+  const actionData: any = useActionData();
+
   return (
     <>
       <img src="logo.svg" className="h-16" />

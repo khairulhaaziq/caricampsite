@@ -1,7 +1,11 @@
 import type { DataFunctionArgs } from '@remix-run/node';
 import { json, redirect } from '@remix-run/node';
 
-import { destroySession, getSession } from '~/utils/sessions.server';
+import {
+  commitSession,
+  destroySession,
+  getSession
+} from '~/utils/sessions.server';
 
 export const action = async ({ request }: DataFunctionArgs) => {
   if (request.method !== 'POST') {
@@ -10,13 +14,22 @@ export const action = async ({ request }: DataFunctionArgs) => {
       { status: 405 });
   }
 
-  const session = await getSession(
+  let session = await getSession(
     request.headers.get('Cookie')
+  );
+
+  await destroySession(session);
+
+  session = await getSession();
+
+  session.flash(
+    'globalMessage',
+    'Successfully logged out!'
   );
 
   return redirect('/login', {
     headers: {
-      'Set-Cookie': await destroySession(session),
+      'Set-Cookie': await commitSession(session),
     },
   });
 };
