@@ -1,11 +1,17 @@
+import type { DataFunctionArgs, LoaderFunctionArgs } from '@remix-run/node';
+import { json, redirect } from '@remix-run/node';
 import { Link, useSearchParams } from '@remix-run/react';
 import { withZod } from '@remix-validated-form/with-zod';
+import { ofetch } from 'ofetch';
 import { type ReactNode, useMemo } from 'react';
-import { ValidatedForm } from 'remix-validated-form';
+import { ValidatedForm, validationError } from 'remix-validated-form';
 
 import FormButton from '~/components/form/FormButton';
 import FormTextField from '~/components/form/FormTextField';
 import { ChoiceboxItem } from '~/components/ui/Choicebox';
+import { API_BASE_URL } from '~/config.server';
+import { Auth } from '~/modules/auth/auth.server';
+import { commitSession, getSession } from '~/utils/sessions.server';
 
 import { schema } from './schema';
 
@@ -19,6 +25,95 @@ const steps = [
   { index: 4, stepName: 'Contact', component: (<FormContacts />) },
   { index: 5, stepName: 'Additional Information', component: (<FormContacts />) }
 ];
+
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+  const tokenValidated = await Auth.validateToken(request);
+
+  if (!tokenValidated) {
+    return redirect('/login');
+  }
+
+  return ({});
+};
+
+export const action = async ({ request }: DataFunctionArgs) => {
+  switch (request.method) {
+    case 'POST': {
+      const session = await getSession(
+        request.headers.get('Cookie')
+      );
+
+      const token = session.get('token')?.token;
+
+      let error = false;
+
+      const formResult = await validator.validate(
+        await request.formData()
+      );
+
+      if (formResult.error)
+        return validationError(formResult.error, formResult.submittedData);
+
+      console.log(formResult.data);
+
+      const { name, description, images, cover_image } = formResult.data;
+
+      const result = await ofetch(
+        `${API_BASE_URL}/campsites`, {
+          method: 'POST',
+          body: { campsites: { name, description, images, cover_image } },
+          headers: {
+            'Authorization': `Bearer ${token}`
+          },
+          parseResponse: JSON.parse
+        })
+        .catch((err) => {
+          error = true;
+          console.log('error: ', err);
+
+          return {
+            __type: 'Error',
+            error: true,
+            message: err.data?.message,
+            statusCode: err.data?.code,
+          };
+        });
+
+      console.log('result: ', result);
+
+      if (error) {
+        session.flash(
+          'error',
+          'Failed to create a new campsite listing!'
+        );
+
+        return json({ result }, {
+          headers: {
+            'Set-Cookie': await commitSession(session),
+          }
+        });
+      }
+
+      session.flash(
+        'globalMessage',
+        'Successfully created a new campsite listing!'
+      );
+
+      console.log(result);
+
+      return json({ result }, {
+        headers: {
+          'Set-Cookie': await commitSession(session),
+        }
+      });
+    }
+    default: {
+      return json(
+        { error: { message: 'Method Not Allowed' } },
+        { status: 405 });
+    }
+  }
+};
 
 export default function CampsitesNew() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -83,7 +178,16 @@ function FormDetails() {
             label="Description"
             textarea
           />
-          <FormTextField name="category" label="Category" />
+          <FormTextField
+            name="images[0]"
+            label="images[0]"
+            defaultValue="https://loremflickr.com/300/300"
+          />
+          <FormTextField
+            name="cover_image"
+            label="cover_image"
+            defaultValue="https://loremflickr.com/300/300"
+          />
 
         </div>
         <div className="contents">
