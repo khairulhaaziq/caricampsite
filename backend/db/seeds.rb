@@ -6,16 +6,14 @@ end
 # Seed Example User
 User.create(
   email: "test@example.com",
-  password: "Password123",
-  role: [0, 1].sample # Assuming 0 is for regular users and 1 is for admins
+  password: "Password123"
 )
 
 # Seed Users
 10.times do
   User.create(
     email: Faker::Internet.unique.email,
-    password: Faker::Internet.password,
-    role: [0, 1].sample # Assuming 0 is for regular users and 1 is for admins
+    password: Faker::Internet.password
   )
 end
 
@@ -156,7 +154,7 @@ end
 
 # Seed Campsites
 20.times do
-  campsite = Campsite.create(
+  campsite = Campsite.new(
     name: Faker::Lorem.words(number: 3).join(" "),
     description: Faker::Lorem.paragraph,
     direction_instructions: Faker::Lorem.sentence,
@@ -174,6 +172,21 @@ end
       phone: Faker::PhoneNumber.phone_number
     }
   )
+
+  # Seed Campsite Admins (Assuming each campsite has one admin)
+
+  admin = CampsitesAdmin.new(
+    campsite: campsite,
+    user: User.all.sample
+  )
+  campsite.admins << admin
+
+  if campsite.valid? && admin.valid?
+    ActiveRecord::Base.transaction do
+      campsite.save
+      admin.save
+    end
+  end
 
   # Seed Campsite Addresses
   CampsiteAddress.create(
@@ -199,12 +212,6 @@ end
     campsite: campsite,
     latitude: Faker::Address.latitude,
     longitude: Faker::Address.longitude
-  )
-
-  # Seed Campsite Admins (Assuming each campsite has one admin)
-  CampsitesAdmin.create(
-    campsite: campsite,
-    user: User.all.sample
   )
 
   # Seed Campsite Features (Assign random features to the campsite)
