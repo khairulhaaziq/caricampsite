@@ -22,6 +22,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "remix-validated-form": "^5.1.0",
+    "sonner": "^0.7.1",
     "tailwind-merge": "^1.14.0",
     "tailwind-variants": "^0.1.14",
     "zod": "^3.22.2",
