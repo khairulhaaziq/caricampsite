@@ -21,15 +21,32 @@ class CampsiteSerializer
     # many
     :visits,
     :reviews,
-    :favourites,
-    # joined tables
-    :admins,
-    :features,
-    :amenities,
-    :activities,
-    :categories,
-    :accessibility_features
+    :favourites
   )
+
+  attribute :admins do |obj|
+    obj.admins.map { |x| x.user }
+  end
+
+  attribute :amenities do |obj|
+    obj.amenities.map { |x| x.amenity_option.name }
+  end
+
+  attribute :activities do |obj|
+    obj.activities.map { |x| x.activity_option.name }
+  end
+
+  attribute :categories do |obj|
+    obj.categories.map { |x| x.category_option.name }
+  end
+
+  attribute :features do |obj|
+    obj.features.map { |x| x.feature_option.name }
+  end
+
+  attribute :accessibility_features do |obj|
+    obj.accessibility_features.map { |x| x.accessibility_feature_option.name }
+  end
 
   # attribute :campsite_address do |obj|
   #   obj.campsite_address&.slice(:id)
