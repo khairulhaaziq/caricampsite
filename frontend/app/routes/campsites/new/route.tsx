@@ -4,7 +4,13 @@ import { Link, useSearchParams } from '@remix-run/react';
 import { withZod } from '@remix-validated-form/with-zod';
 import { ofetch } from 'ofetch';
 import { type ReactNode, useMemo } from 'react';
-import { ValidatedForm, validationError } from 'remix-validated-form';
+import { useCallback, useState } from 'react';
+import { useDropzone } from 'react-dropzone';
+import {
+  useFormContext,
+  ValidatedForm,
+  validationError
+} from 'remix-validated-form';
 
 import FormButton from '~/components/form/FormButton';
 import FormTextField from '~/components/form/FormTextField';
@@ -17,21 +23,21 @@ import { schema } from './schema';
 
 const validator = withZod(schema);
 
-const steps = [
-  { index: 0, stepName: 'Details', component: (<FormDetails />) },
-  { index: 1, stepName: 'Location', component: (<FormLocation />) },
-  { index: 2, stepName: 'Features', component: (<FormFeatures />) },
-  { index: 3, stepName: 'Images', component: (<FormImages />) },
-  { index: 4, stepName: 'Contact', component: (<FormContacts />) },
-  { index: 5, stepName: 'Additional Information', component: (<FormContacts />) }
-];
+// const steps = [
+//   { index: 0, stepName: 'Details', component: (<FormDetails />) },
+//   { index: 1, stepName: 'Location', component: (<FormLocation />) },
+//   { index: 2, stepName: 'Features', component: (<FormFeatures />) },
+//   { index: 3, stepName: 'Images', component: (<FormImages />) },
+//   { index: 4, stepName: 'Contact', component: (<FormContacts />) },
+//   { index: 5, stepName: 'Additional Information', component: (<FormContacts />) }
+// ];
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const tokenValidated = await Auth.validateToken(request);
 
-  if (!tokenValidated) {
-    return redirect('/login');
-  }
+  // if (!tokenValidated) {
+  //   return redirect('/login');
+  // }
 
   return ({});
 };
@@ -42,6 +48,21 @@ export const action = async ({ request }: DataFunctionArgs) => {
       const session = await getSession(
         request.headers.get('Cookie')
       );
+
+      const tokenValidated = await Auth.validateToken(request);
+      if (!tokenValidated) {
+        session.flash(
+          'error',
+          'You need to be logged in to create a listing!'
+        );
+
+        return json({ message: 'Unauthorized' }, {
+          status: 401,
+          headers: {
+            'Set-Cookie': await commitSession(session),
+          }
+        });
+      }
 
       const token = session.get('token')?.token;
 
@@ -118,16 +139,16 @@ export const action = async ({ request }: DataFunctionArgs) => {
 export default function CampsitesNew() {
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const currentStep = useMemo(()=>{
-    return searchParams.get('step') || 'details';
-  }, [searchParams]);
+  // const currentStep = useMemo(()=>{
+  //   return searchParams.get('step') || 'details';
+  // }, [searchParams]);
 
   return (
     <div className="flex justify-center sm:px-8 md:px-10 lg:px-14 xl:px-16 2xl:px-20 min-h-screen pt-20 pb-24">
       <div className="w-full max-w-6xl flex flex-col items-center gap-5 relative">
-        <FormStepper currentStep={currentStep} />
         <Card>
-          {steps.find(i=>i.stepName.toLowerCase() === currentStep)?.component}
+          <FormDetails />
+          {/*steps.find(i=>i.stepName.toLowerCase() === currentStep)?.component*/}
         </Card>
       </div>
     </div>
@@ -142,24 +163,32 @@ function Card({ children }: {children?: ReactNode} = {}) {
   );
 }
 
-function FormStepper({ currentStep }: {currentStep: string}) {
-  return (
-    <div className="absolute left-6 top-8 max-md:hidden">
-      <div className="flex flex-col gap-4 pb-6 overflow-x-scroll">
-        {steps.map((i, index)=>(
-          <Link to={`?step=${i.stepName.toLowerCase()}`} className="flex items-center gap-2">
-            <div className={`h-6 w-6 flex-none ${ i.stepName.toLowerCase() === currentStep ? 'bg-blue-500' : 'bg-neutral-300' } text-white rounded-full flex items-center justify-center text-center`}>
-              {index + 1}
-            </div>
-            <p className={`text-sm ${ i.stepName.toLowerCase() === currentStep ? '' : 'text-neutral-500' }`}>{i.stepName}</p>
-          </Link>
-        ))}
-      </div>
-    </div>
-  );
-}
+// function FormStepper({ currentStep }: {currentStep: string}) {
+//   return (
+//     <div className="absolute left-6 top-8 max-md:hidden">
+//       <div className="flex flex-col gap-4 pb-6 overflow-x-scroll">
+//         {steps.map((i, index)=>(
+//           <Link to={`?step=${i.stepName.toLowerCase()}`} className="flex items-center gap-2">
+//             <div className={`h-6 w-6 flex-none ${ i.stepName.toLowerCase() === currentStep ? 'bg-blue-500' : 'bg-neutral-300' } text-white rounded-full flex items-center justify-center text-center`}>
+//               {index + 1}
+//             </div>
+//             <p className={`text-sm ${ i.stepName.toLowerCase() === currentStep ? '' : 'text-neutral-500' }`}>{i.stepName}</p>
+//           </Link>
+//         ))}
+//       </div>
+//     </div>
+//   );
+// }
 
 function FormDetails() {
+  const { validate } = useFormContext('form-details');
+
+  async function handleSubmit(e: SubmitEvent) {
+    e.preventDefault();
+    const result = await validate();
+    console.log(result);
+  }
+
   return (
     <div className="contents">
       <div className="flex flex-col gap-0.5">
@@ -167,6 +196,7 @@ function FormDetails() {
         <p className="text-neutral-500">Let's get you set up!</p>
       </div>
       <ValidatedForm
+        id="form-details"
         validator={validator}
         className="contents"
         method="post"
@@ -178,16 +208,7 @@ function FormDetails() {
             label="Description"
             textarea
           />
-          <FormTextField
-            name="images[0]"
-            label="images[0]"
-            defaultValue="https://loremflickr.com/300/300"
-          />
-          <FormTextField
-            name="cover_image"
-            label="cover_image"
-            defaultValue="https://loremflickr.com/300/300"
-          />
+          <ImageDropzone />
 
         </div>
         <div className="contents">
@@ -278,73 +299,91 @@ function FormDetails() {
 
         <div className="flex justify-between items-center fixed bottom-0 left-0 right-0 bg-white px-8 py-4 border-t border-neutral-300">
           <Link>Back</Link>
-          <FormButton label="Continue" />
+          <FormButton label="Continue" onSubmit={handleSubmit} />
         </div>
       </ValidatedForm>
     </div>
   );
 }
 
-function FormLocation() {
-  return (
-    <div className="contents">
-      <div className="flex flex-col gap-0.5">
-        <h1 className="text-2xl font-bold">Basic Information</h1>
-        <p className="text-neutral-500">Let's get you set up!</p>
-      </div>
-      <div className="flex flex-col gap-4">
-        <FormTextField label="Address Line 1" />
-        <FormTextField label="Address Line 2" />
-        <FormTextField label="City" />
-        <FormTextField label="State" />
-        <FormTextField label="Country" />
-      </div>
+function ImageDropzone() {
+  const [files, setFiles] = useState([]);
+
+  const onDrop = useCallback(async (acceptedFiles) => {
+    const form = new FormData();
+
+    for (const file of acceptedFiles){
+      const modifiedFileName = new Date().toISOString() + '_' + file.name;
+
+      setFiles((prevFiles) => [...prevFiles, { preview: URL.createObjectURL(file), fileName: modifiedFileName }]);
+
+      const modifiedFile = new File([file], modifiedFileName, {
+        type: file.type,
+      });
+
+      form.append('image', modifiedFile);
+    }
+
+    await uploadFiles(form);
+  }, []);
+
+  async function uploadFiles(form) {
+    await fetch('new/images',
+      {
+        method: 'POST',
+        body: form,
+      })
+      .then(async (res) => {
+        const json = await res.json();
+        console.log(json);
+      })
+      .catch((err) =>
+        console.error(err)
+      );
+  }
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+
+  const thumbs = files.map((file, index) => (
+    <div key={index} className="relative">
+      <img
+        src={file.preview}
+        className="aspect-square object-cover rounded-lg"
+        // Revoke data uri after image is loaded
+        onLoad={() => { URL.revokeObjectURL(file.preview); }}
+      />
+      <input
+        type="hidden"
+        hidden
+        name={`images[${index}]`}
+        value={file.preview}
+      />
+      <p className="absolute bottom-2 left-2">{file.fileName}</p>
     </div>
+  ));
+
+  return (
+    <>
+      <div className="grid grid-cols-3 gap-4">
+        {thumbs}
+        <div className="border border-dashed border-2 border-neutral-200 bg-neutral-50 rounded-lg aspect-square flex-none">
+          <div {...getRootProps()} className="flex items-center justify-center text-center h-full px-4">
+            <input {...getInputProps()} />
+            {
+              isDragActive ?
+                <p>Drop the files here ...</p> :
+                <p>Drag or drop to add a photo</p>
+            }
+          </div>
+        </div>
+        <input
+          type="hidden"
+          hidden
+          name="cover_image"
+          value={files[0]?.preview}
+          defaultValue="https://loremflickr.com/300/300"
+        />
+      </div>
+    </>
   );
 }
-
-function FormFeatures() {
-  return (
-    <div className="contents">
-      <div className="flex flex-col gap-0.5">
-        <h1 className="text-2xl font-bold">Basic Information</h1>
-        <p className="text-neutral-500">Let's get you set up!</p>
-      </div>
-      <div className="flex flex-col gap-4">
-        <FormTextField label="Name" />
-        <FormTextField label="Mobile No." />
-      </div>
-    </div>
-  );
-}
-
-function FormImages() {
-  return (
-    <div className="contents">
-      <div className="flex flex-col gap-0.5">
-        <h1 className="text-2xl font-bold">Basic Information</h1>
-        <p className="text-neutral-500">Let's get you set up!</p>
-      </div>
-      <div className="flex flex-col gap-4">
-        <FormTextField label="Upload images here" />
-      </div>
-    </div>
-  );
-}
-
-function FormContacts() {
-  return (
-    <div className="contents">
-      <div className="flex flex-col gap-0.5">
-        <h1 className="text-2xl font-bold">Basic Information</h1>
-        <p className="text-neutral-500">Let's get you set up!</p>
-      </div>
-      <div className="flex flex-col gap-4">
-        <FormTextField label="Name" />
-        <FormTextField label="Mobile No." />
-      </div>
-    </div>
-  );
-}
-
-
