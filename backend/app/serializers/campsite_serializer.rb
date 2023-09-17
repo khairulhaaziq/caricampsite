@@ -24,15 +24,15 @@ class CampsiteSerializer
 
   attribute :visits do |obj|
     {
-      data: obj.visits.map { |x| x.user },
-      count: obj.visits.count
+      data: obj.visits.map { |x| x.user }
+      # count: obj.visits.count
     }
   end
 
   attribute :favourites do |obj|
     {
-      data: obj.favourites.map { |x| x.user },
-      count: obj.favourites.count
+      data: obj.favourites.map { |x| x.user }
+      # count: obj.favourites.count
     }
   end
 

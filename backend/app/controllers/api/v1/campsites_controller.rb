@@ -7,19 +7,19 @@ class Api::V1::CampsitesController < ApplicationController
     records = Campsite
       .filter(filter_params)
       .where(deleted_at: nil)
-      .preload(
-        :visits,
+      .includes(
         :reviews,
-        :favourites,
-        :features,
-        :admins,
         :campsite_fee,
         :campsite_address,
         :campsite_location,
-        :amenities,
-        :activities,
-        :categories,
-        :accessibility_features
+        visits: :user,
+        favourites: :user,
+        admins: :user,
+        features: :feature_option,
+        amenities: :amenity_option,
+        activities: :activity_option,
+        categories: :category_option,
+        accessibility_features: :accessibility_feature_option
       )
       .order(created_at: :desc)
       .page(params[:page])
@@ -31,7 +31,20 @@ class Api::V1::CampsitesController < ApplicationController
 
   def show
     @record = Campsite
-      .preload(:visits, :reviews, :favourites, :features, :admins, :campsite_fee, :campsite_address, :campsite_location)
+      .includes(
+        :reviews,
+        :admins,
+        :campsite_fee,
+        :campsite_address,
+        :campsite_location,
+        visits: :user,
+        favourites: :user,
+        admins: :user,
+        amenities: :amenity_option,
+        activities: :activity_option,
+        categories: :category_option,
+        accessibility_features: :accessibility_feature_option
+      )
       .find_by(slug: params[:slug])
 
     if @record
