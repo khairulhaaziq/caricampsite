@@ -1,6 +1,6 @@
 import type { DataFunctionArgs, LoaderFunctionArgs } from '@remix-run/node';
-import { json } from '@remix-run/node';
-import { Link } from '@remix-run/react';
+import { json, redirect } from '@remix-run/node';
+import { Link, useActionData } from '@remix-run/react';
 import { withZod } from '@remix-validated-form/with-zod';
 import { ofetch } from 'ofetch';
 import { type ReactNode } from 'react';
@@ -83,8 +83,6 @@ export const action = async ({ request }: DataFunctionArgs) => {
       if (formResult.error)
         return validationError(formResult.error, formResult.submittedData);
 
-      console.log(formResult.data);
-
       const { ...formData } = formResult.data;
 
       const result = await ofetch(
@@ -108,15 +106,13 @@ export const action = async ({ request }: DataFunctionArgs) => {
           };
         });
 
-      console.log('result: ', result);
-
       if (error) {
         session.flash(
           'error',
           'Failed to create a new campsite listing!'
         );
 
-        return json({ result }, {
+        return json( result, {
           headers: {
             'Set-Cookie': await commitSession(session),
           }
@@ -128,9 +124,17 @@ export const action = async ({ request }: DataFunctionArgs) => {
         'Successfully created a new campsite listing!'
       );
 
-      console.log(result);
+      const newCreatedCampsiteListingSlug = result.data?.attributes?.slug;
 
-      return json({ result }, {
+      if (!newCreatedCampsiteListingSlug) {
+        return json( result, {
+          headers: {
+            'Set-Cookie': await commitSession(session),
+          }
+        });
+      }
+
+      return redirect( `/campsites/${newCreatedCampsiteListingSlug}`, {
         headers: {
           'Set-Cookie': await commitSession(session),
         }
@@ -146,6 +150,7 @@ export const action = async ({ request }: DataFunctionArgs) => {
 
 export default function CampsitesNew() {
   // const [searchParams, setSearchParams] = useSearchParams();
+  const actionData = useActionData();
 
   // const currentStep = useMemo(()=>{
   //   return searchParams.get('step') || 'details';
@@ -255,7 +260,11 @@ function FormDetails() {
             <p className="text-neutral-500">Let's get you set up!</p>
           </div>
           <div className="flex flex-col gap-4">
-            <FormTextField name="campsite_fee_attributes.currency" label="Currency" defaultValue="MYR" />
+            <FormTextField
+              name="campsite_fee_attributes.currency"
+              label="Currency"
+              defaultValue="MYR"
+            />
             <FormTextField name="campsite_fee_attributes.from" label="From" />
             <FormTextField name="campsite_fee_attributes.to" label="To" />
           </div>
