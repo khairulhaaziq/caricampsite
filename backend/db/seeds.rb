@@ -168,8 +168,8 @@ end
       twitter: Faker::Internet.url(host: "twitter.com")
     },
     contacts: {
-      name: Faker::Name.name,
-      phone: Faker::PhoneNumber.phone_number
+      contact_name1: Faker::Name.name,
+      contact_mobile1: Faker::PhoneNumber.phone_number
     }
   )
 
