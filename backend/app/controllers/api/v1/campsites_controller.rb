@@ -61,29 +61,17 @@ class Api::V1::CampsitesController < ApplicationController
   def create
     record = Campsite.new(create_params)
     admin = CampsitesAdmin.new(user: @current_user, campsite: record)
-
-    associations = {
-      images: {association: :images, model: CampsiteImage, column: :image_url}
-    }
-
-    built_associations = {}
-
-    associations.each do |param_key, options|
-      param_values = params.dig(:campsites, param_key) || []
-      built_associations[param_key] = param_values.map { |param_value| options[:model].new(:campsite => record, options[:column] => param_value) }
-    end
+    images = params.dig(:campsites, :images) || []
+    built_images = images.map { |image_url| CampsiteImage.new(campsite: record, image_url: image_url) }
 
     record.admins << admin
-
-    built_associations.each do |param_key, built_records|
-      record.send("#{param_key}=", built_records)
-    end
+    record.images << built_images
 
     if record.valid? && admin.valid?
       ActiveRecord::Base.transaction do
         record.save
         admin.save
-        built_associations.values.flatten.each(&:save)
+        built_images.flatten.each(&:save)
       end
 
       campsite_json = render_serializer(CampsiteSerializer, record)
