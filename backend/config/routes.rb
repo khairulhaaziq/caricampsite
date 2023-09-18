@@ -9,6 +9,7 @@ Rails.application.routes.draw do
       resources :campsites, except: :show do
         resource :reviews, only: [:create, :update, :destroy]
         resource :visits, only: [:create, :destroy]
+        resource :favourites, only: [:create, :destroy]
       end
       get "campsites/:slug", to: "campsites#show"
     end
