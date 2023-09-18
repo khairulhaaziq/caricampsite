@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_09_17_135207) do
+ActiveRecord::Schema[7.0].define(version: 2023_09_18_065216) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -33,6 +33,16 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_17_135207) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["name"], name: "index_amenity_options_on_name", unique: true
+  end
+
+  create_table "attachments", force: :cascade do |t|
+    t.string "name"
+    t.string "attachment_type"
+    t.bigint "attachable_id"
+    t.string "attachable_type"
+    t.text "url"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "campsite_addresses", force: :cascade do |t|

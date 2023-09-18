@@ -8,7 +8,6 @@ class CampsiteSerializer
     :direction_instructions,
     :notes,
     :slug,
-    :images,
     :cover_image,
     :status,
     :is_verified,
@@ -19,7 +18,8 @@ class CampsiteSerializer
     :campsite_address,
     :campsite_location,
     # many
-    :reviews
+    :reviews,
+    :attachments
   )
 
   attribute :visits do |obj|
@@ -71,6 +71,10 @@ class CampsiteSerializer
     else
       0  # Default to 0 if there are no reviews
     end
+  end
+
+  attribute :images do |obj|
+    obj.attachments.map { |x| x.url }
   end
 
   # attribute :campsite_address do |obj|

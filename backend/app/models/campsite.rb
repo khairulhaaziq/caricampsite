@@ -15,7 +15,7 @@ class Campsite < ApplicationRecord
   has_many :visits
   has_many :reviews
   has_many :favourites
-  has_many :images, class_name: "CampsiteImage", foreign_key: "campsite_id", dependent: :destroy
+  has_many :attachments, as: :attachable
   has_many :admins, class_name: "CampsitesAdmin", foreign_key: "campsite_id"
   has_many :campsites_feature_options
   has_many :feature_options, through: :campsites_feature_options
@@ -29,6 +29,7 @@ class Campsite < ApplicationRecord
   has_many :accessibility_feature_options, through: :campsites_accessibility_feature_options
 
   before_validation :assign_slug, on: :create
+  before_validation :assign_cover_image, on: :create
 
   validates :name, presence: true
   validates :description, presence: true
@@ -66,9 +67,14 @@ class Campsite < ApplicationRecord
     self.slug = slug
   end
 
+  def assign_cover_image
+    return if cover_image.present? || attachments.blank? || attachments.all?(&:blank?)
+    self.cover_image = attachments.first.url
+  end
+
   def images_not_empty
-    if images.blank? || images.all?(&:blank?)
-      errors.add(:images, "Must contain at least one image")
+    if attachments.blank? || attachments.all?(&:blank?)
+      errors.add(:attachments, "Must contain at least one image")
     end
   end
 end

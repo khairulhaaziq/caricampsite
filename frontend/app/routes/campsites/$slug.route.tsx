@@ -51,14 +51,14 @@ function ImageGrid({ images, cover_image }: {images: string[]; cover_image?: str
         <img
           className="w-full aspect-[11/10] bg-gray-200 rounded-xl flex-none col-span-4 row-span-2 object-cover"
           src={cover_image ||
-            images[0]?.image_url ||
+            images[0] ||
             `https://loremflickr.com/300/300?lock=${Math.random()*100}`}
         />
         {[...Array(4).keys()].map((i, index)=>(
           <img
             key={index}
             className="aspect-[11/10] w-full flex-none bg-gray-200 rounded-xl col-span-2 object-cover"
-            src={images[i + 1]?.image_url ||
+            src={images[i + 1] ||
               `https://loremflickr.com/300/300?lock=${index + 2}`}
           />
         ))}
