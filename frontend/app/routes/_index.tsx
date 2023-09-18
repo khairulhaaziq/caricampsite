@@ -79,12 +79,7 @@ export const action = async ({ request }: DataFunctionArgs) => {
 export default function Index() {
   const { data, meta } = useLoaderData();
   const { pagination } = meta;
-  const [params, setParams] = useSearchParams();
 
-  function handleChangeParams(page: string) {
-    params.set('page', page);
-    setParams(params);
-  }
 
   return (
     <WithTopbar>
@@ -92,42 +87,18 @@ export default function Index() {
         <div className="w-full flex flex-col gap-8 pt-8">
           <CategoriesNav />
           {data && (
-            <div>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-x-5 gap-y-8">
-                {data.map((i, index)=>(
-                  <ListingItem
-                    key={data.id}
-                    data={i}
-                    index={index}
-                  />
-                ))}
-              </div>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-x-5 gap-y-8">
+              {data.map((i, index)=>(
+                <ListingItem
+                  key={data.id}
+                  data={i}
+                  index={index}
+                />
+              ))}
             </div>
           )}
           <div className="flex justify-end">
-            <div className="flex gap-2">
-              <button
-                className="border rounded-md h-10 px-3 border-neutral-300 disabled:text-neutral-300"
-                onClick={()=>handleChangeParams(pagination?.prev_page.toString())}
-                disabled={!pagination?.prev_page}
-              >Previous
-              </button>
-              {Array.from({ length: pagination.total_pages }, (_, i) => i + 1).map(pageNum=>(
-                <button
-                  key={pageNum}
-                  className="border rounded-md h-10 px-3 border-neutral-300 disabled:text-neutral-300"
-                  onClick={()=>handleChangeParams(pagination?.next_page.toString())}
-                  disabled={pagination?.current_page == pageNum}
-                >{pageNum}
-                </button>
-              ))}
-              <button
-                className="border rounded-md h-10 px-3 border-neutral-300 disabled:text-neutral-300"
-                onClick={()=>handleChangeParams(pagination?.next_page.toString())}
-                disabled={!pagination?.next_page}
-              >Next
-              </button>
-            </div>
+            <Pagination pagination={pagination} />
           </div>
           {JSON.stringify(data)}
         </div>
@@ -200,4 +171,37 @@ function ListingItem({ data, index }) {
     </div>
 
   );
+}
+
+function Pagination({ pagination }) {
+  const [params, setParams] = useSearchParams();
+
+  function handleChangeParams(page: string) {
+    params.set('page', page);
+    setParams(params);
+  }
+
+  return (<div className="flex gap-2">
+    <button
+      className="border rounded-md h-10 px-3 border-neutral-300 disabled:text-neutral-300"
+      onClick={()=>handleChangeParams(pagination?.prev_page.toString())}
+      disabled={!pagination?.prev_page}
+    >Previous
+    </button>
+    {Array.from({ length: pagination.total_pages }, (_, i) => i + 1).map(pageNum=>(
+      <button
+        key={pageNum}
+        className="border rounded-md h-10 px-3 border-neutral-300 disabled:text-neutral-300"
+        onClick={()=>handleChangeParams(pagination?.next_page.toString())}
+        disabled={pagination?.current_page == pageNum}
+      >{pageNum}
+      </button>
+    ))}
+    <button
+      className="border rounded-md h-10 px-3 border-neutral-300 disabled:text-neutral-300"
+      onClick={()=>handleChangeParams(pagination?.next_page.toString())}
+      disabled={!pagination?.next_page}
+    >Next
+    </button>
+  </div>);
 }
