@@ -4,8 +4,6 @@ import { Link } from '@remix-run/react';
 import { withZod } from '@remix-validated-form/with-zod';
 import { ofetch } from 'ofetch';
 import { type ReactNode } from 'react';
-import { useCallback, useState } from 'react';
-import { useDropzone } from 'react-dropzone';
 import {
   useField,
   useFormContext,
@@ -20,6 +18,7 @@ import { API_BASE_URL } from '~/config.server';
 import { Auth } from '~/modules/auth/auth.server';
 import { commitSession, getSession } from '~/utils/sessions.server';
 
+import ImageDropzone from './ImageDropzone';
 import { schema } from './schema';
 import {
   AccessibilityFeatureOption,
@@ -235,20 +234,43 @@ function FormDetails() {
         </div>
 
 
-        {/*<div className="contents">
+        <div className="contents">
           <div className="flex flex-col gap-0.5 mt-6">
             <h1 className="text-2xl font-bold">Your campsite location</h1>
             <p className="text-neutral-500">Let's get you set up!</p>
           </div>
           <div className="flex flex-col gap-4">
-            <FormTextField name="addressLine1" label="Address Line 1" />
-            <FormTextField name="addressLine2" label="Address Line 2" />
-            <FormTextField name="city" label="City" />
-            <FormTextField name="postcode" label="Postcode" />
-            <FormTextField name="state" label="State" />
-            <FormTextField name="country" label="Country" />
+            <FormTextField name="campsite_address_attributes.addressLine1" label="Address Line 1" />
+            <FormTextField name="campsite_address_attributes.addressLine2" label="Address Line 2" />
+            <FormTextField name="campsite_address_attributes.city" label="City" />
+            <FormTextField name="campsite_address_attributes.postcode" label="Postcode" />
+            <FormTextField name="campsite_address_attributes.state" label="State" />
+            <FormTextField name="campsite_address_attributes.country" label="Country" />
           </div>
-        </div>*/}
+        </div>
+
+        <div className="contents">
+          <div className="flex flex-col gap-0.5 mt-6">
+            <h1 className="text-2xl font-bold">Your campsite location</h1>
+            <p className="text-neutral-500">Let's get you set up!</p>
+          </div>
+          <div className="flex flex-col gap-4">
+            <FormTextField name="campsite_fee_attributes.currency" label="Currency" defaultValue="MYR" />
+            <FormTextField name="campsite_fee_attributes.from" label="From" />
+            <FormTextField name="campsite_fee_attributes.to" label="To" />
+          </div>
+        </div>
+
+        <div className="contents">
+          <div className="flex flex-col gap-0.5 mt-6">
+            <h1 className="text-2xl font-bold">Your campsite location</h1>
+            <p className="text-neutral-500">Let's get you set up!</p>
+          </div>
+          <div className="flex flex-col gap-4">
+            <FormTextField name="campsite_location_attributes.latitude" label="Latitude" />
+            <FormTextField name="campsite_location_attributes.longitude" label="Longitude" />
+          </div>
+        </div>
 
         <div className="contents">
           <div className="flex flex-col gap-0.5 mt-6">
@@ -388,8 +410,8 @@ function FormDetails() {
             <p className="text-neutral-500">Let's get you set up!</p>
           </div>
           <div className="flex flex-col gap-4">
-            <FormTextField name="contacts[0].name" label="Name" />
-            <FormTextField name="contacts[0].mobileNo" label="Mobile No." />
+            <FormTextField name="contact_name1" label="Name" />
+            <FormTextField name="contact_mobile1" label="Mobile No." />
 
             <FormTextField name="instagram" label="Instagram" />
           </div>
@@ -425,129 +447,3 @@ function FormDetails() {
   );
 }
 
-function ImageDropzone({ validate }: {validate: ()=>void}) {
-  const [files, setFiles] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-
-  const onDrop = useCallback(async (acceptedFiles: File[]) => {
-    const form = new FormData();
-
-    for (const file of acceptedFiles){
-      const modifiedFileName = new Date().toISOString() + '_' + file.name;
-
-      const modifiedFile = new File([file], modifiedFileName, {
-        type: file.type,
-      });
-
-      form.append('image', modifiedFile);
-    }
-
-    await uploadFiles(form);
-    validate();
-  }, []);
-
-  async function uploadFiles(form: FormData) {
-    setIsLoading(true);
-    let error = false;
-
-    const result = await fetch('new/images',
-      {
-        method: 'POST',
-        body: form,
-      })
-      .then(async (res) => {
-        const json = await res.json();
-        console.log(json);
-        return json;
-      })
-      .catch((err) =>{
-        error = true;
-        console.error(err);
-        return err;
-      });
-
-    if (!error) {
-      result.result.fileUrls.forEach(fileUrl=>{
-        setFiles((prevFiles) => [...prevFiles, { preview: fileUrl }]);
-      });
-    }
-
-    setIsLoading(false);
-  }
-
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
-
-  const thumbs = files.map((file, index) => (
-    <div key={index} className="relative">
-      <img
-        src={file.preview}
-        className="aspect-square object-cover rounded-lg"
-        // Revoke data uri after image is loaded
-        onLoad={() => { URL.revokeObjectURL(file.preview); }}
-      />
-      <input
-        type="hidden"
-        hidden
-        name={`images[${index}]`}
-        value={file.preview}
-      />
-      <p className="absolute bottom-2 left-2">{file.fileName}</p>
-    </div>
-  ));
-
-  return (
-    <>
-      <div className="grid grid-cols-5 gap-4">
-        {thumbs}
-        {isLoading && (
-          <div className="border-dashed border-2 border-neutral-200 bg-neutral-50 rounded-lg aspect-square flex-none items-center justify-center">
-            'Uploading your image'
-          </div>
-        )}
-        {files.length < 5 ? (
-          <>
-            {Array.from({ length: 5 - files.length }, (_, i) => i + 1).map((i)=>(
-              <div
-                key={i}
-                className="border-dashed border-2 border-neutral-200 bg-neutral-50 rounded-lg aspect-square flex-none"
-              >
-                <div
-                  {...getRootProps()}
-                  className="flex items-center justify-center text-center h-full px-4"
-                >
-                  <input {...getInputProps()} />
-                  {
-                    isDragActive ?
-                      <p>Drop the files here ...</p> :
-                      <p className="text-neutral-600">Add a photo</p>
-                  }
-                </div>
-              </div>
-            ))}
-          </>
-        ) : (
-          <div className="border-dashed border-2 border-neutral-200 bg-neutral-50 rounded-lg aspect-square flex-none">
-            <div
-              {...getRootProps()}
-              className="flex items-center justify-center text-center h-full px-4"
-            >
-              <input {...getInputProps()} />
-              {
-                isDragActive ?
-                  <p>Drop the files here ...</p> :
-                  <p className="text-neutral-600">Add a photo</p>
-              }
-            </div>
-          </div>
-        )}
-        <input
-          type="hidden"
-          hidden
-          name="cover_image"
-          value={files[0]?.preview}
-          defaultValue="https://loremflickr.com/300/300"
-        />
-      </div>
-    </>
-  );
-}

@@ -8,6 +8,14 @@ export const schema = z.object({
     .text(z
       .string({ required_error: 'Please enter a name.' })
       .min(3, { message: 'Name must be at least 3 characters.' })),
+  notes: zfd
+    .text(z
+      .string()
+      .min(3, { message: 'Name must be at least 3 characters.' })).optional(),
+  direction_instructions: zfd
+    .text(z
+      .string()
+      .min(3, { message: 'Name must be at least 3 characters.' })).optional(),
   description: zfd
     .text(z
       .string({ required_error: 'Please enter a description.' })),
@@ -26,10 +34,10 @@ export const schema = z.object({
         .min(2, { message: 'Currency line be at least 3 characters.' })),
     from: zfd
       .numeric(z
-        .string({ required_error: 'Please enter a price from.' })),
+        .number({ required_error: 'Please enter a price from.' })),
     to: zfd
       .numeric(z
-        .string({ required_error: 'Please enter a price to.' })),
+        .number({ required_error: 'Please enter a price to.' })),
   })
     .optional(),
   campsite_location_attributes: z.object({
@@ -55,5 +63,13 @@ export const schema = z.object({
     .min(1, 'Please select at least one categories.')),
   accessibility_feature_option_ids: zfd.repeatable(z
     .array(zfd.numeric()) //TODO: Use enums
-    .min(1, 'Please select at least one accessibility feature.'))
+    .min(1, 'Please select at least one accessibility feature.')),
+  instagram: zfd
+    .text(z
+      .string()
+      .min(3, { message: 'Name must be at least 3 characters.' })).optional(),
+  contact_mobile1: zfd
+    .text(z
+      .string()
+      .min(3, { message: 'Name must be at least 3 characters.' })).optional(),
 });
