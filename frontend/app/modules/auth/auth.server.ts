@@ -83,6 +83,22 @@ class Auth {
 
     return false;
   }
+
+  static async getToken (request: Request) {
+    const session = await getSession(
+      request.headers.get('Cookie')
+    );
+
+    const tokenSession = session.get('token');
+
+    if (tokenSession)
+    {
+      const { token } = tokenSession;
+      return token;
+    }
+
+    return null;
+  }
 }
 
 export { Auth };

@@ -46,11 +46,6 @@ export default function App() {
   const { message, toastErrorMessage, user } = useLoaderData();
 
   useEffect(()=>{
-    if (user)
-      console.log(user);
-  }, [user]);
-
-  useEffect(()=>{
     if (toastErrorMessage) {
       toast.custom((t) => (
         <div className="flex items-center justify-center w-[356px]">
