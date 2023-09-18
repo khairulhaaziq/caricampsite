@@ -34,6 +34,10 @@ class CampsiteSerializer
     obj.favourites.map { |x| x.user.id }
   end
 
+  attribute :reviews_users do |obj|
+    obj.reviews.map { |x| x.user.id }
+  end
+
   attribute :admins do |obj|
     obj.admins.map { |x| x.user }
   end

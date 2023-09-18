@@ -8,6 +8,7 @@ import {
 } from '@remix-run/react';
 import { ofetch } from 'ofetch';
 
+import IconHeart from '~/components/icons/IconHeart';
 import WithTopbar from '~/components/layouts/WithTopbar';
 import { API_BASE_URL } from '~/config.server';
 import { Auth } from '~/modules/auth/auth.server';
@@ -16,6 +17,12 @@ import { getApiData } from '~/utils/loader';
 export const loader = getApiData({ path: '/campsites' });
 
 export const action = async ({ request }: DataFunctionArgs) => {
+  const tokenValidated = await Auth.validateToken(request);
+
+  if (!tokenValidated) {
+    return Auth.unauthorizedResponse(request);
+  }
+
   const formData = await request.formData();
 
   const body = Object.fromEntries(formData);
@@ -66,7 +73,7 @@ export const action = async ({ request }: DataFunctionArgs) => {
     console.log('result: ', result);
 
     if (error) {
-      return json({ error: true, message: result }, { status: 200 });
+      return json({ error: true, message: result }, { status: 500 });
     }
     return json({ success: true, message: result }, { status: 200 });
   }
@@ -160,12 +167,13 @@ function ListingItem({ data, index }) {
         <button
           name="_action"
           value={data.attributes.favourites_users.includes(parseInt(userData?.id)) ? 'remove_favourite' : 'add_favourite'}
-          className={`h-5 flex-none w-5 rounded-lg border ${
+          className={`${
             data.attributes.favourites_users.includes(parseInt(userData?.id)) ?
-              'bg-pink-400' :
-              'bg-pink-200'
-          } absolute right-3 top-3`}
+              'text-rose-600' :
+              'text-rose-300'
+          } active:scale-90 transition-all absolute right-3 top-3`}
         >
+          <IconHeart />
         </button>
       </fetcher.Form>}
     </div>

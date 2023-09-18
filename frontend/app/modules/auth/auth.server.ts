@@ -1,9 +1,10 @@
 // eslint-disable-next-line max-len
 
+import { json } from '@remix-run/node';
 import { ofetch } from 'ofetch';
 
 import { AUTH_BASE_URL } from '~/config.server';
-import { getSession } from '~/utils/sessions.server';
+import { commitSession, getSession } from '~/utils/sessions.server';
 
 class Auth {
   static async verifyLogin (email: string, password: string) {
@@ -98,6 +99,28 @@ class Auth {
     }
 
     return null;
+  }
+
+  static async unauthorizedResponse (request: Request) {
+    const session = await getSession(
+      request.headers.get('Cookie')
+    );
+
+    const tokenValidated = await Auth.validateToken(request);
+
+    if (!tokenValidated) {
+      session.flash(
+        'error',
+        'You aren\'t logged in! Log in to create a listing.'
+      );
+
+      return json({ message: 'Unauthorized' }, {
+        status: 401,
+        headers: {
+          'Set-Cookie': await commitSession(session),
+        }
+      });
+    }
   }
 }
 
