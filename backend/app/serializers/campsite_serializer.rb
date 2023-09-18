@@ -40,28 +40,28 @@ class CampsiteSerializer
     obj.admins.map { |x| x.user }
   end
 
-  attribute :amenities do |obj|
+  attribute :feature_options do |obj|
+    obj.feature_options.map { |x| x.name }
+  end
+
+  attribute :amenity_options do |obj|
     # obj.amenities.map { |x|
     #   {**x.attributes.symbolize_keys, name: x.amenity_option.name} # demo spread
     #   {**x.slice(:id), name: x.amenity_option.name} # demo selective
     # }
-    obj.amenities.map { |x| x.amenity_option.name }
+    obj.amenity_options.map { |x| x.name }
   end
 
-  attribute :activities do |obj|
-    obj.activities.map { |x| x.activity_option.name }
+  attribute :activity_options do |obj|
+    obj.activity_options.map { |x| x.name }
   end
 
-  attribute :categories do |obj|
-    obj.categories.map { |x| x.category_option.name }
+  attribute :category_options do |obj|
+    obj.category_options.map { |x| x.name }
   end
 
-  attribute :features do |obj|
-    obj.features.map { |x| x.feature_option.name }
-  end
-
-  attribute :accessibility_features do |obj|
-    obj.accessibility_features.map { |x| x.accessibility_feature_option.name }
+  attribute :accessibility_feature_options do |obj|
+    obj.accessibility_feature_options.map { |x| x.name }
   end
 
   attribute :rating do |obj|

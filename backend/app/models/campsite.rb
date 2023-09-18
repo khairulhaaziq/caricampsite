@@ -17,11 +17,16 @@ class Campsite < ApplicationRecord
   has_many :favourites
   has_many :images, class_name: "CampsiteImage", foreign_key: "campsite_id", dependent: :destroy
   has_many :admins, class_name: "CampsitesAdmin", foreign_key: "campsite_id"
-  has_many :features, class_name: "CampsitesFeatureOption", foreign_key: "campsite_id"
-  has_many :amenities, class_name: "CampsitesAmenityOption", foreign_key: "campsite_id"
-  has_many :activities, class_name: "CampsitesActivityOption", foreign_key: "campsite_id"
-  has_many :categories, class_name: "CampsitesCategoryOption", foreign_key: "campsite_id"
-  has_many :accessibility_features, class_name: "CampsitesAccessibilityFeatureOption", foreign_key: "campsite_id"
+  has_many :campsites_feature_options
+  has_many :feature_options, through: :campsites_feature_options
+  has_many :campsites_amenity_options
+  has_many :amenity_options, through: :campsites_amenity_options
+  has_many :campsites_activity_options
+  has_many :activity_options, through: :campsites_activity_options
+  has_many :campsites_category_options
+  has_many :category_options, through: :campsites_category_options
+  has_many :campsites_accessibility_feature_options
+  has_many :accessibility_feature_options, through: :campsites_accessibility_feature_options
 
   before_validation :assign_slug, on: :create
 

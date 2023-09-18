@@ -39,9 +39,9 @@ export default function Index() {
                           {i.attributes.name}
                         </p>
                         <p>
-                          {i.attributes.categories.map((category, index)=>(
+                          {i.attributes.category_options.map((category, index)=>(
                             <span key={category}>
-                              {category}{ index !== i.attributes.categories.length - 1 && ', '}
+                              {category}{ index !== i.attributes.category_options.length - 1 && ', '}
                             </span>
                           ))}
                         </p>

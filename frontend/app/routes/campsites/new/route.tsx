@@ -267,7 +267,7 @@ function FormDetails() {
                   key={featureOption.id}
                   multiple
                   label={featureOption.name}
-                  name="features"
+                  name="feature_option_ids"
                   value={featureOption.id}
                   onCheckedChange={() => featureFieldValidate()}
                 />
@@ -293,7 +293,7 @@ function FormDetails() {
                   key={amenityOption.id}
                   multiple
                   label={amenityOption.name}
-                  name="amenities"
+                  name="amenity_option_ids"
                   value={amenityOption.id}
                   onCheckedChange={() => amenityFieldValidate()}
                 />
@@ -319,7 +319,7 @@ function FormDetails() {
                   key={categoryOption.id}
                   multiple
                   label={categoryOption.name}
-                  name="categories"
+                  name="category_option_ids"
                   value={categoryOption.id}
                   onCheckedChange={() => categoryFieldValidate()}
                 />
@@ -345,7 +345,7 @@ function FormDetails() {
                   key={activityOption.id}
                   multiple
                   label={activityOption.name}
-                  name="activities"
+                  name="activity_option_ids"
                   value={activityOption.id}
                   onCheckedChange={() => activityFieldValidate()}
                 />
@@ -373,7 +373,7 @@ function FormDetails() {
                   key={accessibilityFeatureOption.id}
                   multiple
                   label={accessibilityFeatureOption.name}
-                  name="accessibility_features"
+                  name="accessibility_feature_option_ids"
                   value={accessibilityFeatureOption.id}
                   onCheckedChange={() => accessibilityFeatureFieldValidate()}
                 />

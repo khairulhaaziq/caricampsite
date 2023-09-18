@@ -41,19 +41,19 @@ export const schema = z.object({
         .number({ required_error: 'Please enter a longitude.' })),
   })
     .optional(),
-  features: zfd.repeatable(z
+  feature_option_ids: zfd.repeatable(z
     .array(zfd.numeric())  //TODO: Use enums
     .min(1, 'Please select at least one feature.')),
-  amenities: zfd.repeatable(z
+  amenity_option_ids: zfd.repeatable(z
     .array(zfd.numeric())  //TODO: Use enums
     .min(1, 'Please select at least one amenity.')),
-  activities: zfd.repeatable(z
+  activity_option_ids: zfd.repeatable(z
     .array(zfd.numeric())  //TODO: Use enums
     .min(1, 'Please select at least one activities.')),
-  categories: zfd.repeatable(z
+  category_option_ids: zfd.repeatable(z
     .array(zfd.numeric()) //TODO: Use enums
     .min(1, 'Please select at least one categories.')),
-  accessibility_features: zfd.repeatable(z
+  accessibility_feature_option_ids: zfd.repeatable(z
     .array(zfd.numeric()) //TODO: Use enums
     .min(1, 'Please select at least one accessibility feature.'))
 });

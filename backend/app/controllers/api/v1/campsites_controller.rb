@@ -13,14 +13,14 @@ class Api::V1::CampsitesController < ApplicationController
         :campsite_address,
         :campsite_location,
         :images,
+        :feature_options,
+        :amenity_options,
+        :activity_options,
+        :category_options,
+        :accessibility_feature_options,
         visits: :user,
         favourites: :user,
-        admins: :user,
-        features: :feature_option,
-        amenities: :amenity_option,
-        activities: :activity_option,
-        categories: :category_option,
-        accessibility_features: :accessibility_feature_option
+        admins: :user
       )
       .order(created_at: :desc)
       .page(params[:page])
@@ -39,14 +39,14 @@ class Api::V1::CampsitesController < ApplicationController
         :campsite_address,
         :campsite_location,
         :images,
+        :feature_options,
+        :amenity_options,
+        :activity_options,
+        :category_options,
+        :accessibility_feature_options,
         visits: :user,
         favourites: :user,
-        admins: :user,
-        features: :feature_option,
-        amenities: :amenity_option,
-        activities: :activity_option,
-        categories: :category_option,
-        accessibility_features: :accessibility_feature_option
+        admins: :user
       )
       .find_by(slug: params[:slug])
 
@@ -63,12 +63,7 @@ class Api::V1::CampsitesController < ApplicationController
     admin = CampsitesAdmin.new(user: @current_user, campsite: record)
 
     associations = {
-      images: {association: :images, model: CampsiteImage, column: :image_url},
-      features: {association: :features, model: CampsitesFeatureOption, column: :feature_option_id},
-      amenities: {association: :amenities, model: CampsitesAmenityOption, column: :amenity_option_id},
-      categories: {association: :categories, model: CampsitesCategoryOption, column: :category_option_id},
-      activities: {association: :activities, model: CampsitesActivityOption, column: :activity_option_id},
-      accessibility_features: {association: :accessibility_features, model: CampsitesAccessibilityFeatureOption, column: :accessibility_feature_option_id}
+      images: {association: :images, model: CampsiteImage, column: :image_url}
     }
 
     built_associations = {}
@@ -172,16 +167,17 @@ class Api::V1::CampsitesController < ApplicationController
         :status,
         :social_links,
         :contacts,
-        # one
+        # one to one
         campsite_fee_attributes: [:currency, :from, :to],
         campsite_address_attributes: [:addressLine1, :addressLine2, :city, :state, :postcode, :country],
-        campsite_location_attributes: [:latitude, :longitude]
-        # joined tables
+        campsite_location_attributes: [:latitude, :longitude],
         # :admins,
-        # :amenities,
-        # :activities,
-        # :categories,
-        # :accessibility_features
+        # many to many
+        feature_option_ids: [],
+        amenity_option_ids: [],
+        activity_option_ids: [],
+        category_option_ids: [],
+        accessibility_feature_option_ids: []
       )
   end
 end
