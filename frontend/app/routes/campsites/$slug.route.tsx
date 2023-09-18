@@ -50,13 +50,16 @@ function ImageGrid({ images, cover_image }: {images: string[]; cover_image?: str
       <div className="hidden md:grid md:grid-cols-8 gap-3">
         <img
           className="w-full aspect-[11/10] bg-gray-200 rounded-xl flex-none col-span-4 row-span-2 object-cover"
-          src={cover_image || images[0]?.image_url || `https://loremflickr.com/300/300?lock=${Math.random()*100}`}
+          src={cover_image ||
+            images[0]?.image_url ||
+            `https://loremflickr.com/300/300?lock=${Math.random()*100}`}
         />
         {[...Array(4).keys()].map((i, index)=>(
           <img
             key={index}
             className="aspect-[11/10] w-full flex-none bg-gray-200 rounded-xl col-span-2 object-cover"
-            src={images[i + 1]?.image_url || `https://loremflickr.com/300/300?lock=${index + 2}`}
+            src={images[i + 1]?.image_url ||
+              `https://loremflickr.com/300/300?lock=${index + 2}`}
           />
         ))}
 

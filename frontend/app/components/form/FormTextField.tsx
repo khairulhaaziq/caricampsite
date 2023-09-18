@@ -1,8 +1,10 @@
 import { useField } from 'remix-validated-form';
 
-type TextareaTextFieldAttributes = React.TextareaHTMLAttributes<HTMLTextAreaElement>;
+type TextareaTextFieldAttributes =
+  React.TextareaHTMLAttributes<HTMLTextAreaElement>;
 
-interface FormTextFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
+interface FormTextFieldProps extends
+  React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   textarea?: boolean;
   name: string;
@@ -25,14 +27,16 @@ export default function FormTextField({
               {...getInputProps({ id: name })}
               {...props as TextareaTextFieldAttributes}
               placeholder={label ? label : props.placeholder}
-              className={`rounded-xl ${error ? 'bg-red-50' : 'bg-[#EDEDED]'} h-32 pl-5 pt-3.5`}
+              className={`rounded-xl ${error ?
+                'bg-red-50' : 'bg-[#EDEDED]'} h-32 pl-5 pt-3.5 max-w-[600px]`}
             />
           ) : (
             <input
               {...getInputProps({ id: name })}
               {...props}
               placeholder={label ? label : props.placeholder}
-              className={`rounded-xl ${error ? 'bg-red-50' : 'bg-[#EDEDED]'} h-14 pl-5`}
+              className={`rounded-xl ${error ?
+                'bg-red-50' : 'bg-[#EDEDED]'} h-14 pl-5 max-w-[600px]`}
             />
           )
         }

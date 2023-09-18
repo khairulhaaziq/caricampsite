@@ -35,8 +35,16 @@ export default function Index() {
                         src={`${i.attributes.cover_image}?lock=${index}`}
                       />
                       <div className="text-sm text-neutral-500">
-                        <p className="capitalize text-base text-black font-medium">{i.attributes.name}</p>
-                        <p>{i.attributes.categories.map((category, index)=>(<>{category}{ index !== i.attributes.categories.length - 1 && ', '}</>))}</p>
+                        <p className="capitalize text-base text-black font-medium">
+                          {i.attributes.name}
+                        </p>
+                        <p>
+                          {i.attributes.categories.map((category, index)=>(
+                            <span key={category}>
+                              {category}{ index !== i.attributes.categories.length - 1 && ', '}
+                            </span>
+                          ))}
+                        </p>
                         <p>Jarak</p>
                         <p>{i.attributes.rating}</p>
                       </div>
@@ -56,6 +64,7 @@ export default function Index() {
               </button>
               {Array.from({ length: pagination.total_pages }, (_, i) => i + 1).map(pageNum=>(
                 <button
+                  key={pageNum}
                   className="border rounded-md h-10 px-3 border-neutral-300 disabled:text-neutral-300"
                   onClick={()=>handleChangeParams(pagination?.next_page.toString())}
                   disabled={pagination?.current_page == pageNum}
