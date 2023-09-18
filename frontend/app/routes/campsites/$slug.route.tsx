@@ -11,7 +11,7 @@ export default function Index() {
   return (
     <div className="flex justify-center px-6 sm:px-8 md:px-10 lg:px-14 xl:px-16 2xl:px-20 pt-20 pb-16">
       <div className="w-full max-w-6xl flex flex-col gap-5">
-        <Header name={attributes.name} />
+        <Header title={attributes.title} />
         <ImageGrid images={attributes.images} />
 
         <p>{attributes.description}</p>
@@ -24,12 +24,12 @@ export default function Index() {
   );
 }
 
-function Header({ name }: { name: string }) {
+function Header({ title }: { title: string }) {
   return (
     <div className="flex justify-between pt-8">
       <div className="text-neutral-500">
         <h1 className="font-bold text-2xl sm:text-3xl capitalize text-black">
-          {name}
+          {title}
         </h1>
         <p>Category, Category</p>
         <p>Price, Price</p>

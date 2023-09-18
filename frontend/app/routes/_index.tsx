@@ -36,7 +36,7 @@ export default function Index() {
                       />
                       <div className="text-sm text-neutral-500">
                         <p className="capitalize text-base text-black font-medium">
-                          {i.attributes.name}
+                          {i.attributes.title}
                         </p>
                         <p>
                           {i.attributes.category_options.map((category, index)=>(

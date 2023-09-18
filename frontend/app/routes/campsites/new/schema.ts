@@ -4,18 +4,18 @@ import { zfd } from 'zod-form-data';
 import { addressSchema } from '~/utils/schema';
 
 export const schema = z.object({
-  name: zfd
+  title: zfd
     .text(z
-      .string({ required_error: 'Please enter a name.' })
-      .min(3, { message: 'Name must be at least 3 characters.' })),
+      .string({ required_error: 'Please enter a title.' })
+      .min(3, { message: 'Title must be at least 3 characters.' })),
   notes: zfd
     .text(z
       .string()
-      .min(3, { message: 'Name must be at least 3 characters.' })).optional(),
+      .min(3, { message: 'Notes must be at least 3 characters.' })).optional(),
   direction_instructions: zfd
     .text(z
       .string()
-      .min(3, { message: 'Name must be at least 3 characters.' })).optional(),
+      .min(3, { message: 'Direction instructions must be at least 3 characters.' })).optional(),
   description: zfd
     .text(z
       .string({ required_error: 'Please enter a description.' })),
@@ -67,9 +67,9 @@ export const schema = z.object({
   instagram: zfd
     .text(z
       .string()
-      .min(3, { message: 'Name must be at least 3 characters.' })).optional(),
+      .min(3, { message: 'Link must be at least 3 characters.' })).optional(),
   contact_mobile1: zfd
     .text(z
       .string()
-      .min(3, { message: 'Name must be at least 3 characters.' })).optional(),
+      .min(3, { message: 'No. must be at least 3 characters.' })).optional(),
 });

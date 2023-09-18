@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_09_18_065216) do
+ActiveRecord::Schema[7.0].define(version: 2023_09_18_142754) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -86,7 +86,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_18_065216) do
   end
 
   create_table "campsites", force: :cascade do |t|
-    t.string "name", null: false
+    t.string "title", null: false
     t.text "description", null: false
     t.text "direction_instructions"
     t.text "notes"

@@ -211,7 +211,7 @@ function FormDetails() {
         method="post"
       >
         <div className="flex flex-col gap-4">
-          <FormTextField name="name" label="Name" />
+          <FormTextField name="title" label="Title" />
           <FormTextField
             name="description"
             label="Description"

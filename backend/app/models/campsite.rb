@@ -51,7 +51,7 @@ class Campsite < ApplicationRecord
   before_validation :assign_slug, on: :create
   before_validation :assign_cover_image, on: :create
 
-  validates :name, presence: true
+  validates :title, presence: true
   validates :description, presence: true
   validates :slug, presence: true
   validates :slug, uniqueness: true
@@ -73,12 +73,12 @@ class Campsite < ApplicationRecord
 
   def assign_slug
     return if slug.present?
-    if name.blank?
+    if title.blank?
       self.slug = SecureRandom.alphanumeric(5).downcase
       return
     end
 
-    slug = name.parameterize.downcase
+    slug = title.parameterize.downcase
 
     if Campsite.exists?(slug: slug)
       slug += "-#{SecureRandom.alphanumeric(5).downcase}"

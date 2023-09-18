@@ -65,7 +65,7 @@ class Api::V1::CampsitesController < ApplicationController
 
     attachments = images.map { |image_url|
       record.attachments.new(
-        name: record.name.parameterize.downcase + "-image-#{SecureRandom.alphanumeric(5).downcase}",
+        name: record.title.parameterize.downcase + "-image-#{SecureRandom.alphanumeric(5).downcase}",
         attachment_type: "campsite-images",
         url: image_url
       )
@@ -135,7 +135,7 @@ class Api::V1::CampsitesController < ApplicationController
   def campsite_params
     params.require(:campsites)
       .permit(
-        :name,
+        :title,
         :description,
         :direction_instructions,
         :notes,

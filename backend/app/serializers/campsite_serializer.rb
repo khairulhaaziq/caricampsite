@@ -3,7 +3,7 @@ class CampsiteSerializer
 
   attributes(
     :id,
-    :name,
+    :title,
     :description,
     :direction_instructions,
     :notes,
