@@ -1,6 +1,26 @@
 class Campsite < ApplicationRecord
   include Filterable
 
+  serialize :contacts, HashSerializer
+  serialize :social_links, HashSerializer
+
+  store_accessor :contacts,
+    :contact_name1,
+    :contact_mobile1,
+    :contact_name2,
+    :contact_mobile2,
+    :contact_name3,
+    :contact_mobile3
+  store_accessor :social_links,
+    :facebook,
+    :google_embed,
+    :google_map,
+    :instagram,
+    :tiktok,
+    :twitter,
+    :waze,
+    :whatsapp
+
   enum status: {
     open_for_public: 0,
     open_for_booking: 1,

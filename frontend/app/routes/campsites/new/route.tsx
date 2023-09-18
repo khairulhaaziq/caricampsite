@@ -391,7 +391,7 @@ function FormDetails() {
             <FormTextField name="contacts[0].name" label="Name" />
             <FormTextField name="contacts[0].mobileNo" label="Mobile No." />
 
-            <FormTextField name="social_links[0].instagram" label="Instagram" />
+            <FormTextField name="instagram" label="Instagram" />
           </div>
         </div>
 

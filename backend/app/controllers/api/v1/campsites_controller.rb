@@ -141,12 +141,35 @@ class Api::V1::CampsitesController < ApplicationController
         :notes,
         :cover_image,
         :status,
-        :social_links,
-        :contacts,
+        # social_links start
+        :facebook,
+        :google_embed,
+        :google_map,
+        :instagram,
+        :tiktok,
+        :twitter,
+        :waze,
+        :whatsapp,
+        # social_links end
+        # contacts start
+        :contact_name1,
+        :contact_mobile1,
+        :contact_name2,
+        :contact_mobile2,
+        :contact_name3,
+        :contact_mobile3,
+        # contacts end
         # one
         campsite_fee_attributes: [:currency, :from, :to],
         campsite_address_attributes: [:addressLine1, :addressLine2, :city, :state, :postcode, :country],
-        campsite_location_attributes: [:latitude, :longitude]
+        campsite_location_attributes: [:latitude, :longitude],
+        # :admins,
+        # many to many
+        feature_option_ids: [],
+        amenity_option_ids: [],
+        activity_option_ids: [],
+        category_option_ids: [],
+        accessibility_feature_option_ids: []
       )
   end
 
@@ -159,8 +182,24 @@ class Api::V1::CampsitesController < ApplicationController
         :notes,
         :cover_image,
         :status,
-        :social_links,
-        :contacts,
+        # social_links start
+        :facebook,
+        :google_embed,
+        :google_map,
+        :instagram,
+        :tiktok,
+        :twitter,
+        :waze,
+        :whatsapp,
+        # social_links end
+        # contacts start
+        :contact_name1,
+        :contact_mobile1,
+        :contact_name2,
+        :contact_mobile2,
+        :contact_name3,
+        :contact_mobile3,
+        # contacts end
         # one to one
         campsite_fee_attributes: [:currency, :from, :to],
         campsite_address_attributes: [:addressLine1, :addressLine2, :city, :state, :postcode, :country],
