@@ -41,7 +41,7 @@ const validator = withZod(schema);
 // ];
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const tokenValidated = await Auth.validateToken(request);
+  // const tokenValidated = await Auth.validateToken(request);
 
   // if (!tokenValidated) {
   //   return redirect('/login');
@@ -192,12 +192,12 @@ function Card({ children }: {children?: ReactNode} = {}) {
 function FormDetails() {
   const formId = 'form-details';
   const { validate, getValues, ...formContext  } = useFormContext(formId);
-  const { error: imageFieldError } = useField('images', { formId });
-  const { error: featureFieldError } = useField('features', { formId });
-  const { error: amenityFieldError } = useField('amenities', { formId });
-  const { error: categoryFieldError } = useField('categories', { formId });
-  const { error: activityFieldError } = useField('activities', { formId });
-  const { error: accessibilityFeatureFieldError } = useField('accessibility_features', { formId });
+  const { error: imageFieldError, validate: imageFieldValidate } = useField('images', { formId });
+  const { error: featureFieldError, validate: featureFieldValidate } = useField('features', { formId });
+  const { error: amenityFieldError, validate: amenityFieldValidate } = useField('amenities', { formId });
+  const { error: categoryFieldError, validate: categoryFieldValidate } = useField('categories', { formId });
+  const { error: activityFieldError, validate: activityFieldValidate } = useField('activities', { formId });
+  const { error: accessibilityFeatureFieldError, validate: accessibilityFeatureFieldValidate } = useField('accessibility_features', { formId });
 
   return (
     <div className="contents">
@@ -231,7 +231,7 @@ function FormDetails() {
               </p>
             )}
           </div>
-          <ImageDropzone />
+          <ImageDropzone validate={imageFieldValidate} />
         </div>
 
 
@@ -269,7 +269,7 @@ function FormDetails() {
                   label={featureOption.name}
                   name="features"
                   value={featureOption.id}
-                  onCheckedChange={(val) => console.log(val)}
+                  onCheckedChange={() => featureFieldValidate()}
                 />
               );
             })}
@@ -295,7 +295,7 @@ function FormDetails() {
                   label={amenityOption.name}
                   name="amenities"
                   value={amenityOption.id}
-                  onCheckedChange={(val) => console.log(val)}
+                  onCheckedChange={() => amenityFieldValidate()}
                 />
               );
             })}
@@ -321,7 +321,7 @@ function FormDetails() {
                   label={categoryOption.name}
                   name="categories"
                   value={categoryOption.id}
-                  onCheckedChange={(val) => console.log(val)}
+                  onCheckedChange={() => categoryFieldValidate()}
                 />
               );
             })}
@@ -347,7 +347,7 @@ function FormDetails() {
                   label={activityOption.name}
                   name="activities"
                   value={activityOption.id}
-                  onCheckedChange={(val) => console.log(val)}
+                  onCheckedChange={() => activityFieldValidate()}
                 />
               );
             })}
@@ -357,7 +357,9 @@ function FormDetails() {
         <div className="contents">
           <div className="flex flex-col gap-0.5 mt-6">
             <h1 className="text-2xl font-bold">Accessibility Features</h1>
-            <p className="text-neutral-500">Select your campsite accessibility features</p>
+            <p className="text-neutral-500">
+              Select your campsite accessibility features
+            </p>
             {accessibilityFeatureFieldError && (
               <p className="text-danger flex gap-1 items-center">
                 {accessibilityFeatureFieldError}
@@ -373,7 +375,7 @@ function FormDetails() {
                   label={accessibilityFeatureOption.name}
                   name="accessibility_features"
                   value={accessibilityFeatureOption.id}
-                  onCheckedChange={(val) => console.log(val)}
+                  onCheckedChange={() => accessibilityFeatureFieldValidate()}
                 />
               );
             })}
@@ -404,7 +406,9 @@ function FormDetails() {
           </div>
         </div>
 
-        <div className="flex justify-between items-center fixed bottom-0 left-0 right-0 bg-white px-8 py-4 border-t border-neutral-300">
+        <div
+          className="flex justify-between items-center fixed bottom-0 left-0 right-0 bg-white px-8 py-4 border-t border-neutral-300"
+        >
           <Link>Back</Link>
           <button
             type="button"
@@ -421,11 +425,11 @@ function FormDetails() {
   );
 }
 
-function ImageDropzone() {
+function ImageDropzone({ validate }: {validate: ()=>void}) {
   const [files, setFiles] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const onDrop = useCallback(async (acceptedFiles) => {
+  const onDrop = useCallback(async (acceptedFiles: File[]) => {
     const form = new FormData();
 
     for (const file of acceptedFiles){
@@ -439,9 +443,10 @@ function ImageDropzone() {
     }
 
     await uploadFiles(form);
+    validate();
   }, []);
 
-  async function uploadFiles(form) {
+  async function uploadFiles(form: FormData) {
     setIsLoading(true);
     let error = false;
 
@@ -452,7 +457,6 @@ function ImageDropzone() {
       })
       .then(async (res) => {
         const json = await res.json();
-
         console.log(json);
         return json;
       })
@@ -485,7 +489,6 @@ function ImageDropzone() {
         type="hidden"
         hidden
         name={`images[${index}]`}
-        defaultValue=""
         value={file.preview}
       />
       <p className="absolute bottom-2 left-2">{file.fileName}</p>
@@ -504,8 +507,14 @@ function ImageDropzone() {
         {files.length < 5 ? (
           <>
             {Array.from({ length: 5 - files.length }, (_, i) => i + 1).map((i)=>(
-              <div className="border-dashed border-2 border-neutral-200 bg-neutral-50 rounded-lg aspect-square flex-none">
-                <div {...getRootProps()} className="flex items-center justify-center text-center h-full px-4">
+              <div
+                key={i}
+                className="border-dashed border-2 border-neutral-200 bg-neutral-50 rounded-lg aspect-square flex-none"
+              >
+                <div
+                  {...getRootProps()}
+                  className="flex items-center justify-center text-center h-full px-4"
+                >
                   <input {...getInputProps()} />
                   {
                     isDragActive ?
@@ -517,18 +526,19 @@ function ImageDropzone() {
             ))}
           </>
         ) : (
-          <>
-            <div className="border-dashed border-2 border-neutral-200 bg-neutral-50 rounded-lg aspect-square flex-none">
-              <div {...getRootProps()} className="flex items-center justify-center text-center h-full px-4">
-                <input {...getInputProps()} />
-                {
-                  isDragActive ?
-                    <p>Drop the files here ...</p> :
-                    <p className="text-neutral-600">Add a photo</p>
-                }
-              </div>
+          <div className="border-dashed border-2 border-neutral-200 bg-neutral-50 rounded-lg aspect-square flex-none">
+            <div
+              {...getRootProps()}
+              className="flex items-center justify-center text-center h-full px-4"
+            >
+              <input {...getInputProps()} />
+              {
+                isDragActive ?
+                  <p>Drop the files here ...</p> :
+                  <p className="text-neutral-600">Add a photo</p>
+              }
             </div>
-          </>
+          </div>
         )}
         <input
           type="hidden"
