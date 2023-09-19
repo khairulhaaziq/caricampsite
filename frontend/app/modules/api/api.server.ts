@@ -1,8 +1,9 @@
-import { json } from '@remix-run/node';
+import { json, redirect } from '@remix-run/node';
 import { ofetch } from 'ofetch';
 
 import { API_BASE_URL } from '~/config.server';
 import { Auth } from '~/modules/auth/auth.server';
+import { commitSession, getSession } from '~/utils/sessions.server';
 
 type RequestMethod = 'GET' | 'POST' | 'PUT' | 'DELETE'
 export type RequestAction = 'get' | 'create' | 'update' | 'delete'
@@ -14,8 +15,23 @@ const MapRequestAction: Record<RequestAction, RequestMethod> = {
   delete: 'DELETE'
 };
 
+interface ForwardRequestOptions {
+  body?:any;
+  method?: RequestMethod;
+  action?: RequestAction;
+  redictTo?: string;
+  toastMessage?: string;
+}
+
 class Api {
-  static async forwardRequest (request: Request, { body, method, action }: {body?:any; method?: RequestMethod; action?: RequestAction} = {} ) {
+  static async forwardRequest (request: Request, {
+    body,
+    method,
+    action,
+    redictTo,
+    toastMessage,
+  }: ForwardRequestOptions = {}
+  ){
     if (!action && !method) {
       return json(
         { error: { message: 'Method Not Allowed' } },
@@ -57,6 +73,25 @@ class Api {
       return json({ error: true, message: result }, { status: 500 });
     }
 
+    if (redictTo) {
+      if (toastMessage) {
+        const session = await getSession(
+          request.headers.get('Cookie')
+        );
+
+        session.flash(
+          'globalMessage',
+          toastMessage
+        );
+
+        return redirect(redictTo, {
+          headers: {
+            'Set-Cookie': await commitSession(session),
+          },
+        });
+      }
+      return redirect(redictTo);
+    }
     return json({ success: true, message: result }, { status: 200 });
   }
 }

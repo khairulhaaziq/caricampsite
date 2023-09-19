@@ -41,6 +41,7 @@ export default function CampsiteSlug() {
               visits_users={attributes.visits_users}
               favourites_users={attributes.favourites_users}
               user_id={user?.data?.id}
+              admins={attributes.admins}
               campsite_id={data?.id}
             />
             <ImageGrid images={attributes.images} />
@@ -93,8 +94,10 @@ export default function CampsiteSlug() {
   );
 }
 
-function Header({ title, visits_users, favourites_users, user_id, campsite_id }: { title: string; visits_users: number[]; favourites_users: number[]; user_id: string; campsite_id: number }) {
+function Header({ title, visits_users, favourites_users, user_id, campsite_id, admins }: { title: string; visits_users: number[]; favourites_users: number[]; user_id: string; campsite_id: number; admins: any[] }) {
   const fetcher = useFetcher();
+  const deleteCampsiteFetcher = useFetcher();
+  const isOwner = admins.map(i=>i.id).includes(parseInt(user_id));
 
   return (
     <div className="flex justify-between pt-8 items-center">
@@ -145,6 +148,23 @@ function Header({ title, visits_users, favourites_users, user_id, campsite_id }:
             </button>
           </fetcher.Form>
           <button className="bg-white rounded-xl px-5 h-10 items-center border border-[#DBDBDB]">Share</button>
+
+          {isOwner &&
+          <>
+            <button className="bg-white rounded-xl px-5 h-10 items-center border border-[#DBDBDB]">Edit</button>
+            <deleteCampsiteFetcher.Form
+              method="POST"
+              action={`/api/v1/campsites/${campsite_id}`}
+              onSubmit={(e)=>!user_id && e.preventDefault()}
+            >
+              <button
+                name="_action"
+                value="delete"
+                className="bg-white rounded-xl px-5 h-10 items-center border border-[#DBDBDB]"
+              >Delete</button>
+            </deleteCampsiteFetcher.Form>
+          </>
+          }
         </div>
       </div>
     </div>
