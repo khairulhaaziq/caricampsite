@@ -5,8 +5,15 @@ import {
 } from 'react';
 import { useDropzone } from 'react-dropzone';
 
-export default function ImageDropzone({ validate, defaultFileUrls }: {validate: ()=>void; defaultFileUrls?: string[]}) {
-  const [files, setFiles] = useState<string[]>([]);
+interface ImageType {
+  preview: string; // image url from s3
+  fileName?: string; // name
+}
+
+export default function ImageDropzone({ validate, defaultFileUrls }:
+  {validate: ()=>void; defaultFileUrls?: ImageType[]}
+){
+  const [files, setFiles] = useState<ImageType[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(()=>{
@@ -52,7 +59,8 @@ export default function ImageDropzone({ validate, defaultFileUrls }: {validate: 
       });
 
     if (!error) {
-      result.result.fileUrls.forEach(fileUrl=>{
+      const { fileUrls } = result.result as {fileUrls: string[]};
+      fileUrls.forEach((fileUrl)=>{
         setFiles((prevFiles) => [...prevFiles, { preview: fileUrl }]);
       });
     }

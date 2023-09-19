@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import { Link } from '@remix-run/react';
 import { type ReactNode } from 'react';
 import {
@@ -74,7 +75,7 @@ export default function CampsiteForm({ formDefaultValues, action }: CampsiteForm
                     </p>
                   )}
                 </div>
-                <ImageDropzone validate={imageFieldValidate} defaultFileUrls={formDefaultValues?.images} />
+                <ImageDropzone validate={imageFieldValidate} defaultFileUrls={formDefaultValues?.images.map(url=>({ preview: url }))} />
               </div>
 
 
@@ -284,7 +285,7 @@ export default function CampsiteForm({ formDefaultValues, action }: CampsiteForm
               <div
                 className="flex justify-between items-center fixed bottom-0 left-0 right-0 bg-white px-8 py-4 border-t border-neutral-300"
               >
-                <Link>Back</Link>
+                <Link to="">Back</Link>
                 <button
                   type="button"
                   onClick={()=>{
