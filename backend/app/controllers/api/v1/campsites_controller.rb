@@ -61,15 +61,6 @@ class Api::V1::CampsitesController < ApplicationController
   def create
     record = Campsite.new(campsite_params)
     admin = CampsitesAdmin.new(user: @current_user, campsite: record)
-    images = params.dig(:campsites, :images) || []
-
-    attachments = images.map { |image_url|
-      record.attachments.new(
-        name: record.title.parameterize.downcase + "-image-#{SecureRandom.alphanumeric(5).downcase}",
-        attachment_type: "campsite-images",
-        url: image_url
-      )
-    }
 
     record.admins << admin
 
@@ -77,7 +68,6 @@ class Api::V1::CampsitesController < ApplicationController
       ActiveRecord::Base.transaction do
         record.save
         admin.save
-        attachments.flatten.each(&:save)
       end
 
       campsite_json = render_serializer(CampsiteSerializer, record)
@@ -164,6 +154,7 @@ class Api::V1::CampsitesController < ApplicationController
         campsite_address_attributes: [:addressLine1, :addressLine2, :city, :state, :postcode, :country],
         campsite_location_attributes: [:latitude, :longitude],
         # :admins,
+        attachments_attributes: [:id, :attachment_type, :url],
         # many to many
         feature_option_ids: [],
         amenity_option_ids: [],

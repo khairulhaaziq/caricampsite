@@ -1,5 +1,6 @@
 class Campsite < ApplicationRecord
   include Filterable
+  before_save :set_attachments_name
 
   serialize :contacts, HashSerializer
   serialize :social_links, HashSerializer
@@ -60,11 +61,11 @@ class Campsite < ApplicationRecord
   # validates :campsite_fee, presence: true
   # validates :campsite_address, presence: true
   validates :admins, presence: true
-  # validates :categories, presence: true
 
   accepts_nested_attributes_for :campsite_fee, update_only: true
   accepts_nested_attributes_for :campsite_address, update_only: true
   accepts_nested_attributes_for :campsite_location, update_only: true
+  accepts_nested_attributes_for :attachments
 
   scope :filter_by_verified, ->(value) { where(is_verified: value) }
   scope :filter_by_state, ->(value) { joins(:campsite_address).where(campsite_addresses: {state: value}) }
@@ -95,6 +96,15 @@ class Campsite < ApplicationRecord
   def images_not_empty
     if attachments.blank? || attachments.all?(&:blank?)
       errors.add(:attachments, "Must contain at least one image")
+    end
+  end
+
+  def set_attachments_name
+    if saved_changes["title"]
+      attachments.each do |attachment|
+        attachment.set_name
+        attachment.save
+      end
     end
   end
 end

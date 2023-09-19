@@ -83,12 +83,14 @@ export const action = async ({ request }: DataFunctionArgs) => {
       if (formResult.error)
         return validationError(formResult.error, formResult.submittedData);
 
-      const { ...formData } = formResult.data;
+      const { images, ...formData } = formResult.data;
+
+      const attachments_attributes = images.map(url=>({ url, attachment_type: 'campsite-images' }));
 
       const result = await ofetch(
         `${API_BASE_URL}/campsites`, {
           method: 'POST',
-          body: { campsites: formData },
+          body: { campsites: { attachments_attributes, ...formData } },
           headers: {
             'Authorization': `Bearer ${token}`
           },
