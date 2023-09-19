@@ -31,6 +31,7 @@ export default function CampsiteSlug() {
       <div className="w-full max-w-6xl flex flex-col gap-5">
         <Header
           title={attributes.title}
+          visits_users={attributes.visits_users}
           favourites_users={attributes.favourites_users}
           user_id={user?.data?.id}
           campsite_id={data?.id}
@@ -90,7 +91,7 @@ export default function CampsiteSlug() {
   );
 }
 
-function Header({ title, favourites_users, user_id, campsite_id }: { title: string; favourites_users: number[]; user_id: string; campsite_id: number }) {
+function Header({ title, visits_users, favourites_users, user_id, campsite_id }: { title: string; visits_users: number[]; favourites_users: number[]; user_id: string; campsite_id: number }) {
   const fetcher = useFetcher();
 
   return (
@@ -105,15 +106,32 @@ function Header({ title, favourites_users, user_id, campsite_id }: { title: stri
 
       <div>
         <div className="flex gap-2 font-medium">
-          <button className="bg-white rounded-xl px-5 h-10 items-center border border-[#DBDBDB]">Visit</button>
           <fetcher.Form
             method="POST"
-            action={`/api/v1/campsites/${campsite_id}`}
+            action={`/api/v1/campsites/${campsite_id}/visits`}
             onSubmit={(e)=>!user_id && e.preventDefault()}
           >
             <button
               name="_action"
-              value={favourites_users.includes(parseInt(user_id)) ? 'remove_favourite' : 'add_favourite'}
+              value={visits_users.includes(parseInt(user_id)) ? 'delete' : 'create'}
+              className="active:scale-90 transition-all bg-white rounded-xl px-5 h-10 items-center flex gap-2 border border-[#DBDBDB]"
+            >
+              <span className={`${
+                visits_users.includes(parseInt(user_id)) ?
+                  'text-rose-600' :
+                  'text-rose-300'
+              }`}
+              ><IconHeart /></span> <span>Visits </span><span className="rounded-full bg-[#E8E8E8] h-5 w-5 flex items-center justify-center text-sm">{visits_users.length}</span>
+            </button>
+          </fetcher.Form>
+          <fetcher.Form
+            method="POST"
+            action={`/api/v1/campsites/${campsite_id}/favourites`}
+            onSubmit={(e)=>!user_id && e.preventDefault()}
+          >
+            <button
+              name="_action"
+              value={favourites_users.includes(parseInt(user_id)) ? 'delete' : 'create'}
               className="active:scale-90 transition-all bg-white rounded-xl px-5 h-10 items-center flex gap-2 border border-[#DBDBDB]"
             >
               <span className={`${
@@ -180,7 +198,7 @@ function ReviewSection({ reviews, campsite_id, user, reviews_users, ...props }: 
 
 function ReviewsList({ reviews }: {reviews: any[]}) {
   return (
-    <div className="[&>*:not:first-child]:border-b border-neutral-200">
+    <div className="">
       {reviews.map(review=>(
         <ReviewItem key={review.id} review={review}/>
       ))}
@@ -211,7 +229,7 @@ function ReviewItem({ review }) {
 
   else {
     return (
-      <div className="text-sm flex gap-2 text-neutral-500">
+      <div className="text-sm flex gap-2 text-neutral-500 py-4 first:pt-0 border-t border-neutral-200 first:border-t-0">
         <div className="space-y-2 flex-grow">
           <div className="flex text-yellow-500">
             {[...Array(rating).keys()].map(i=>(

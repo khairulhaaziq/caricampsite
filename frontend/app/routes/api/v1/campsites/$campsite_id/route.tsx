@@ -5,7 +5,6 @@ import { API_BASE_URL } from '~/config.server';
 import { Auth } from '~/modules/auth/auth.server';
 
 export const action = async ({ request, params }: DataFunctionArgs) => {
-  const { campsite_id } = params;
   const tokenValidated = await Auth.validateToken(request);
 
   if (!tokenValidated) {
@@ -19,51 +18,51 @@ export const action = async ({ request, params }: DataFunctionArgs) => {
 
   let error = false;
 
-  if (_action === 'add_favourite' || _action === 'remove_favourite') {
-    const authToken = await Auth.getToken(request);
+  // if (_action === 'create_favourite' || _action === 'delete_favourite') {
+  //   const authToken = await Auth.getToken(request);
 
-    let result;
+  //   let result;
 
-    if (_action === 'add_favourite') {
-      result = await ofetch(
-        `${API_BASE_URL}/campsites/${campsite_id}/favourites`, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${authToken}`
-          },
-          parseResponse: JSON.parse
-        })
-        .then((res)=>{
-          return res;
-        })
-        .catch((err) => {
-          error = true;
-          return err;
-        });
-    } else if (_action === 'remove_favourite') {
-      result = await ofetch(
-        `${API_BASE_URL}/campsites/${campsite_id}/favourites`, {
-          method: 'DELETE',
-          headers: {
-            'Authorization': `Bearer ${authToken}`
-          },
-          parseResponse: JSON.parse
-        })
-        .then((res)=>{
-          return res;
-        })
-        .catch((err) => {
-          error = true;
-          return err;
-        });
-    }
-    console.log('result: ', result);
+  //   if (_action === 'create_favourite') {
+  //     result = await ofetch(
+  //       `${API_BASE_URL}/campsites/${campsite_id}/favourites`, {
+  //         method: 'POST',
+  //         headers: {
+  //           'Authorization': `Bearer ${authToken}`
+  //         },
+  //         parseResponse: JSON.parse
+  //       })
+  //       .then((res)=>{
+  //         return res;
+  //       })
+  //       .catch((err) => {
+  //         error = true;
+  //         return err;
+  //       });
+  //   } else if (_action === 'delete_favourite') {
+  //     result = await ofetch(
+  //       `${API_BASE_URL}/campsites/${campsite_id}/favourites`, {
+  //         method: 'DELETE',
+  //         headers: {
+  //           'Authorization': `Bearer ${authToken}`
+  //         },
+  //         parseResponse: JSON.parse
+  //       })
+  //       .then((res)=>{
+  //         return res;
+  //       })
+  //       .catch((err) => {
+  //         error = true;
+  //         return err;
+  //       });
+  //   }
+  //   console.log('result: ', result);
 
-    if (error) {
-      return json({ error: true, message: result }, { status: 500 });
-    }
-    return json({ success: true, message: result }, { status: 200 });
-  }
+  //   if (error) {
+  //     return json({ error: true, message: result }, { status: 500 });
+  //   }
+  //   return json({ success: true, message: result }, { status: 200 });
+  // }
 
   return json(
     { error: { message: 'Method Not Allowed' } },

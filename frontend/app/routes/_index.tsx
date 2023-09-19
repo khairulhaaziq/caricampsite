@@ -85,10 +85,10 @@ function ListingItem({ data, index }) {
         </div>
       </Link>
       {userData &&
-      <fetcher.Form method="POST" action={`/api/v1/campsites/${data.id}`}>
+      <fetcher.Form method="POST" action={`/api/v1/campsites/${data.id}/favourites`}>
         <button
           name="_action"
-          value={data.attributes.favourites_users.includes(parseInt(userData?.id)) ? 'remove_favourite' : 'add_favourite'}
+          value={data.attributes.favourites_users.includes(parseInt(userData?.id)) ? 'delete' : 'create'}
           className={`${
             data.attributes.favourites_users.includes(parseInt(userData?.id)) ?
               'text-rose-600' :
