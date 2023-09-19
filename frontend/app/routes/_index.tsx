@@ -1,4 +1,3 @@
-import { type DataFunctionArgs, json } from '@remix-run/node';
 import {
   Link,
   useFetcher,
@@ -6,87 +5,16 @@ import {
   useRouteLoaderData,
   useSearchParams
 } from '@remix-run/react';
-import { ofetch } from 'ofetch';
 
 import IconHeart from '~/components/icons/IconHeart';
 import WithTopbar from '~/components/layouts/WithTopbar';
-import { API_BASE_URL } from '~/config.server';
-import { Auth } from '~/modules/auth/auth.server';
 import { getApiData } from '~/utils/loader';
 
 export const loader = getApiData({ path: '/campsites' });
 
-export const action = async ({ request }: DataFunctionArgs) => {
-  const tokenValidated = await Auth.validateToken(request);
-
-  if (!tokenValidated) {
-    return Auth.unauthorizedResponse(request);
-  }
-
-  const formData = await request.formData();
-
-  const body = Object.fromEntries(formData);
-  const { _action } = body;
-
-  if (_action === 'add_favourite' || _action === 'remove_favourite') {
-    const { campsite_id } = body;
-
-    let error = false;
-
-    const authToken = await Auth.getToken(request);
-
-    let result;
-
-    if (_action === 'add_favourite') {
-      result = await ofetch(
-        `${API_BASE_URL}/campsites/${campsite_id}/favourites`, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${authToken}`
-          },
-          parseResponse: JSON.parse
-        })
-        .then((res)=>{
-          return res;
-        })
-        .catch((err) => {
-          error = true;
-          return err;
-        });
-    } else if (_action === 'remove_favourite') {
-      result = await ofetch(
-        `${API_BASE_URL}/campsites/${campsite_id}/favourites`, {
-          method: 'DELETE',
-          headers: {
-            'Authorization': `Bearer ${authToken}`
-          },
-          parseResponse: JSON.parse
-        })
-        .then((res)=>{
-          return res;
-        })
-        .catch((err) => {
-          error = true;
-          return err;
-        });
-    }
-    console.log('result: ', result);
-
-    if (error) {
-      return json({ error: true, message: result }, { status: 500 });
-    }
-    return json({ success: true, message: result }, { status: 200 });
-  }
-
-  return json(
-    { error: { message: 'Method Not Allowed' } },
-    { status: 405 });
-};
-
 export default function Index() {
   const { data, meta } = useLoaderData();
   const { pagination } = meta;
-
 
   return (
     <WithTopbar>
@@ -136,13 +64,13 @@ function ListingItem({ data, index }) {
 
   return (
     <div className="flex flex-col flex-none gap-2 relative">
-      <Link to={`/campsites/${data.attributes.slug}`} className='contents'>
+      <Link to={`/campsites/${data.attributes.slug}`} className="contents">
         <img
           className="aspect-square w-full flex-none bg-gray-200 rounded-xl object-cover"
           src={`${data.attributes.cover_image}?lock=${index}`}
         />
         <div className="text-sm text-neutral-500">
-          <p className="capitalize text-black font-semibold">
+          <p className="capitalize text-black font-semibold text-base">
             {data.attributes.title}
           </p>
           <p>
@@ -157,13 +85,7 @@ function ListingItem({ data, index }) {
         </div>
       </Link>
       {userData &&
-      <fetcher.Form method="POST">
-        <input
-          hidden
-          type="hidden"
-          name="campsite_id"
-          value={data.id}
-        />
+      <fetcher.Form method="POST" action={`/api/v1/campsites/${data.id}`}>
         <button
           name="_action"
           value={data.attributes.favourites_users.includes(parseInt(userData?.id)) ? 'remove_favourite' : 'add_favourite'}
