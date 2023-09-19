@@ -1,6 +1,6 @@
 class Api::V1::CampsitesController < ApplicationController
-  before_action :ensure_record_exists, only: [:update, :destroy]
   before_action :doorkeeper_authorize!, :set_current_user, only: [:create, :update, :destroy]
+  before_action :ensure_record_exists, only: [:update, :destroy]
   before_action :set_campsite_by_current_user, only: [:update, :destroy]
 
   def index
@@ -102,9 +102,10 @@ class Api::V1::CampsitesController < ApplicationController
   private
 
   def ensure_record_exists
-    @record = Campsite
-      .preload(:visits, :reviews, :favourites, :features, :admins, :campsite_fee, :campsite_address, :campsite_location)
-      .find(params[:id])
+    @record =
+      @current_user.administered_campsites
+        .where(deleted_at: nil)
+        .find(params[:id])
     render json: error_json(404), status: 404 unless @record
   end
 
