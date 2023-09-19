@@ -4,7 +4,7 @@ import { validationError } from 'remix-validated-form';
 
 import { API_BASE_URL } from '~/config.server';
 import { Auth } from '~/modules/auth/auth.server';
-import { validator } from '~/routes/campsites/schema';
+import { validator } from '~/routes/campsites/$slug/schema';
 
 export const action = async ({ request, params }: DataFunctionArgs) => {
   const { campsite_id } = params;

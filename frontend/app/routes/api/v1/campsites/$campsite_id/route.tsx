@@ -16,7 +16,7 @@ export const action = async ({ request, params }: DataFunctionArgs) => {
 
   const { _action } = fromFormData;
 
-  let error = false;
+  const error = false;
 
   // if (_action === 'create_favourite' || _action === 'delete_favourite') {
   //   const authToken = await Auth.getToken(request);

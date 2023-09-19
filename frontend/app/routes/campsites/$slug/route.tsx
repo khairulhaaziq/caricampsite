@@ -12,10 +12,10 @@ import FormButton from '~/components/form/FormButton';
 import FormTextField from '~/components/form/FormTextField';
 import IconHeart from '~/components/icons/IconHeart';
 import IconStar from '~/components/icons/IconStar';
+import { ClientOnly } from '~/utils/ClientOnly';
 import { cn } from '~/utils/cn';
 import { getApiData } from '~/utils/loader';
 
-import { ClientOnly } from './ClientOnly';
 import LeafletMap from './LeafletMap.client';
 import { validator } from './schema';
 
