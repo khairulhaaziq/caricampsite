@@ -13,7 +13,7 @@ import FormButton from '~/components/form/FormButton';
 import FormTextField from '~/components/form/FormTextField';
 import IconHeart from '~/components/icons/IconHeart';
 import IconStar from '~/components/icons/IconStar';
-import { API_BASE_URL } from '~/config.server';
+import { Campsite } from '~/modules/campsite/campsite.server';
 import { ClientOnly } from '~/utils/ClientOnly';
 import { cn } from '~/utils/cn';
 
@@ -23,18 +23,7 @@ import { validator } from './schema';
 dayjs.extend(relativeTime);
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
-  const queryParams = (new URL(request.url).searchParams).toString();
-
-  const { pathname } = new URL(request.url);
-
-  const result = await fetch(
-    `${API_BASE_URL}${pathname}?slug=true&${queryParams}`)
-    .then(async (res)=>{
-      const json = await res.json();
-      return json;
-    });
-
-  return json(result);
+  return await Campsite.getCampsite(request, { slug: params.slug! });
 };
 
 export default function CampsiteSlug() {
@@ -233,7 +222,7 @@ function ReviewItem({ review }) {
     return (
       <ReviewInputField
         campsite_id={review.campsite_id}
-        action="update_review"
+        action="update"
         onSuccess={()=>setIsEditingReview(false)}
         defaultReviewValue={review}
       />
@@ -264,7 +253,7 @@ function ReviewItem({ review }) {
       >
         <button
           name="_action"
-          value="delete_review"
+          value="delete"
         >Delete</button>
       </fetcher.Form>
     </div>)
@@ -274,7 +263,7 @@ function ReviewItem({ review }) {
   }
 }
 
-function ReviewInputField({ campsite_id, action='create_review', onSuccess, defaultReviewValue }: { campsite_id: string | number; action?: 'create_review' | 'update_review'; onSuccess?: ()=>void; defaultReviewValue?: any }) {
+function ReviewInputField({ campsite_id, action='create', onSuccess, defaultReviewValue }: { campsite_id: string | number; action?: 'create' | 'update'; onSuccess?: ()=>void; defaultReviewValue?: any }) {
   const [rating, setRating] = useState(0);
   const fetcher = useFetcher();
   const formId = 'review-form';
