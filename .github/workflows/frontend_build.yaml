@@ -23,7 +23,7 @@ jobs:
       uses: actions/setup-node@v2
 
     - name: Install
-      run: npm run install
+      run: npm install
       working-directory: frontend
 
     - name: Build
