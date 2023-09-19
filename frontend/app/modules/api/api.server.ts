@@ -5,7 +5,7 @@ import { API_BASE_URL } from '~/config.server';
 import { Auth } from '~/modules/auth/auth.server';
 import { commitSession, getSession } from '~/utils/sessions.server';
 
-type RequestMethod = 'GET' | 'POST' | 'PUT' | 'DELETE'
+export type RequestMethod = 'GET' | 'POST' | 'PUT' | 'DELETE'
 export type RequestAction = 'get' | 'create' | 'update' | 'delete'
 
 const MapRequestAction: Record<RequestAction, RequestMethod> = {
@@ -19,7 +19,7 @@ interface ForwardRequestOptions {
   body?:any;
   method?: RequestMethod;
   action?: RequestAction;
-  redictTo?: string;
+  redirectTo?: string;
   toastMessage?: string;
 }
 
@@ -28,7 +28,7 @@ class Api {
     body,
     method,
     action,
-    redictTo,
+    redirectTo,
     toastMessage,
   }: ForwardRequestOptions = {}
   ){
@@ -73,7 +73,7 @@ class Api {
       return json({ error: true, message: result }, { status: 500 });
     }
 
-    if (redictTo) {
+    if (redirectTo) {
       if (toastMessage) {
         const session = await getSession(
           request.headers.get('Cookie')
@@ -84,13 +84,13 @@ class Api {
           toastMessage
         );
 
-        return redirect(redictTo, {
+        return redirect(redirectTo, {
           headers: {
             'Set-Cookie': await commitSession(session),
           },
         });
       }
-      return redirect(redictTo);
+      return redirect(redirectTo);
     }
     return json({ success: true, message: result }, { status: 200 });
   }
@@ -98,12 +98,21 @@ class Api {
 
 
 function parsePath(path: string) {
-  const parts = path.split('/');
+  const withoutQuery = path.split('?');
+  const parts = withoutQuery[0].split('/');
 
+  // Find the index of 'v1' in the path
   const campsitesIndex = parts.indexOf('v1');
 
   if (campsitesIndex !== -1) {
-    return '/' + parts.slice(campsitesIndex + 1).join('/');
+    // Check if there's a part after 'v1'
+    if (campsitesIndex + 1 < parts.length) {
+      // Join all parts after 'v1' and return the result
+      return '/' + parts.slice(campsitesIndex + 1).join('/');
+    } else {
+      // If there are no parts after 'v1', return '/' to avoid 'undefined'
+      return '/';
+    }
   } else {
     return path;
   }

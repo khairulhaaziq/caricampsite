@@ -34,7 +34,11 @@ class Api::V1::CampsitesController < ApplicationController
   end
 
   def show
-    campsite = render_serializer(CampsiteSerializer, @record)
+    campsite = if params[:view] == "edit"
+      render_serializer(CampsiteFormSerializer, @record)
+    else
+      render_serializer(CampsiteSerializer, @record)
+    end
 
     render json: campsite, status: campsite[:code] || 200
   end

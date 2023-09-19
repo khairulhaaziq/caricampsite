@@ -1,9 +1,18 @@
-import { useCallback, useState } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useState
+} from 'react';
 import { useDropzone } from 'react-dropzone';
 
-export default function ImageDropzone({ validate }: {validate: ()=>void}) {
-  const [files, setFiles] = useState([]);
+export default function ImageDropzone({ validate, defaultFileUrls }: {validate: ()=>void; defaultFileUrls?: string[]}) {
+  const [files, setFiles] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(()=>{
+    if (defaultFileUrls)
+      setFiles(()=>[...defaultFileUrls]);
+  }, []);
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     const form = new FormData();

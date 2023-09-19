@@ -14,6 +14,7 @@ export const action = async ({ request }: DataFunctionArgs) => {
   const formData = await request.formData();
 
   const { _action: action } = Object.fromEntries(formData);
+
   let body;
 
   if (action === 'create' || action === 'update') {

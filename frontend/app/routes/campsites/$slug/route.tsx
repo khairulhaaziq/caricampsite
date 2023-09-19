@@ -1,5 +1,6 @@
 import { json, type LoaderFunctionArgs } from '@remix-run/node';
 import {
+  Link,
   useFetcher,
   useLoaderData,
   useRouteLoaderData
@@ -151,7 +152,7 @@ function Header({ title, visits_users, favourites_users, user_id, campsite_id, a
 
           {isOwner &&
           <>
-            <button className="bg-white rounded-xl px-5 h-10 items-center border border-[#DBDBDB]">Edit</button>
+            <Link to="./edit" className="bg-white rounded-xl px-5 h-10 items-center border border-[#DBDBDB]">Edit</Link>
             <deleteCampsiteFetcher.Form
               method="POST"
               action={`/api/v1/campsites/${campsite_id}`}

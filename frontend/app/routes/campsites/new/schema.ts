@@ -1,3 +1,4 @@
+import { withZod } from '@remix-validated-form/with-zod';
 import { z } from 'zod';
 import { zfd } from 'zod-form-data';
 
@@ -74,3 +75,5 @@ export const schema = z.object({
       .min(3, { message: 'No. must be at least 3 characters.' }).optional())
     .optional(),
 });
+
+export const validator = withZod(schema);
