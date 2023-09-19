@@ -100,6 +100,7 @@ class Api::V1::CampsitesController < ApplicationController
         favourites: :user,
         admins: :user
       )
+      .where(deleted_at: nil)
       .find_by(slug: params[:slug])
 
     render json: error_json(404), status: 404 unless @record

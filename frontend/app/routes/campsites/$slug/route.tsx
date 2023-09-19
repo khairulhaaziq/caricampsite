@@ -31,55 +31,60 @@ export default function CampsiteSlug() {
   return (
     <div className="flex justify-center px-6 sm:px-8 md:px-10 lg:px-14 xl:px-16 2xl:px-20 py-16">
       <div className="w-full max-w-6xl flex flex-col gap-5">
-        <Header
-          title={attributes.title}
-          visits_users={attributes.visits_users}
-          favourites_users={attributes.favourites_users}
-          user_id={user?.data?.id}
-          campsite_id={data?.id}
-        />
-        <ImageGrid images={attributes.images} />
-
-        <div className="flex gap-6 py-8">
-          <MainSectionLayout className="flex-grow overflow-clip">
-
-            <DescriptionSection
-              description={attributes.description}
-              className="border-t-0"
+        {attributes ?
+          <>
+            <Header
+              title={attributes.title}
+              visits_users={attributes.visits_users}
+              favourites_users={attributes.favourites_users}
+              user_id={user?.data?.id}
+              campsite_id={data?.id}
             />
+            <ImageGrid images={attributes.images} />
 
-            <FeaturesSection featureList={attributes.feature_options} />
+            <div className="flex gap-6 py-8">
+              <MainSectionLayout className="flex-grow overflow-clip">
 
-            <ActivitiesSection activityList={attributes.activity_options} />
+                <DescriptionSection
+                  description={attributes.description}
+                  className="border-t-0"
+                />
 
-            <AmenitiesSection amenityList={attributes.amenity_options} />
+                <FeaturesSection featureList={attributes.feature_options} />
 
-            <AccessibilityFeaturesSection accessibilityFeatureList={attributes.accessibility_feature_options} />
+                <ActivitiesSection activityList={attributes.activity_options} />
 
-            <ReviewSection
-              reviews={attributes.reviews}
-              user={user}
-              campsite_id={attributes.id}
-              reviews_users={attributes.reviews_users}
-            />
+                <AmenitiesSection amenityList={attributes.amenity_options} />
 
-            {attributes && (
-              <div>{JSON.stringify(attributes)}</div>
-            )}
-          </MainSectionLayout>
-          <div className="pr-3 w-[400px] flex-none">
-            <div className="border rounded-2xl p-5 flex flex-col gap-4 bg-white shadow-dropshadow/button">
-              <ClientOnly fallback={<div></div>}>
-                {()=><LeafletMap />}
-              </ClientOnly>
-              <div className="flex gap-3 font-semibold flex-col">
-                <button className="bg-[#E8E8E8] rounded-xl px-4 h-12 items-center">Call now</button>
-                <button className="bg-[#E8E8E8] rounded-xl px-4 h-12 items-center">Get directions</button>
+                <AccessibilityFeaturesSection accessibilityFeatureList={attributes.accessibility_feature_options} />
+
+                <ReviewSection
+                  reviews={attributes.reviews}
+                  user={user}
+                  campsite_id={attributes.id}
+                  reviews_users={attributes.reviews_users}
+                />
+
+                {attributes && (
+                  <div>{JSON.stringify(attributes)}</div>
+                )}
+              </MainSectionLayout>
+              <div className="pr-3 w-[400px] flex-none">
+                <div className="border rounded-2xl p-5 flex flex-col gap-4 bg-white shadow-dropshadow/button">
+                  <ClientOnly fallback={<div></div>}>
+                    {()=><LeafletMap />}
+                  </ClientOnly>
+                  <div className="flex gap-3 font-semibold flex-col">
+                    <button className="bg-[#E8E8E8] rounded-xl px-4 h-12 items-center">Call now</button>
+                    <button className="bg-[#E8E8E8] rounded-xl px-4 h-12 items-center">Get directions</button>
+                  </div>
+                  <AddressSection address={attributes.campsite_address} />
+                </div>
               </div>
-              <AddressSection address={attributes.campsite_address} />
             </div>
-          </div>
-        </div>
+          </> :
+          <div>Record not found</div>
+        }
       </div>
     </div>
   );
