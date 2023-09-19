@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  @apply text-black
+}
+
 @layer base {
 	:root {
 		--black: #18181b;

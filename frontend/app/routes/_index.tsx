@@ -136,13 +136,13 @@ function ListingItem({ data, index }) {
 
   return (
     <div className="flex flex-col flex-none gap-2 relative">
-      <Link to={`/campsites/${data.attributes.slug}`}>
+      <Link to={`/campsites/${data.attributes.slug}`} className='contents'>
         <img
           className="aspect-square w-full flex-none bg-gray-200 rounded-xl object-cover"
           src={`${data.attributes.cover_image}?lock=${index}`}
         />
         <div className="text-sm text-neutral-500">
-          <p className="capitalize text-base text-black font-medium">
+          <p className="capitalize text-black font-semibold">
             {data.attributes.title}
           </p>
           <p>

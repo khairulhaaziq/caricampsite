@@ -1,21 +1,33 @@
 import { type DataFunctionArgs, json } from '@remix-run/node';
 import { useLoaderData, useRouteLoaderData } from '@remix-run/react';
 import { withZod } from '@remix-validated-form/with-zod';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
 import { ofetch } from 'ofetch';
+import { useState } from 'react';
 import { ValidatedForm, validationError } from 'remix-validated-form';
 import { z } from 'zod';
 import { zfd } from 'zod-form-data';
 
 import FormButton from '~/components/form/FormButton';
 import FormTextField from '~/components/form/FormTextField';
+import IconStar from '~/components/icons/IconStar';
 import { API_BASE_URL } from '~/config.server';
 import { Auth } from '~/modules/auth/auth.server';
+import { cn } from '~/utils/cn';
 import { getApiData } from '~/utils/loader';
 
+dayjs.extend(relativeTime);
+
 export const schema = z.object({
+  rating: zfd
+    .numeric(z
+      .number({ required_error: 'Rating is required.' })
+      .min(1, { message: 'Rating is required' })
+      .max(5, { message: 'Max rating is 5' })),
   body: zfd
     .text(z
-      .string({ required_error: 'Please enter your email.' })
+      .string({ required_error: 'Content is required.' })
       .min(3, { message: 'Body must be more than 3 characters' })),
   campsite_id: zfd
     .numeric(z
@@ -43,7 +55,7 @@ export const action = async ({ request }: DataFunctionArgs) => {
   if (result.error)
     return validationError(result.error, result.submittedData);
 
-  const { _action, body, campsite_id } = result.data;
+  const { _action, campsite_id, ...body } = result.data;
 
   if (_action === 'create_review') {
 
@@ -54,7 +66,7 @@ export const action = async ({ request }: DataFunctionArgs) => {
     const result = await ofetch(
       `${API_BASE_URL}/campsites/${campsite_id}/reviews`, {
         method: 'POST',
-        body: { body },
+        body,
         headers: {
           'Authorization': `Bearer ${authToken}`
         },
@@ -89,16 +101,39 @@ export default function CampsiteSlug() {
         <Header title={attributes.title} />
         <ImageGrid images={attributes.images} />
 
-        <p>{attributes.description}</p>
+        <div className="flex gap-6 py-8">
+          <MainSectionLayout className="flex-grow overflow-clip">
 
-        {user && !attributes.reviews_users.includes(parseInt(user?.data?.id)) &&
-          <ReviewInputField id={attributes.id} />}
+            <DescriptionSection
+              description={attributes.description}
+              className="border-t-0"
+            />
 
-        <ReviewsList reviews={attributes.reviews} />
+            <FeaturesSection featureList={attributes.feature_options} />
 
-        {attributes && (
-          <div>{JSON.stringify(attributes)}</div>
-        )}
+            <ActivitiesSection activityList={attributes.activity_options} />
+
+            <AmenitiesSection amenityList={attributes.amenity_options} />
+
+            <AccessibilityFeaturesSection accessibilityFeatureList={attributes.accessibility_feature_options} />
+
+            {attributes && (
+              <div>{JSON.stringify(attributes)}</div>
+            )}
+          </MainSectionLayout>
+          <div className="pr-3 w-[400px] flex-none">
+            <div className="border rounded-xl p-6 flex flex-col gap-3">
+              <h3 className="text-xl font-semibold">Reviews</h3>
+              {!user && (<div>Log in to add a review!</div>)}
+              {user && !attributes.reviews_users.includes(parseInt(user?.data?.id)) &&
+                <ReviewInputField campsite_id={attributes.id} />}
+
+              <ReviewsList reviews={attributes.reviews} />
+
+              <p>{JSON.stringify(attributes.reviews)}</p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -154,28 +189,155 @@ function ImageGrid({ images, cover_image }: {images: string[]; cover_image?: str
 
 function ReviewsList({ reviews }: {reviews: any[]}) {
   return (
-    <div>
+    <div className="[&>*:not:first-child]:border-b border-neutral-200">
       {reviews.map(review=>(
-        <div key={review.id}>
-          <p>{JSON.stringify(review)}</p>
-        </div>
+        <ReviewItem key={review.id} review={review}/>
       ))}
     </div>
   );
 }
 
-function ReviewInputField({ id }) {
+function ReviewItem({ review }) {
+  const rating = parseInt(review.rating);
+  const parsedTimestamp = dayjs(review.created_at);
+  const timeDifference = dayjs().to(parsedTimestamp);
 
   return (
-    <ValidatedForm validator={validator} method="POST">
+    <div className="text-sm space-y-2 text-neutral-600">
+      <div className="flex text-yellow-500">
+        {[...Array(rating).keys()].map(i=>(
+          <IconStar />
+        ))}
+        {[...Array(5-rating).keys()].map(i=>(
+          <IconStar outline />
+        ))}
+      </div>
+      <p className="text-base text-black">{review.body}</p>
+      <p className="">{review.user?.email}</p>
+      <p className="text-right">{timeDifference}</p>
+    </div>
+  );
+}
+
+function ReviewInputField({ campsite_id }: { campsite_id: string | number }) {
+  const [rating, setRating] = useState(0);
+
+  return (
+    <ValidatedForm
+      validator={validator}
+      method="POST"
+      className="flex flex-col gap-3"
+    >
+      <div className="flex text-yellow-500">
+        {[...Array(5).keys()].map((i, index)=>(
+          <button
+            key={i}
+            type="button"
+            onClick={()=>setRating(index+1)}
+            className="cursor-default"
+          >
+            {index + 1 <= rating ?
+              <IconStar /> :
+              <IconStar outline />}
+          </button>
+        ))}
+      </div>
+      <input
+        hidden
+        type="hidden"
+        name="rating"
+        value={rating}
+      />
       <FormTextField textarea name="body" />
       <input
         hidden
         type="hidden"
         name="campsite_id"
-        value={id}
+        value={campsite_id}
       />
-      <FormButton name="_action" value="create_review">Add review</FormButton>
+      <FormButton
+        name="_action"
+        value="create_review"
+        label="Add review"
+      />
     </ValidatedForm>
+  );
+}
+
+function DescriptionSection({ description, ...props }: { description: string} & React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <SectionLayout {...props}>
+      <p>{description}</p>
+    </SectionLayout>
+  );
+}
+
+function FeaturesSection({ featureList, ...props }: { featureList: string[]} & React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <SectionLayout {...props}>
+      <SectionHeader title="Features you can expect" />
+
+      <div className="grid grid-cols-2 gap-3">
+        {featureList.map(feature=><p>{feature}</p>)}
+      </div>
+    </SectionLayout>
+  );
+}
+
+function ActivitiesSection({ activityList, ...props }: { activityList: string[]} & React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <SectionLayout {...props}>
+      <SectionHeader title="Activities you can do here" />
+
+      <div className="grid grid-cols-2 gap-3">
+        {activityList.map(activity=><p>{activity}</p>)}
+      </div>
+    </SectionLayout>
+  );
+}
+
+function AmenitiesSection({ amenityList, ...props }: { amenityList: string[]} & React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <SectionLayout {...props}>
+      <SectionHeader title="What this place offers" />
+
+      <div className="grid grid-cols-2 gap-3">
+        {amenityList.map(amenity=><p>{amenity}</p>)}
+      </div>
+    </SectionLayout>
+  );
+}
+
+function AccessibilityFeaturesSection({ accessibilityFeatureList, ...props }: { accessibilityFeatureList: string[]} & React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <SectionLayout {...props}>
+      <SectionHeader title="Accessibility" />
+
+      <div className="grid grid-cols-2 gap-3">
+        {accessibilityFeatureList.map(accessibilityFeature=><p>{accessibilityFeature}</p>)}
+      </div>
+    </SectionLayout>
+  );
+}
+
+function MainSectionLayout({ children, className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div className={cn('', className)} {...props}>
+      {children}
+    </div>
+  );
+}
+
+function SectionHeader({ title }: { title: string}) {
+  return (
+    <h3 className="text-xl font-semibold">{title}</h3>
+  );
+}
+
+function SectionLayout({ children, className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div  className={cn('space-y-8 text-sm py-10 border-t border-neutral-100 ', className)} {...props}>
+      {children}
+    </div>
   );
 }

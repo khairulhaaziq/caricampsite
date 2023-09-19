@@ -18,7 +18,6 @@ class CampsiteSerializer
     :campsite_address,
     :campsite_location,
     # many
-    :reviews,
     :attachments
   )
 
@@ -32,6 +31,13 @@ class CampsiteSerializer
 
   attribute :favourites_users do |obj|
     obj.favourites.map { |x| x.user.id }
+  end
+
+  attribute :reviews do |obj|
+    obj.reviews.map do |review|
+      user = User.where(id: review.user_id).first
+      review.attributes.merge(user: {id: user.id, email: user.email})
+    end
   end
 
   attribute :reviews_users do |obj|
