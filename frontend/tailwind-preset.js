@@ -36,6 +36,11 @@ module.exports = {
           DEFAULT: '#EAAC0C',
         },
       },
+      boxShadow: {
+        'dropshadow/field': '0px 1px 2px 0px rgba(0, 0, 0, 0.05)',
+        'dropshadow/button': '0px 1px 4px 0px rgba(0, 0, 0, 0.05)',
+        'dropshadow/floating': '0px 6px 24px 0px rgba(0, 0, 0, 0.10)',
+      },
     }
   }
 };

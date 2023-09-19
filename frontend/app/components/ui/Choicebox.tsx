@@ -12,7 +12,7 @@ const choiceboxVariantsClass = tv({
     },
   },
   slots: {
-    root: 'group relative flex gap-2 items-end h-20 px-4 py-4 shadow-[0_0_0_1px_inset_var(--outline),0px_1px_4px_0px_rgba(0,0,0,0.05)] hover:shadow-[0_0_0_1px_inset_var(--outline-hover)] rounded-lg w-full data-[state=checked]:shadow-[0_0_0_2px_inset_var(--black)] data-[state=checked]:focus:shadow-[0_0_0_2px_inset_var(--black),0_0_0_2px_rgba(0,0,0,0.2)] box-border transition-all duration-200  focus:shadow-[0_0_0_2px_rgba(0,0,0,0.3)] outline-none ',
+    root: 'group relative flex gap-2 items-end h-20 px-4 py-4 bg-white shadow-[0_0_0_1px_inset_var(--outline)] hover:shadow-[0_0_0_1px_inset_var(--outline-hover)] rounded-lg w-full data-[state=checked]:shadow-[0_0_0_2px_inset_var(--black)] data-[state=checked]:focus:shadow-[0_0_0_2px_inset_var(--black),0_0_0_2px_rgba(0,0,0,0.2)] box-border transition-all duration-200  focus:shadow-[0_0_0_2px_rgba(0,0,0,0.3)] outline-none ',
     indicatorBox:
       'absolute right-3 top-3 bg-white flex flex-none h-5 w-5 appearance-none items-center justify-center rounded-full group-data-[state=unchecked]:border-2 border-outline group-data-[state=checked]:bg-black text-white shadow-[0_2px_10px] outline-none',
     indicator: '',

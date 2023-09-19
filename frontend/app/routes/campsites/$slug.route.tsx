@@ -1,94 +1,25 @@
-import { type DataFunctionArgs, json } from '@remix-run/node';
-import { useLoaderData, useRouteLoaderData } from '@remix-run/react';
-import { withZod } from '@remix-validated-form/with-zod';
+import {
+  useFetcher,
+  useLoaderData,
+  useRouteLoaderData
+} from '@remix-run/react';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import { ofetch } from 'ofetch';
-import { useState } from 'react';
-import { ValidatedForm, validationError } from 'remix-validated-form';
-import { z } from 'zod';
-import { zfd } from 'zod-form-data';
+import { useEffect, useState } from 'react';
+import { ValidatedForm } from 'remix-validated-form';
 
 import FormButton from '~/components/form/FormButton';
 import FormTextField from '~/components/form/FormTextField';
+import IconHeart from '~/components/icons/IconHeart';
 import IconStar from '~/components/icons/IconStar';
-import { API_BASE_URL } from '~/config.server';
-import { Auth } from '~/modules/auth/auth.server';
 import { cn } from '~/utils/cn';
 import { getApiData } from '~/utils/loader';
 
+import { validator } from './schema';
+
 dayjs.extend(relativeTime);
 
-export const schema = z.object({
-  rating: zfd
-    .numeric(z
-      .number({ required_error: 'Rating is required.' })
-      .min(1, { message: 'Rating is required' })
-      .max(5, { message: 'Max rating is 5' })),
-  body: zfd
-    .text(z
-      .string({ required_error: 'Content is required.' })
-      .min(3, { message: 'Body must be more than 3 characters' })),
-  campsite_id: zfd
-    .numeric(z
-      .number({ required_error: 'Campsite id is required.' })),
-  _action: zfd
-    .text(z
-      .string({ required_error: '_action is required.' }))
-});
-
-const validator = withZod(schema);
-
 export const loader = getApiData();
-
-export const action = async ({ request }: DataFunctionArgs) => {
-  const tokenValidated = await Auth.validateToken(request);
-
-  if (!tokenValidated) {
-    return Auth.unauthorizedResponse(request);
-  }
-
-  const result = await validator.validate(
-    await request.formData()
-  );
-
-  if (result.error)
-    return validationError(result.error, result.submittedData);
-
-  const { _action, campsite_id, ...body } = result.data;
-
-  if (_action === 'create_review') {
-
-    let error = false;
-
-    const authToken = await Auth.getToken(request);
-
-    const result = await ofetch(
-      `${API_BASE_URL}/campsites/${campsite_id}/reviews`, {
-        method: 'POST',
-        body,
-        headers: {
-          'Authorization': `Bearer ${authToken}`
-        },
-        parseResponse: JSON.parse
-      })
-      .then((res)=>{
-        return res;
-      })
-      .catch((err) => {
-        error = true;
-        return err;
-      });
-    if (error) {
-      return json({ error: true, message: result }, { status: 500 });
-    }
-    return json({ success: true, message: result }, { status: 200 });
-  }
-
-  return json(
-    { error: { message: 'Method Not Allowed' } },
-    { status: 405 });
-};
 
 export default function CampsiteSlug() {
   const { user } = useRouteLoaderData('root');
@@ -98,7 +29,12 @@ export default function CampsiteSlug() {
   return (
     <div className="flex justify-center px-6 sm:px-8 md:px-10 lg:px-14 xl:px-16 2xl:px-20 pt-20 pb-16">
       <div className="w-full max-w-6xl flex flex-col gap-5">
-        <Header title={attributes.title} />
+        <Header
+          title={attributes.title}
+          favourites_users={attributes.favourites_users}
+          user_id={user?.data?.id}
+          campsite_id={data?.id}
+        />
         <ImageGrid images={attributes.images} />
 
         <div className="flex gap-6 py-8">
@@ -117,20 +53,35 @@ export default function CampsiteSlug() {
 
             <AccessibilityFeaturesSection accessibilityFeatureList={attributes.accessibility_feature_options} />
 
+            <ReviewSection
+              reviews={attributes.reviews}
+              user={user}
+              campsite_id={attributes.id}
+              reviews_users={attributes.reviews_users}
+            />
+
             {attributes && (
               <div>{JSON.stringify(attributes)}</div>
             )}
           </MainSectionLayout>
           <div className="pr-3 w-[400px] flex-none">
-            <div className="border rounded-xl p-6 flex flex-col gap-3">
-              <h3 className="text-xl font-semibold">Reviews</h3>
-              {!user && (<div>Log in to add a review!</div>)}
-              {user && !attributes.reviews_users.includes(parseInt(user?.data?.id)) &&
-                <ReviewInputField campsite_id={attributes.id} />}
-
-              <ReviewsList reviews={attributes.reviews} />
-
-              <p>{JSON.stringify(attributes.reviews)}</p>
+            <div className="border rounded-2xl p-5 flex flex-col gap-4 bg-white shadow-dropshadow/button">
+              <div className="rounded-lg overflow-hidden aspect-video">
+                <iframe
+                  src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d15934.89536826058!2d101.742476!3d3.1672667!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31cc376959f51fbf%3A0x46fe2a707c9f4efb!2sEmpat.17%20Coffee!5e0!3m2!1sen!2smy!4v1695098629775!5m2!1sen!2smy"
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  allowFullScreen=""
+                  loading="lazy"
+                  referrerpolicy="no-referrer-when-downgrade"
+                ></iframe>
+              </div>
+              <div className="flex gap-3 font-semibold flex-col">
+                <button className="bg-[#E8E8E8] rounded-xl px-4 h-12 items-center">Call now</button>
+                <button className="bg-[#E8E8E8] rounded-xl px-4 h-12 items-center">Get directions</button>
+              </div>
+              <AddressSection address={attributes.campsite_address} />
             </div>
           </div>
         </div>
@@ -139,9 +90,11 @@ export default function CampsiteSlug() {
   );
 }
 
-function Header({ title }: { title: string }) {
+function Header({ title, favourites_users, user_id, campsite_id }: { title: string; favourites_users: number[]; user_id: string; campsite_id: number }) {
+  const fetcher = useFetcher();
+
   return (
-    <div className="flex justify-between pt-8">
+    <div className="flex justify-between pt-8 items-center">
       <div className="text-neutral-500">
         <h1 className="font-bold text-2xl sm:text-3xl capitalize text-black">
           {title}
@@ -151,10 +104,29 @@ function Header({ title }: { title: string }) {
       </div>
 
       <div>
-        <p>Favourite</p>
-        <p>Share</p>
+        <div className="flex gap-2 font-medium">
+          <button className="bg-white rounded-xl px-5 h-10 items-center border border-[#DBDBDB]">Visit</button>
+          <fetcher.Form
+            method="POST"
+            action={`/api/v1/campsites/${campsite_id}`}
+            onSubmit={(e)=>!user_id && e.preventDefault()}
+          >
+            <button
+              name="_action"
+              value={favourites_users.includes(parseInt(user_id)) ? 'remove_favourite' : 'add_favourite'}
+              className="active:scale-90 transition-all bg-white rounded-xl px-5 h-10 items-center flex gap-2 border border-[#DBDBDB]"
+            >
+              <span className={`${
+                favourites_users.includes(parseInt(user_id)) ?
+                  'text-rose-600' :
+                  'text-rose-300'
+              }`}
+              ><IconHeart /></span> <span>Favourite </span><span className="rounded-full bg-[#E8E8E8] h-5 w-5 flex items-center justify-center text-sm">{favourites_users.length}</span>
+            </button>
+          </fetcher.Form>
+          <button className="bg-white rounded-xl px-5 h-10 items-center border border-[#DBDBDB]">Share</button>
+        </div>
       </div>
-
     </div>
   );
 }
@@ -187,6 +159,25 @@ function ImageGrid({ images, cover_image }: {images: string[]; cover_image?: str
   );
 }
 
+function ReviewSection({ reviews, campsite_id, user, reviews_users, ...props }: {reviews: any[]} & React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <SectionLayout {...props}>
+      <SectionHeader title="Reviews" />
+
+      <>
+        {!user && (<div>Log in to add a review!</div>)}
+        {user && !reviews_users.includes(parseInt(user?.data?.id)) &&
+        <ReviewInputField campsite_id={campsite_id} />}
+
+        <ReviewsList reviews={reviews} />
+
+        <p>{JSON.stringify(reviews)}</p>
+      </>
+    </SectionLayout>
+
+  );
+}
+
 function ReviewsList({ reviews }: {reviews: any[]}) {
   return (
     <div className="[&>*:not:first-child]:border-b border-neutral-200">
@@ -201,31 +192,81 @@ function ReviewItem({ review }) {
   const rating = parseInt(review.rating);
   const parsedTimestamp = dayjs(review.created_at);
   const timeDifference = dayjs().to(parsedTimestamp);
+  const [isEditingReview, setIsEditingReview] = useState(false);
+  const { user } = useRouteLoaderData('root');
+  const fetcher = useFetcher();
 
-  return (
-    <div className="text-sm space-y-2 text-neutral-600">
-      <div className="flex text-yellow-500">
-        {[...Array(rating).keys()].map(i=>(
-          <IconStar />
-        ))}
-        {[...Array(5-rating).keys()].map(i=>(
-          <IconStar outline />
-        ))}
+  const isOwner = parseInt(user?.data?.id) === parseInt(review.user?.id);
+
+  if (isEditingReview) {
+    return (
+      <ReviewInputField
+        campsite_id={review.campsite_id}
+        action="update_review"
+        onSuccess={()=>setIsEditingReview(false)}
+        defaultReviewValue={review}
+      />
+    );
+  }
+
+  else {
+    return (
+      <div className="text-sm flex gap-2 text-neutral-500">
+        <div className="space-y-2 flex-grow">
+          <div className="flex text-yellow-500">
+            {[...Array(rating).keys()].map(i=>(
+              <IconStar />
+            ))}
+            {[...Array(5-rating).keys()].map(i=>(
+              <IconStar outline />
+            ))}
+          </div>
+          <p className="text-base text-black whitespace-pre-wrap">{review.body}</p>
+          <p className="">{review.user?.email} <span>•</span> {timeDifference}</p>
+        </div>
+        {isOwner &&
+    (<div className="flex gap-2 h-fit">
+      <button onClick={()=>setIsEditingReview(!isEditingReview)}>Edit</button>
+      <fetcher.Form
+        method="POST"
+        action={`/api/v1/campsites/${review.campsite_id.toString()}/reviews`}
+      >
+        <button
+          name="_action"
+          value="delete_review"
+        >Delete</button>
+      </fetcher.Form>
+    </div>)
+        }
       </div>
-      <p className="text-base text-black">{review.body}</p>
-      <p className="">{review.user?.email}</p>
-      <p className="text-right">{timeDifference}</p>
-    </div>
-  );
+    );
+  }
 }
 
-function ReviewInputField({ campsite_id }: { campsite_id: string | number }) {
+function ReviewInputField({ campsite_id, action='create_review', onSuccess, defaultReviewValue }: { campsite_id: string | number; action?: 'create_review' | 'update_review'; onSuccess?: ()=>void; defaultReviewValue?: any }) {
   const [rating, setRating] = useState(0);
+  const fetcher = useFetcher();
+
+  useEffect(()=>{
+    if (fetcher.data?.success) {
+      onSuccess && onSuccess();
+    }
+  }, [fetcher.data]);
+
+  useEffect(()=>{
+    setRating(defaultReviewValue?.rating || 0);
+  }, []);
 
   return (
     <ValidatedForm
       validator={validator}
+      fetcher={fetcher}
       method="POST"
+      defaultValues={{
+        rating: defaultReviewValue?.rating,
+        body: defaultReviewValue?.body
+      }}
+      action={`/api/v1/campsites/${campsite_id.toString()}/reviews`}
       className="flex flex-col gap-3"
     >
       <div className="flex text-yellow-500">
@@ -237,8 +278,8 @@ function ReviewInputField({ campsite_id }: { campsite_id: string | number }) {
             className="cursor-default"
           >
             {index + 1 <= rating ?
-              <IconStar /> :
-              <IconStar outline />}
+              <IconStar size={6}  /> :
+              <IconStar size={6} outline />}
           </button>
         ))}
       </div>
@@ -249,15 +290,9 @@ function ReviewInputField({ campsite_id }: { campsite_id: string | number }) {
         value={rating}
       />
       <FormTextField textarea name="body" />
-      <input
-        hidden
-        type="hidden"
-        name="campsite_id"
-        value={campsite_id}
-      />
       <FormButton
         name="_action"
-        value="create_review"
+        value={action}
         label="Add review"
       />
     </ValidatedForm>
@@ -338,6 +373,27 @@ function SectionLayout({ children, className, ...props }: React.HTMLAttributes<H
   return (
     <div  className={cn('space-y-8 text-sm py-10 border-t border-neutral-100 ', className)} {...props}>
       {children}
+    </div>
+  );
+}
+
+function AddressSection({ address, ...props }: { address: object} & React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div className="" {...props}>
+      <div className="flex flex-col gap-2">
+        <div className="w-[100px] flex-none text-neutral-400 tracking-widest font-medium text-xs">
+          <p>ADDRESS</p>
+        </div>
+        {address?.addressLine1 &&
+        <div className="">
+          <p>{address.addressLine1}</p>
+          {address?.addressLine2 && <p>{address.addressLine2}</p>}
+          <p>{address.city}</p>
+          <p>{address.postcode} {address.state}</p>
+        </div>
+        }
+      </div>
+
     </div>
   );
 }
