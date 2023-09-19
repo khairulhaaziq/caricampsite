@@ -50,9 +50,6 @@ dependencies:
   react-dropzone:
     specifier: ^14.2.3
     version: 14.2.3(react@18.2.0)
-  relativeTime:
-    specifier: link:dayjs/plugin/relativeTime
-    version: link:dayjs/plugin/relativeTime
   remix-validated-form:
     specifier: ^5.1.0
     version: 5.1.0(@remix-run/react@2.0.0)(@remix-run/server-runtime@1.19.3)(@types/react@18.0.35)(react@18.2.0)
