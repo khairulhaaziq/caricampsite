@@ -27,7 +27,7 @@ export default function CampsiteSlug() {
   const { attributes } = data;
 
   return (
-    <div className="flex justify-center px-6 sm:px-8 md:px-10 lg:px-14 xl:px-16 2xl:px-20 pt-20 pb-16">
+    <div className="flex justify-center px-6 sm:px-8 md:px-10 lg:px-14 xl:px-16 2xl:px-20 py-16">
       <div className="w-full max-w-6xl flex flex-col gap-5">
         <Header
           title={attributes.title}
@@ -152,9 +152,9 @@ function Header({ title, visits_users, favourites_users, user_id, campsite_id }:
 function ImageGrid({ images, cover_image }: {images: string[]; cover_image?: string }) {
   return (
     <>
-      <div className="hidden md:grid md:grid-cols-8 gap-3">
+      <div className="hidden md:grid md:grid-cols-8 gap-2 rounded-2xl overflow-hidden">
         <img
-          className="w-full aspect-[11/10] bg-gray-200 rounded-xl flex-none col-span-4 row-span-2 object-cover"
+          className="w-full aspect-[11/10] bg-gray-200 rounded-lg flex-none col-span-4 row-span-2 object-cover"
           src={cover_image ||
             images[0] ||
             `https://loremflickr.com/300/300?lock=${Math.random()*100}`}
@@ -162,7 +162,7 @@ function ImageGrid({ images, cover_image }: {images: string[]; cover_image?: str
         {[...Array(4).keys()].map((i, index)=>(
           <img
             key={index}
-            className="aspect-[11/10] w-full flex-none bg-gray-200 rounded-xl col-span-2 object-cover"
+            className="aspect-[11/10] w-full flex-none bg-gray-200 rounded-lg col-span-2 object-cover"
             src={images[i + 1] ||
               `https://loremflickr.com/300/300?lock=${index + 2}`}
           />

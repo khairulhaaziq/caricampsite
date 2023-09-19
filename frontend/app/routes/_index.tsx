@@ -18,7 +18,7 @@ export default function Index() {
 
   return (
     <WithTopbar>
-      <div className="flex px-6 sm:px-8 md:px-10 lg:px-14 xl:px-16 2xl:px-20 pb-16 pt-20">
+      <div className="flex px-6 sm:px-8 md:px-10 lg:px-14 xl:px-16 2xl:px-20 py-16">
         <div className="w-full flex flex-col gap-8 pt-8">
           <CategoriesNav />
           {data && (

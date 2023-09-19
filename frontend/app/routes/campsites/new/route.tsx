@@ -159,7 +159,7 @@ export default function CampsitesNew() {
   // }, [searchParams]);
 
   return (
-    <div className="flex justify-center sm:px-8 md:px-10 lg:px-14 xl:px-16 2xl:px-20 min-h-screen pt-20 pb-24">
+    <div className="flex justify-center sm:px-8 md:px-10 lg:px-14 xl:px-16 2xl:px-20 min-h-screen pt-16 pb-24">
       <div className="w-full max-w-6xl flex flex-col items-center gap-5 relative">
         <Card>
           <FormDetails />
