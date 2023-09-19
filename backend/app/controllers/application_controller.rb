@@ -2,6 +2,15 @@ class ApplicationController < ActionController::API
   include ActionController::RequestForgeryProtection
   protect_from_forgery with: :null_session
 
+  def fetch_cache(cache_key, expires_in = nil, force = nil)
+    force = ActiveModel::Type::Boolean.new.cast(force || "false")
+    Rails.cache.fetch(
+      cache_key,
+      expires_in: expires_in || 1.hour,
+      force: force
+    ) { yield }
+  end
+
   def error_json(status_code, custom_message = nil, data = {})
     case status_code
     when 400

@@ -1,6 +1,9 @@
 class Campsite < ApplicationRecord
   include Filterable
+
   before_save :set_attachments_name
+  after_save :delete_cache
+  before_destroy :delete_cache
 
   serialize :contacts, HashSerializer
   serialize :social_links, HashSerializer
@@ -105,6 +108,16 @@ class Campsite < ApplicationRecord
         attachment.set_name
         attachment.save
       end
+    end
+  end
+
+  def delete_cache
+    collection_cache_keys = [
+      "/api/v1/campsites"
+    ]
+
+    collection_cache_keys.each do |collection_cache_key|
+      CacheDeleteService.new(collection_cache_key, true).process
     end
   end
 end
