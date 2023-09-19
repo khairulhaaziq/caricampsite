@@ -21,6 +21,10 @@ import { commitSession, getSession } from './utils/sessions.server';
 export const links: LinksFunction = () => [
   { rel: 'stylesheet', href: styles },
   ...(cssBundleHref ? [{ rel: 'stylesheet', href: cssBundleHref }] : []),
+  {
+    rel: 'stylesheet',
+    href: 'https://unpkg.com/leaflet@1.9.3/dist/leaflet.css'
+  },
 ];
 
 export const loader = async ({ request, }: LoaderFunctionArgs) => {

@@ -15,6 +15,8 @@ import IconStar from '~/components/icons/IconStar';
 import { cn } from '~/utils/cn';
 import { getApiData } from '~/utils/loader';
 
+import { ClientOnly } from './ClientOnly';
+import LeafletMap from './LeafletMap.client';
 import { validator } from './schema';
 
 dayjs.extend(relativeTime);
@@ -67,17 +69,9 @@ export default function CampsiteSlug() {
           </MainSectionLayout>
           <div className="pr-3 w-[400px] flex-none">
             <div className="border rounded-2xl p-5 flex flex-col gap-4 bg-white shadow-dropshadow/button">
-              <div className="rounded-lg overflow-hidden aspect-video">
-                <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d15934.89536826058!2d101.742476!3d3.1672667!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31cc376959f51fbf%3A0x46fe2a707c9f4efb!2sEmpat.17%20Coffee!5e0!3m2!1sen!2smy!4v1695098629775!5m2!1sen!2smy"
-                  width="100%"
-                  height="100%"
-                  style={{ border: 0 }}
-                  allowFullScreen=""
-                  loading="lazy"
-                  referrerpolicy="no-referrer-when-downgrade"
-                ></iframe>
-              </div>
+              <ClientOnly fallback={<div></div>}>
+                {()=><LeafletMap />}
+              </ClientOnly>
               <div className="flex gap-3 font-semibold flex-col">
                 <button className="bg-[#E8E8E8] rounded-xl px-4 h-12 items-center">Call now</button>
                 <button className="bg-[#E8E8E8] rounded-xl px-4 h-12 items-center">Get directions</button>
@@ -152,9 +146,9 @@ function Header({ title, visits_users, favourites_users, user_id, campsite_id }:
 function ImageGrid({ images, cover_image }: {images: string[]; cover_image?: string }) {
   return (
     <>
-      <div className="hidden md:grid md:grid-cols-8 gap-2 rounded-2xl overflow-hidden">
+      <div className="hidden md:grid md:grid-cols-8 gap-2.5 rounded-2xl overflow-hidden">
         <img
-          className="w-full aspect-[11/10] bg-gray-200 rounded-lg flex-none col-span-4 row-span-2 object-cover"
+          className="w-full aspect-[11/10] bg-gray-200 rounded-xl flex-none col-span-4 row-span-2 object-cover"
           src={cover_image ||
             images[0] ||
             `https://loremflickr.com/300/300?lock=${Math.random()*100}`}
@@ -162,7 +156,7 @@ function ImageGrid({ images, cover_image }: {images: string[]; cover_image?: str
         {[...Array(4).keys()].map((i, index)=>(
           <img
             key={index}
-            className="aspect-[11/10] w-full flex-none bg-gray-200 rounded-lg col-span-2 object-cover"
+            className="aspect-[11/10] w-full flex-none bg-gray-200 rounded-xl col-span-2 object-cover"
             src={images[i + 1] ||
               `https://loremflickr.com/300/300?lock=${index + 2}`}
           />
@@ -389,7 +383,7 @@ function SectionHeader({ title }: { title: string}) {
 
 function SectionLayout({ children, className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (
-    <div  className={cn('space-y-8 text-sm py-10 border-t border-neutral-100 ', className)} {...props}>
+    <div  className={cn('space-y-8 text-sm py-10 border-t border-neutral-200 ', className)} {...props}>
       {children}
     </div>
   );
