@@ -1,0 +1,61 @@
+name: Frontend Build
+
+on:
+  push:
+    branches:
+      - main
+
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      with:
+          persist-credentials: false
+
+    - name: Setup Node.js environment
+      uses: actions/setup-node@v2
+
+    - name: Build
+      run: npm run build
+      working-directory: frontend
+
+    - name: Check for errors
+      run: |
+        if [ $? -eq 0 ]; then
+          echo "Build succeeded"
+        else
+          echo "Build failed"
+          exit 1
+        fi
+
+  # lint:
+  #   needs: build
+  #   runs-on: ubuntu-latest
+  #   env:
+  #       GH_TOKEN: ${{ secrets.GH_TOKEN }}
+
+  #   steps:
+  #   - name: Checkout repository
+  #     uses: actions/checkout@v2
+  #     with:
+  #         persist-credentials: false
+
+  #   - name: Setup Node.js environment
+  #     uses: actions/setup-node@v2
+  #     with:
+  #       node-version: 16
+
+  #   - name: Install dependencies
+  #     run: |
+  #       git config --global url.https://$GH_TOKEN@github.com/.insteadOf https://github.com/
+  #       npm install
+
+  #   - name: Lint
+  #     run: npm run lint
