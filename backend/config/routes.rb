@@ -6,12 +6,11 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
-      resources :campsites, except: :show do
+      resources :campsites do
         resource :reviews, only: [:create, :update, :destroy]
         resource :visits, only: [:create, :destroy]
         resource :favourites, only: [:create, :destroy]
       end
-      get "campsites/:slug", to: "campsites#show"
     end
   end
 

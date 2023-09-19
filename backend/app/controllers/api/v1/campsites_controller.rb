@@ -101,7 +101,7 @@ class Api::V1::CampsitesController < ApplicationController
         admins: :user
       )
       .where(deleted_at: nil)
-      .find_by(slug: params[:slug])
+      .find_by(params[:slug].present? ? {slug: params[:id]} : {id: params[:id].to_i})
 
     render json: error_json(404), status: 404 unless @record
   end

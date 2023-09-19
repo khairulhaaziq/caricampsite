@@ -1,3 +1,4 @@
+import { json, type LoaderFunctionArgs } from '@remix-run/node';
 import {
   useFetcher,
   useLoaderData,
@@ -12,16 +13,29 @@ import FormButton from '~/components/form/FormButton';
 import FormTextField from '~/components/form/FormTextField';
 import IconHeart from '~/components/icons/IconHeart';
 import IconStar from '~/components/icons/IconStar';
+import { API_BASE_URL } from '~/config.server';
 import { ClientOnly } from '~/utils/ClientOnly';
 import { cn } from '~/utils/cn';
-import { getApiData } from '~/utils/loader';
 
 import LeafletMap from './LeafletMap.client';
 import { validator } from './schema';
 
 dayjs.extend(relativeTime);
 
-export const loader = getApiData();
+export const loader = async ({ request, params }: LoaderFunctionArgs) => {
+  const queryParams = (new URL(request.url).searchParams).toString();
+
+  const { pathname } = new URL(request.url);
+
+  const result = await fetch(
+    `${API_BASE_URL}${pathname}?slug=true&${queryParams}`)
+    .then(async (res)=>{
+      const json = await res.json();
+      return json;
+    });
+
+  return json(result);
+};
 
 export default function CampsiteSlug() {
   const { user } = useRouteLoaderData('root');
