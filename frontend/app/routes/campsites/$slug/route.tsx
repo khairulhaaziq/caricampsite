@@ -6,7 +6,7 @@ import {
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { useEffect, useState } from 'react';
-import { ValidatedForm } from 'remix-validated-form';
+import { useField, ValidatedForm } from 'remix-validated-form';
 
 import FormButton from '~/components/form/FormButton';
 import FormTextField from '~/components/form/FormTextField';
@@ -258,6 +258,8 @@ function ReviewItem({ review }) {
 function ReviewInputField({ campsite_id, action='create_review', onSuccess, defaultReviewValue }: { campsite_id: string | number; action?: 'create_review' | 'update_review'; onSuccess?: ()=>void; defaultReviewValue?: any }) {
   const [rating, setRating] = useState(0);
   const fetcher = useFetcher();
+  const formId = 'review-form';
+  const { error: ratingFieldError, validate: ratingFieldValidate } = useField('rating', { formId });
 
   useEffect(()=>{
     if (fetcher.data?.success) {
@@ -269,8 +271,14 @@ function ReviewInputField({ campsite_id, action='create_review', onSuccess, defa
     setRating(defaultReviewValue?.rating || 0);
   }, []);
 
+  useEffect(()=>{
+    if (rating)
+      ratingFieldValidate();
+  }, [rating]);
+
   return (
     <ValidatedForm
+      id={formId}
       validator={validator}
       fetcher={fetcher}
       method="POST"
@@ -301,6 +309,11 @@ function ReviewInputField({ campsite_id, action='create_review', onSuccess, defa
         name="rating"
         value={rating}
       />
+      {ratingFieldError && (
+        <p className="text-danger flex gap-1 items-center">
+          {ratingFieldError}
+        </p>
+      )}
       <FormTextField textarea name="body" />
       <FormButton
         name="_action"
