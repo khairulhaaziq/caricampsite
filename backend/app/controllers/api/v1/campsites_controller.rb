@@ -108,7 +108,7 @@ class Api::V1::CampsitesController < ApplicationController
   def set_campsite_by_current_user
     @record = @current_user.administered_campsites
       .where(deleted_at: nil)
-      .find_by(params[:id])
+      .find_by(id: params[:id].to_i)
 
     render json: error_json(404), status: 404 unless @record
   end
