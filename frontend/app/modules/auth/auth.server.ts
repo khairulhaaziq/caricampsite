@@ -1,5 +1,3 @@
-// eslint-disable-next-line max-len
-
 import { json } from '@remix-run/node';
 import { ofetch } from 'ofetch';
 

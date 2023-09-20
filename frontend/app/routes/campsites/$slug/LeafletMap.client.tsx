@@ -1,3 +1,4 @@
+import type { LatLngExpression } from 'leaflet';
 import {
   MapContainer,
   Marker,
@@ -5,7 +6,7 @@ import {
   TileLayer
 } from 'react-leaflet';
 
-export default function LeafletMap({ position=[3.1963428597407795, 101.72791987116433] }) {
+export default function LeafletMap({ position=[3.1963428597407795, 101.72791987116433] }: { position: LatLngExpression}) {
   return (
     <div className="rounded-lg overflow-hidden aspect-video">
       <>

@@ -47,7 +47,7 @@ export const loader = async ({ request, }: LoaderFunctionArgs) => {
 };
 
 export default function App() {
-  const { message, toastErrorMessage, user } = useLoaderData();
+  const { message, toastErrorMessage } = useLoaderData();
 
   useEffect(()=>{
     if (toastErrorMessage) {

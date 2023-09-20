@@ -6,7 +6,9 @@
     "dev": "remix dev",
     "start": "remix-serve build/index.js",
     "preview": "dotenv -e .env remix-serve build/index.js",
-    "typecheck": "tsc"
+    "typecheck": "tsc",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives",
+    "lint:fix": "eslint . --ext ts,tsx --report-unused-disable-directives --fix"
   },
   "dependencies": {
     "@radix-ui/react-checkbox": "^1.0.4",
