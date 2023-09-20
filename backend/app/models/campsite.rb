@@ -72,6 +72,27 @@ class Campsite < ApplicationRecord
 
   scope :filter_by_verified, ->(value) { where(is_verified: value) }
   scope :filter_by_state, ->(value) { joins(:campsite_address).where(campsite_addresses: {state: value}) }
+  scope :filter_by_q, ->(title) { where("title ILIKE ?", "%#{title}%") }
+  scope :filter_by_categories, ->(values) {
+    joins(campsites_category_options: :category_option)
+      .where(category_options: {name: values.split(",")})
+  }
+  scope :filter_by_features, ->(values) {
+    joins(campsites_feature_options: :feature_option)
+      .where(feature_options: {name: values.split(",")})
+  }
+  scope :filter_by_amenities, ->(values) {
+    joins(campsites_amenity_options: :amenity_option)
+      .where(amenity_options: {name: values.split(",")})
+  }
+  scope :filter_by_activities, ->(values) {
+    joins(campsites_activity_options: :activity_option)
+      .where(activity_options: {name: values.split(",")})
+  }
+  scope :filter_by_accessibility_features, ->(values) {
+    joins(campsites_accessibility_feature_options: :accessibility_feature_option)
+      .where(accessibility_feature_options: {name: values.split(",")})
+  }
 
   private
 

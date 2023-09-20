@@ -119,7 +119,16 @@ class Api::V1::CampsitesController < ApplicationController
   end
 
   def filter_params
-    params.permit(:verified, :state)
+    params.permit(
+      :verified,
+      :state,
+      :q,
+      :categories,
+      :features,
+      :amenities,
+      :activities,
+      :accessbility_features
+    )
   end
 
   def campsite_params
