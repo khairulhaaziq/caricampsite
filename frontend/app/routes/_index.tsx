@@ -10,6 +10,8 @@ import IconHeart from '~/components/icons/IconHeart';
 import WithTopbar from '~/components/layouts/WithTopbar';
 import { getApiData } from '~/utils/loader';
 
+import { CategoryOption } from './campsites/new/types';
+
 export const loader = getApiData({ path: '/campsites' });
 
 export default function Index() {
@@ -44,13 +46,13 @@ export default function Index() {
 
 function CategoriesNav() {
   return (
-    <div className="flex justify-center gap-6">
-      {[...Array(7).keys()].map((i, index)=>(
-        <div key={index} className="flex flex-col items-center gap-1">
+    <div className="flex justify-center gap-6 overflow-x-scroll">
+      {CategoryOption.map((option, index)=>(
+        <div key={index} className="flex flex-col items-center gap-1.5 text-xs">
           <div
-            className="aspect-square h-14 w-14 flex-none bg-gray-200 rounded-lg"
+            className="aspect-square h-7 w-7 flex-none bg-gray-200 rounded-lg"
           />
-          <p>Category 1</p>
+          <p>{option.name}</p>
         </div>
       ))}
     </div>
@@ -63,14 +65,14 @@ function ListingItem({ data, index }) {
   const userData = user?.data;
 
   return (
-    <div className="flex flex-col flex-none gap-2 relative">
+    <div className="flex flex-col flex-none gap-3 relative">
       <Link to={`/campsites/${data.attributes.slug}`} className="contents">
         <img
           className="aspect-square w-full flex-none bg-gray-200 rounded-xl object-cover"
           src={`${data.attributes.cover_image}?lock=${index}`}
         />
-        <div className="text-sm text-neutral-500">
-          <p className="capitalize text-black font-semibold text-base">
+        <div className="text-sm text-neutral-500 space-y-1">
+          <p className="capitalize text-black font-semibold text-[15px]">
             {data.attributes.title}
           </p>
           <p>

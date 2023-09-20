@@ -44,10 +44,11 @@ export default function CampsiteSlug() {
               user_id={user?.data?.id}
               admins={attributes.admins}
               campsite_id={data?.id}
+              address={attributes.campsite_address}
             />
             <ImageGrid images={attributes.images} />
 
-            <div className="flex gap-6 py-8">
+            <div className="flex gap-20 py-8">
               <MainSectionLayout className="flex-grow overflow-clip">
 
                 <DescriptionSection
@@ -74,7 +75,7 @@ export default function CampsiteSlug() {
                   <div>{JSON.stringify(attributes)}</div>
                 )}
               </MainSectionLayout>
-              <div className="pr-3 w-[400px] flex-none">
+              <div className="w-[400px] flex-none">
                 <div className="border rounded-2xl p-5 flex flex-col gap-4 bg-white shadow-dropshadow/button">
                   <ClientOnly fallback={<div></div>}>
                     {()=><LeafletMap />}
@@ -95,19 +96,18 @@ export default function CampsiteSlug() {
   );
 }
 
-function Header({ title, visits_users, favourites_users, user_id, campsite_id, admins }: { title: string; visits_users: number[]; favourites_users: number[]; user_id: string; campsite_id: number; admins: any[] }) {
+function Header({ title, visits_users, favourites_users, user_id, campsite_id, admins, address }: { title: string; visits_users: number[]; favourites_users: number[]; user_id: string; campsite_id: number; admins: any[]; address: any }) {
   const fetcher = useFetcher();
   const deleteCampsiteFetcher = useFetcher();
   const isOwner = admins.map(i=>i.id).includes(parseInt(user_id));
 
   return (
-    <div className="flex justify-between pt-8 items-center">
-      <div className="text-neutral-500">
-        <h1 className="font-bold text-2xl sm:text-3xl capitalize text-black">
+    <div className="flex justify-between pt-7 items-center text-sm pb-2">
+      <div className="text-neutral-500 space-y-2">
+        <h1 className="font-semibold text-2xl sm:text-[26px] leading-8 capitalize text-black">
           {title}
         </h1>
-        <p>Category, Category</p>
-        <p>Price, Price</p>
+        <p>{[address?.city, address?.state, address?.country].join(', ')}</p>
       </div>
 
       <div>
@@ -152,7 +152,7 @@ function Header({ title, visits_users, favourites_users, user_id, campsite_id, a
 
           {isOwner &&
           <>
-            <Link to="./edit" className="bg-white rounded-xl px-5 h-10 items-center border border-[#DBDBDB]">Edit</Link>
+            <Link to="./edit" className="bg-white rounded-xl px-5 h-10 flex items-center border border-[#DBDBDB]">Edit</Link>
             <deleteCampsiteFetcher.Form
               method="POST"
               action={`/api/v1/campsites/${campsite_id}`}
@@ -161,7 +161,7 @@ function Header({ title, visits_users, favourites_users, user_id, campsite_id, a
               <button
                 name="_action"
                 value="delete"
-                className="bg-white rounded-xl px-5 h-10 items-center border border-[#DBDBDB]"
+                className="bg-white rounded-xl px-5 h-10 flex items-center border border-[#DBDBDB]"
               >Delete</button>
             </deleteCampsiteFetcher.Form>
           </>
@@ -356,7 +356,7 @@ function ReviewInputField({ campsite_id, action='create', onSuccess, defaultRevi
 function DescriptionSection({ description, ...props }: { description: string} & React.HTMLAttributes<HTMLDivElement>) {
   return (
     <SectionLayout {...props}>
-      <p>{description}</p>
+      <p className='whitespace-pre-wrap'>{description}</p>
     </SectionLayout>
   );
 }
@@ -419,13 +419,13 @@ function MainSectionLayout({ children, className, ...props }: React.HTMLAttribut
 
 function SectionHeader({ title }: { title: string}) {
   return (
-    <h3 className="text-xl font-semibold">{title}</h3>
+    <h3 className="text-lg font-medium">{title}</h3>
   );
 }
 
 function SectionLayout({ children, className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (
-    <div  className={cn('space-y-8 text-sm py-10 border-t border-neutral-200 ', className)} {...props}>
+    <div  className={cn('space-y-6 text-[15px] leading-relaxed py-10 border-t border-neutral-200 ', className)} {...props}>
       {children}
     </div>
   );

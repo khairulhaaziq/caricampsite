@@ -9,7 +9,7 @@ export default function FormButton({ label, ...props }: FormButtonProps = {}) {
   const isSubmitting = useIsSubmitting();
 
   return (
-    <button {...props} disabled={isSubmitting} className="rounded-xl bg-[#31B5FF] text-white font-semibold h-14 px-6 disabled:opacity-60">
+    <button {...props} disabled={isSubmitting} className="transition-all active:scale-90 rounded-xl bg-[#31B5FF] text-white font-semibold h-14 px-6 disabled:opacity-60">
       {isSubmitting ? 'Loading...' : label ?? 'Button'}
     </button>
   );
