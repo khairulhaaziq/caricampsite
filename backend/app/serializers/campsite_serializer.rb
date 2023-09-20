@@ -79,9 +79,17 @@ class CampsiteSerializer
   attribute :rating do |obj|
     if obj.reviews.present?
       total_rating = obj.reviews.sum(&:rating)
-      (total_rating.to_f / obj.reviews.length).round(2)
+      average_rating = total_rating.to_f / obj.reviews.length
+      formatted_rating =
+        if average_rating.to_i == average_rating
+          format("%.1f", average_rating)
+        else
+          formatted = format("%.2f", average_rating)
+          formatted.sub(/\.?0+$/, "")
+        end
+      formatted_rating
     else
-      0  # Default to 0 if there are no reviews
+      0
     end
   end
 

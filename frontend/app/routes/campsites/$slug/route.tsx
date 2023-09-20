@@ -13,6 +13,7 @@ import { useField, ValidatedForm } from 'remix-validated-form';
 import FormButton from '~/components/form/FormButton';
 import FormTextField from '~/components/form/FormTextField';
 import IconHeart from '~/components/icons/IconHeart';
+import IconLocation from '~/components/icons/IconLocation';
 import IconStar from '~/components/icons/IconStar';
 import { Campsite } from '~/modules/campsite/campsite.server';
 import { ClientOnly } from '~/utils/ClientOnly';
@@ -31,6 +32,11 @@ export default function CampsiteSlug() {
   const { user } = useRouteLoaderData('root');
   const { data } = useLoaderData();
   const { attributes } = data;
+
+  useEffect(()=>{
+    if (attributes)
+      console.log('slugdata: ', attributes);
+  }, [attributes]);
 
   return (
     <div className="flex justify-center px-6 sm:px-8 md:px-10 lg:px-14 xl:px-16 2xl:px-20 py-16">
@@ -71,9 +77,6 @@ export default function CampsiteSlug() {
                   reviews_users={attributes.reviews_users}
                 />
 
-                {attributes && (
-                  <div>{JSON.stringify(attributes)}</div>
-                )}
               </MainSectionLayout>
               <div className="w-[400px] flex-none">
                 <div className="border rounded-2xl p-5 flex flex-col gap-4 bg-white shadow-dropshadow/button">
@@ -97,7 +100,8 @@ export default function CampsiteSlug() {
 }
 
 function Header({ title, visits_users, favourites_users, user_id, campsite_id, admins, address }: { title: string; visits_users: number[]; favourites_users: number[]; user_id: string; campsite_id: number; admins: any[]; address: any }) {
-  const fetcher = useFetcher();
+  const visitCampsiteFetcher = useFetcher();
+  const favouriteCampsiteFetcher = useFetcher();
   const deleteCampsiteFetcher = useFetcher();
   const isOwner = admins.map(i=>i.id).includes(parseInt(user_id));
 
@@ -112,7 +116,7 @@ function Header({ title, visits_users, favourites_users, user_id, campsite_id, a
 
       <div>
         <div className="flex gap-2 font-medium">
-          <fetcher.Form
+          <visitCampsiteFetcher.Form
             method="POST"
             action={`/api/v1/campsites/${campsite_id}/visits`}
             onSubmit={(e)=>!user_id && e.preventDefault()}
@@ -120,17 +124,17 @@ function Header({ title, visits_users, favourites_users, user_id, campsite_id, a
             <button
               name="_action"
               value={visits_users.includes(parseInt(user_id)) ? 'delete' : 'create'}
-              className="active:scale-90 transition-all bg-white rounded-xl px-5 h-10 items-center flex gap-2 border border-[#DBDBDB]"
+              className="active:scale-90 transition-all bg-white rounded-xl px-4 h-10 items-center flex gap-1.5 border border-[#DBDBDB]"
             >
               <span className={`${
                 visits_users.includes(parseInt(user_id)) ?
-                  'text-rose-600' :
-                  'text-rose-300'
-              }`}
-              ><IconHeart /></span> <span>Visits </span><span className="rounded-full bg-[#E8E8E8] h-5 w-5 flex items-center justify-center text-sm">{visits_users.length}</span>
+                  'text-black' :
+                  'text-black/50'
+              } h-5 w-5`}
+              ><IconLocation /></span><span className="h-5 w-5 flex items-center justify-center text-sm">{visits_users.length}</span>
             </button>
-          </fetcher.Form>
-          <fetcher.Form
+          </visitCampsiteFetcher.Form>
+          <favouriteCampsiteFetcher.Form
             method="POST"
             action={`/api/v1/campsites/${campsite_id}/favourites`}
             onSubmit={(e)=>!user_id && e.preventDefault()}
@@ -138,21 +142,21 @@ function Header({ title, visits_users, favourites_users, user_id, campsite_id, a
             <button
               name="_action"
               value={favourites_users.includes(parseInt(user_id)) ? 'delete' : 'create'}
-              className="active:scale-90 transition-all bg-white rounded-xl px-5 h-10 items-center flex gap-2 border border-[#DBDBDB]"
+              className="active:scale-90 transition-all bg-white rounded-xl px-4 h-10 items-center flex gap-1.5 border border-[#DBDBDB]"
             >
               <span className={`${
                 favourites_users.includes(parseInt(user_id)) ?
                   'text-rose-600' :
                   'text-rose-300'
-              }`}
-              ><IconHeart /></span> <span>Favourite </span><span className="rounded-full bg-[#E8E8E8] h-5 w-5 flex items-center justify-center text-sm">{favourites_users.length}</span>
+              } h-5 w-5`}
+              ><IconHeart /></span><span className="h-5 w-5 flex items-center justify-center text-sm">{favourites_users.length}</span>
             </button>
-          </fetcher.Form>
-          <button className="bg-white rounded-xl px-5 h-10 items-center border border-[#DBDBDB]">Share</button>
+          </favouriteCampsiteFetcher.Form>
+          <button className="active:scale-90 transition-all bg-white rounded-xl px-5 h-10 items-center border border-[#DBDBDB]">Share</button>
 
           {isOwner &&
           <>
-            <Link to="./edit" className="bg-white rounded-xl px-5 h-10 flex items-center border border-[#DBDBDB]">Edit</Link>
+            <Link to="./edit" className="active:scale-90 transition-all bg-white rounded-xl px-5 h-10 flex items-center border border-[#DBDBDB]">Edit</Link>
             <deleteCampsiteFetcher.Form
               method="POST"
               action={`/api/v1/campsites/${campsite_id}`}
@@ -161,7 +165,7 @@ function Header({ title, visits_users, favourites_users, user_id, campsite_id, a
               <button
                 name="_action"
                 value="delete"
-                className="bg-white rounded-xl px-5 h-10 flex items-center border border-[#DBDBDB]"
+                className="active:scale-90 transition-all bg-white rounded-xl px-5 h-10 flex items-center border border-[#DBDBDB]"
               >Delete</button>
             </deleteCampsiteFetcher.Form>
           </>
@@ -201,6 +205,11 @@ function ImageGrid({ images, cover_image }: {images: string[]; cover_image?: str
 }
 
 function ReviewSection({ reviews, campsite_id, user, reviews_users, ...props }: {reviews: any[]} & React.HTMLAttributes<HTMLDivElement>) {
+  useEffect(()=>{
+    if (reviews)
+      console.log('reviews: ', reviews);
+  }, [reviews]);
+
   return (
     <SectionLayout {...props}>
       <SectionHeader title="Reviews" />
@@ -211,8 +220,6 @@ function ReviewSection({ reviews, campsite_id, user, reviews_users, ...props }: 
         <ReviewInputField campsite_id={campsite_id} />}
 
         <ReviewsList reviews={reviews} />
-
-        <p>{JSON.stringify(reviews)}</p>
       </>
     </SectionLayout>
 
@@ -256,10 +263,14 @@ function ReviewItem({ review }) {
         <div className="space-y-2 flex-grow">
           <div className="flex text-yellow-500">
             {[...Array(rating).keys()].map(i=>(
-              <IconStar />
+              <span className="h-5 w-5" key={i}>
+                <IconStar />
+              </span>
             ))}
             {[...Array(5-rating).keys()].map(i=>(
-              <IconStar outline />
+              <span className="h-5 w-5" key={i}>
+                <IconStar outline />
+              </span>
             ))}
           </div>
           <p className="text-base text-black whitespace-pre-wrap">{review.body}</p>
@@ -324,11 +335,11 @@ function ReviewInputField({ campsite_id, action='create', onSuccess, defaultRevi
             key={i}
             type="button"
             onClick={()=>setRating(index+1)}
-            className="cursor-default"
+            className="cursor-default h-8 w-8"
           >
             {index + 1 <= rating ?
-              <IconStar size={6}  /> :
-              <IconStar size={6} outline />}
+              <IconStar /> :
+              <IconStar outline />}
           </button>
         ))}
       </div>
@@ -356,7 +367,7 @@ function ReviewInputField({ campsite_id, action='create', onSuccess, defaultRevi
 function DescriptionSection({ description, ...props }: { description: string} & React.HTMLAttributes<HTMLDivElement>) {
   return (
     <SectionLayout {...props}>
-      <p className='whitespace-pre-wrap'>{description}</p>
+      <p className="whitespace-pre-wrap">{description}</p>
     </SectionLayout>
   );
 }
