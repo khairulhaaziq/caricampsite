@@ -10,7 +10,8 @@ export const action = async ({ request }: DataFunctionArgs) => {
     return Auth.unauthorizedResponse(request);
   }
 
-  const action = await getAction(request);
+  const { actionType } = await getAction(request);
+  console.log('actionType', actionType);
 
-  return await Api.forwardRequest(request, { action });
+  return await Api.forwardRequest(request, { action: actionType });
 };

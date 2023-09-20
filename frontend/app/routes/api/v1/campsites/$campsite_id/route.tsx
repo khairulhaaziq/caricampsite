@@ -1,54 +1,46 @@
-import {
-  type DataFunctionArgs,
-  json,
-  type LoaderFunctionArgs
-} from '@remix-run/node';
+import type { DataFunctionArgs, LoaderFunctionArgs } from '@remix-run/node';
 import { validationError } from 'remix-validated-form';
 
-import type { RequestAction } from '~/modules/api/api.server';
 import { Api } from '~/modules/api/api.server';
+import { Auth } from '~/modules/auth/auth.server';
 import { Campsite } from '~/modules/campsite/campsite.server';
 import { validator } from '~/routes/campsites/new/schema';
+import { getAction } from '~/utils/request-helpers.server';
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   return await Campsite.getCampsite(request, { id: params.campsite_id! });
 };
 
 export const action = async ({ request }: DataFunctionArgs) => {
-  // if (!await Auth.validateToken(request)) {
-  //   return Auth.unauthorizedResponse(request);
-  // }
-
-  const { searchParams } = new URL(request.url);
-  const formData = await request.formData();
-
-  let { _action: action } = Object.fromEntries(formData);
-  let redirectTo = searchParams.get('redirectTo') ?? undefined;
-
-  if (!action) {
-
-    action = searchParams.get('_action') as RequestAction ?? 'create';
+  if (!await Auth.validateToken(request)) {
+    return Auth.unauthorizedResponse(request);
   }
 
-  if (action === 'create' || action === 'update') {
-    let body;
+  const { searchParams } = new URL(request.url);
+  const { actionType, formData } = await getAction(request);
 
+  let redirectTo = searchParams.get('redirectTo') ?? undefined;
+
+  if (actionType === 'create' || actionType === 'update') {
     const validateResult = await validator.validate(formData);
-
     if (validateResult.error)
       return validationError(validateResult.error, validateResult.submittedData);
 
     const { data } = validateResult;
-    body = { campsites: data };
+    const body = { campsites: data };
 
-    return await Api.forwardRequest(request, { action, body, redirectTo });
+    return await Api.forwardRequest(request, {
+      action: actionType,
+      body,
+      redirectTo
+    });
   }
 
   redirectTo = '/';
   const toastMessage = 'Successfully deleted listing!';
 
   return await Api.forwardRequest(request, {
-    action,
+    action: actionType,
     redirectTo,
     toastMessage
   });

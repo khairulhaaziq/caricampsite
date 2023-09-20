@@ -6,11 +6,16 @@ import { Campsite } from '~/modules/campsite/campsite.server';
 import CampsiteForm from '~/routes/campsites/new/CampsiteForm';
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
-  // if (!await Auth.validateToken(request)) {
-  //   return Auth.unauthorizedResponse(request);
-  // }
+  if (!await Auth.validateToken(request)) {
+    return Auth.unauthorizedResponse(request);
+  }
 
-  return await Campsite.getCampsite(request, { slug: params.slug!, query: { view: 'edit' } });
+  // TODO: Guard from non admin to be able to edit
+
+  return await Campsite.getCampsite(request, {
+    slug: params.slug!,
+    query: { view: 'edit' }
+  });
 };
 
 export default function CampsiteSlugEdit() {
@@ -18,8 +23,6 @@ export default function CampsiteSlugEdit() {
   const { data } = useLoaderData();
   const { attributes } = data;
   const action = `/api/v1/campsites/${data?.id}?_action=update&redirectTo=${`/campsites/${slug}`}`;
-
-  console.log(attributes);
 
   return (
     <CampsiteForm formDefaultValues={attributes} action={action} />

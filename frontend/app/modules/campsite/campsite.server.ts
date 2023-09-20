@@ -8,12 +8,20 @@ class Campsite {
     const queryParams = prefix + new URLSearchParams(query).toString();
     const url = `${API_BASE_URL}/campsites/${id ?? slug}${slug && '?slug=true&'}${queryParams}`;
 
-    console.log('url', url);
+    let error = false;
+
     const result = await fetch(url)
       .then(async (res)=>{
         const json = await res.json();
         return json;
+      })
+      .catch((err)=>{
+        console.error(err);
+        error = true;
       });
+
+    if (error)
+      return json({ message: 'getCampsite failed', error: true }, { status: 500 });
 
     return json(result);
   }

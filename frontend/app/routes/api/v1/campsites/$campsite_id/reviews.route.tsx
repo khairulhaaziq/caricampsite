@@ -4,20 +4,16 @@ import { validationError } from 'remix-validated-form';
 import { Api } from '~/modules/api/api.server';
 import { Auth } from '~/modules/auth/auth.server';
 import { validator } from '~/routes/campsites/$slug/schema';
+import { getAction } from '~/utils/request-helpers.server';
 
 export const action = async ({ request }: DataFunctionArgs) => {
-
   if (!await Auth.validateToken(request)) {
     return Auth.unauthorizedResponse(request);
   }
-
-  const formData = await request.formData();
-
-  const { _action: action } = Object.fromEntries(formData);
-
+  const { actionType, formData } = await getAction(request);
   let body;
 
-  if (action === 'create' || action === 'update') {
+  if (actionType === 'create' || actionType === 'update') {
     const validateResult = await validator.validate(formData);
 
     if (validateResult.error)
@@ -27,5 +23,5 @@ export const action = async ({ request }: DataFunctionArgs) => {
     body = data;
   }
 
-  return await Api.forwardRequest(request, { action, body });
+  return await Api.forwardRequest(request, { action: actionType, body });
 };

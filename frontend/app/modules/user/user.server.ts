@@ -31,7 +31,6 @@ class User {
           user=res;
         })
         .catch((err) => {
-          console.log('err: ', err);
           console.log('err.data: ', err.data);
         });
     }
