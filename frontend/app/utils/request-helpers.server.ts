@@ -1,6 +1,6 @@
 import type { RequestAction } from '~/modules/api/api.server';
 
-export async function getAction(request: Request) {
+async function getAction(request: Request) {
   const formData = await request.formData();
   const fromFormData = Object.fromEntries(formData);
 
@@ -14,3 +14,13 @@ export async function getAction(request: Request) {
 
   return { actionType, formData };
 }
+
+const getRedirectTo = (request: Request) => {
+  const { searchParams } = new URL(request.url);
+
+  const redirectTo = searchParams.get('redirectTo') ?? undefined;
+
+  return redirectTo;
+};
+
+export { getAction, getRedirectTo };

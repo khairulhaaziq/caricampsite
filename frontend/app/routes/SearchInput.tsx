@@ -1,33 +1,28 @@
 import {
   Form,
-  useLoaderData,
+  useSearchParams,
   useSubmit
 } from '@remix-run/react';
-import {
-  useEffect,
-  useMemo,
-  useState
-} from 'react';
+import { useEffect, useState } from 'react';
 import { useDebounce } from 'usehooks-ts';
 
 import IconSearch from '~/components/icons/IconSearch';
 
 export default function SearchInput(){
-  const { params } = useLoaderData();
-  const searchParams = useMemo(()=>new URLSearchParams(params), [params]);
+  const [searchParams] = useSearchParams();
   const submit = useSubmit();
 
-  const [query, setQuery] = useState(searchParams.get('merchant_name'));
+  const [query, setQuery] = useState(searchParams.get('q'));
   const debouncedQuery = useDebounce(query, 300);
 
   useEffect(() => {
     if (debouncedQuery) {
       searchParams.set('q', debouncedQuery);
+      searchParams.set('page', '1');
     } else {
       searchParams.delete('q');
     }
     submit(searchParams);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedQuery]);
 
   return (
@@ -38,7 +33,7 @@ export default function SearchInput(){
           placeholder="Search merchant name"
           name="query"
           type="search"
-          value={query ? query : undefined}
+          value={query ? query : ''}
           onChange={(event) => setQuery(event.currentTarget.value)}
         />
         <span className="absolute left-4 top-0 h-full flex items-centertext-dim">

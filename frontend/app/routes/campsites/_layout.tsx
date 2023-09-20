@@ -4,7 +4,7 @@ import WithTopbar from '~/components/layouts/WithTopbar';
 
 export default function Layout() {
   return (
-    <WithTopbar>
+    <WithTopbar path='/campsites/'>
       <Outlet />
     </WithTopbar>
   );
