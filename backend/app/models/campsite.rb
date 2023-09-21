@@ -94,10 +94,6 @@ class Campsite < ApplicationRecord
       .where(accessibility_feature_options: {name: values.split(",")})
   }
 
-  def self.delete_campsite_cache
-    delete_cache
-  end
-
   private
 
   def assign_slug
@@ -137,13 +133,6 @@ class Campsite < ApplicationRecord
   end
 
   def delete_cache
-    collection_cache_keys = [
-      "/api/v1/campsites",
-      "/internal/campsites"
-    ]
-
-    collection_cache_keys.each do |collection_cache_key|
-      CacheDeleteService.new(collection_cache_key, true).process
-    end
+    CampsitesCacheDeleteService.call
   end
 end

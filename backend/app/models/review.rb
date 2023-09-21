@@ -9,6 +9,6 @@ class Review < ApplicationRecord
   validates :rating, presence: true
 
   def delete_campsite_cache
-    Campsite.delete_campsite_cache
+    CampsitesCacheDeleteService.call
   end
 end
