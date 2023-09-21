@@ -95,14 +95,7 @@ class Campsite < ApplicationRecord
   }
 
   def self.delete_cache
-    collection_cache_keys = [
-      "/api/v1/campsites",
-      "/internal/campsites"
-    ]
-
-    collection_cache_keys.each do |collection_cache_key|
-      CacheDeleteService.new(collection_cache_key, true).process
-    end
+    delete_cache
   end
 
   private
@@ -140,6 +133,17 @@ class Campsite < ApplicationRecord
         attachment.set_name
         attachment.save
       end
+    end
+  end
+
+  def delete_cache
+    collection_cache_keys = [
+      "/api/v1/campsites",
+      "/internal/campsites"
+    ]
+
+    collection_cache_keys.each do |collection_cache_key|
+      CacheDeleteService.new(collection_cache_key, true).process
     end
   end
 end
