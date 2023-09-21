@@ -5,6 +5,13 @@ import {
 } from '@remix-run/react';
 import { type ReactNode } from 'react';
 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger
+} from '~/components/ui/dropdown-menu';
 import SearchInput from '~/routes/SearchInput';
 
 export default function WithTopbar({ children, path='root' }: {children?: ReactNode; path?: string}) {
@@ -39,18 +46,35 @@ export default function WithTopbar({ children, path='root' }: {children?: ReactN
                   </div>
                 </Link>)
                 :
-                (<Form action="/logout" method="POST">
-                  <button className="font-medium active:scale-90 border border-neutral-300 rounded-xl h-10 px-3 flex items-center justify-center">
-                    Logout
-                  </button>
-                </Form>)
-              }
+                (
+                  <>
+                    <Form action="/logout" method="POST">
+                      <button className="font-medium active:scale-90 border border-neutral-300 rounded-xl h-10 px-3 flex items-center justify-center">
+                        Logout
+                      </button>
+                    </Form>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger>
+                        <div className="font-medium border border-neutral-300 rounded-full h-10 w-10 aspect-square flex items-center justify-center">
+                          KH
+                        </div>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem>Favourites</DropdownMenuItem>
+                        <DropdownMenuItem>Manage Listings</DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Link to="/account-settings">
+                            Account
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem>Log out</DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
 
-              <Link to="/account-settings">
-                <div className="font-medium border border-neutral-300 rounded-full h-10 w-10 aspect-square flex items-center justify-center">
-                  KH
-                </div>
-              </Link>
+                  </>
+                )
+              }
             </div>
           </div>
         </div>
