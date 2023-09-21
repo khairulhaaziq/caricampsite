@@ -11,7 +11,8 @@ class User < ApplicationRecord
   has_many :campsites_admins
   has_many :administered_campsites, through: :campsites_admins, source: :campsite
 
-  has_one :user_profile
+  has_one :account_settings
+  has_one :profile_info, through: :account_settings
 
   validates :email, format: URI::MailTo::EMAIL_REGEXP
 

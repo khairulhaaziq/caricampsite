@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_09_18_142754) do
+ActiveRecord::Schema[7.0].define(version: 2023_09_21_065101) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -21,11 +21,32 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_18_142754) do
     t.index ["name"], name: "index_accessibility_feature_options_on_name", unique: true
   end
 
+  create_table "account_settings", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_account_settings_on_user_id"
+  end
+
   create_table "activity_options", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["name"], name: "index_activity_options_on_name", unique: true
+  end
+
+  create_table "addresses", force: :cascade do |t|
+    t.string "addressable_type", null: false
+    t.bigint "addressable_id", null: false
+    t.string "street"
+    t.string "street2"
+    t.string "city"
+    t.string "state"
+    t.string "country"
+    t.string "postcode"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["addressable_type", "addressable_id"], name: "index_addresses_on_addressable"
   end
 
   create_table "amenity_options", force: :cascade do |t|
@@ -208,6 +229,17 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_18_142754) do
     t.index ["uid"], name: "index_oauth_applications_on_uid", unique: true
   end
 
+  create_table "profile_infos", force: :cascade do |t|
+    t.bigint "account_settings_id", null: false
+    t.string "first_name"
+    t.string "last_name"
+    t.string "email"
+    t.string "phone_number"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_settings_id"], name: "index_profile_infos_on_account_settings_id"
+  end
+
   create_table "reviews", force: :cascade do |t|
     t.bigint "campsite_id", null: false
     t.bigint "user_id", null: false
@@ -218,17 +250,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_18_142754) do
     t.datetime "updated_at", null: false
     t.index ["campsite_id"], name: "index_reviews_on_campsite_id"
     t.index ["user_id"], name: "index_reviews_on_user_id"
-  end
-
-  create_table "user_profiles", force: :cascade do |t|
-    t.bigint "user_id", null: false
-    t.string "about"
-    t.string "name", null: false
-    t.string "profile_picture"
-    t.jsonb "social_links", default: {}
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["user_id"], name: "index_user_profiles_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -253,6 +274,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_18_142754) do
     t.index ["user_id"], name: "index_visits_on_user_id"
   end
 
+  add_foreign_key "account_settings", "users"
   add_foreign_key "campsite_addresses", "campsites"
   add_foreign_key "campsite_fees", "campsites"
   add_foreign_key "campsite_images", "campsites"
@@ -272,9 +294,9 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_18_142754) do
   add_foreign_key "favourites", "campsites"
   add_foreign_key "favourites", "users"
   add_foreign_key "oauth_access_tokens", "oauth_applications", column: "application_id"
+  add_foreign_key "profile_infos", "account_settings", column: "account_settings_id"
   add_foreign_key "reviews", "campsites"
   add_foreign_key "reviews", "users"
-  add_foreign_key "user_profiles", "users"
   add_foreign_key "visits", "campsites"
   add_foreign_key "visits", "users"
 end
