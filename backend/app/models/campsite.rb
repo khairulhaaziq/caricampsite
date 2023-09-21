@@ -94,7 +94,7 @@ class Campsite < ApplicationRecord
       .where(accessibility_feature_options: {name: values.split(",")})
   }
 
-  def self.delete_cache
+  def self.delete_campsite_cache
     delete_cache
   end
 

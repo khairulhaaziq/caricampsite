@@ -6,6 +6,6 @@ class Favourite < ApplicationRecord
   belongs_to :user
 
   def delete_campsite_cache
-    Campsite.delete_cache
+    Campsite.delete_campsite_cache
   end
 end
