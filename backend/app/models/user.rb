@@ -12,7 +12,7 @@ class User < ApplicationRecord
   has_many :administered_campsites, through: :campsites_admins, source: :campsite
 
   has_one :account_setting
-  has_one :profile_info, through: :account_setting
+  has_one :personal_info, through: :account_setting
 
   validates :email, format: URI::MailTo::EMAIL_REGEXP
 
