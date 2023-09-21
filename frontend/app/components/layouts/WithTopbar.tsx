@@ -45,6 +45,12 @@ export default function WithTopbar({ children, path='root' }: {children?: ReactN
                   </button>
                 </Form>)
               }
+
+              <Link to="/account-settings">
+                <div className="font-medium border border-neutral-300 rounded-full h-10 w-10 aspect-square flex items-center justify-center">
+                  KH
+                </div>
+              </Link>
             </div>
           </div>
         </div>
