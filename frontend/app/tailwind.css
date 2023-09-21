@@ -33,6 +33,19 @@
     --ring: 0 0% 3.9%;
 
     --radius: 0.5rem;
+
+    --black: #18181b;
+		--white: #ffffff;
+		--primary: #5147dd;
+		--primary-link: #5147dd;
+		--primary-light: #655bf2;
+		--dim: #71717a;
+		--outline: #e2e8f0;
+		--outline-hover: #94a3b8;
+		--washed: #f1f5f9;
+		--danger: #d94242;
+		--success: #10b981;
+		--warning: #eaac0c;
   }
 }
 
