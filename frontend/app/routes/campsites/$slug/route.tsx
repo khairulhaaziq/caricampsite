@@ -79,7 +79,7 @@ export default function CampsiteSlug() {
 
               </MainSectionLayout>
               <div className="w-[420px] flex-none">
-                <div className="border rounded-2xl p-5 flex flex-col gap-4 bg-white shadow-dropshadow/button">
+                <div className="border rounded-2xl p-5 flex flex-col gap-4 bg-white shadow-dropshadow/floating">
                   <ClientOnly fallback={<div></div>}>
                     {()=><LeafletMap />}
                   </ClientOnly>
@@ -106,8 +106,8 @@ function Header({ title, visits_users, favourites_users, user_id, campsite_id, a
   const isOwner = admins.map(i=>i.id).includes(parseInt(user_id));
 
   return (
-    <div className="flex justify-between pt-7 items-center text-sm pb-2">
-      <div className="text-neutral-500 space-y-2">
+    <div className="flex justify-between pt-4 items-center text-sm pb-2">
+      <div className="space-y-1.5">
         <h1 className="font-semibold text-2xl sm:text-[26px] leading-8 capitalize text-black">
           {title}
         </h1>

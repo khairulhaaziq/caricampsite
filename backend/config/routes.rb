@@ -18,6 +18,7 @@ Rails.application.routes.draw do
     namespace :account_settings do
       resource :personal_info, only: [:show, :update]
     end
+    resources :listings, only: [:index, :create, :update, :destroy]
   end
 
   namespace :auth do

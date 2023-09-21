@@ -80,7 +80,7 @@ class ApplicationController < ActionController::API
   end
 
   def set_current_user
-    @current_user = User.find_by(id: doorkeeper_token[:resource_owner_id])
+    @current_user = User.includes(:personal_info).find_by(id: doorkeeper_token[:resource_owner_id])
     render json: error_json(401, "Unauthorized"), status: 401 unless @current_user
   end
 end

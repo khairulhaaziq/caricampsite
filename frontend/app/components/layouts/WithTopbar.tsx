@@ -61,7 +61,11 @@ export default function WithTopbar({ children, path='root' }: {children?: ReactN
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuItem>Favourites</DropdownMenuItem>
-                        <DropdownMenuItem>Manage Listings</DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Link to="/listings">
+                            Manage Listings
+                          </Link>
+                        </DropdownMenuItem>
                         <DropdownMenuItem asChild>
                           <Link to="/account-settings">
                             Account

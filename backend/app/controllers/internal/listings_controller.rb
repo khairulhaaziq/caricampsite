@@ -1,46 +1,32 @@
-class Api::V1::CampsitesController < ApplicationController
-  before_action :doorkeeper_authorize!, :set_current_user, only: [:create, :update, :destroy]
-  before_action :ensure_record_exists, only: [:show]
-  before_action :set_campsite_by_current_user, only: [:update, :destroy]
+class Internal::ListingsController < ApplicationController
+  before_action :doorkeeper_authorize!, :set_current_user
+  before_action :set_campsite, only: [:update, :destroy]
 
   def index
-    campsites = fetch_cache(request.fullpath) do
-      records = Campsite
-        .filter(filter_params)
-        .where(deleted_at: nil)
-        .includes(
-          :campsite_fee,
-          :campsite_address,
-          :campsite_location,
-          :attachments,
-          :feature_options,
-          :amenity_options,
-          :activity_options,
-          :category_options,
-          :accessibility_feature_options,
-          reviews: :user,
-          visits: :user,
-          favourites: :user,
-          admins: :user
-        )
-        .order(created_at: :desc)
-        .page(params[:page])
-        .per(params[:limit])
+    records = @current_user.administered_campsites
+      .where(deleted_at: nil)
+      .includes(
+        :campsite_fee,
+        :campsite_address,
+        :campsite_location,
+        :attachments,
+        :feature_options,
+        :amenity_options,
+        :activity_options,
+        :category_options,
+        :accessibility_feature_options,
+        reviews: :user,
+        visits: :user,
+        favourites: :user,
+        admins: :user
+      )
+      .order(created_at: :desc)
+      .page(params[:page])
+      .per(params[:limit])
 
-      render_serializer(CampsiteSerializer, records)
-    end
+    listings = render_serializer(Internal::ListingsSerializer, records)
 
-    render json: campsites, status: campsites[:code] || 200
-  end
-
-  def show
-    campsite = if params[:view] == "edit"
-      render_serializer(CampsiteFormSerializer, @record)
-    else
-      render_serializer(CampsiteSerializer, @record)
-    end
-
-    render json: campsite, status: campsite[:code] || 200
+    render json: listings, status: listings[:code] || 200
   end
 
   def create
@@ -86,31 +72,7 @@ class Api::V1::CampsitesController < ApplicationController
 
   private
 
-  def ensure_record_exists
-    @record = Campsite
-      .includes(
-        :admins,
-        :campsite_fee,
-        :campsite_address,
-        :campsite_location,
-        :attachments,
-        :feature_options,
-        :amenity_options,
-        :activity_options,
-        :category_options,
-        :accessibility_feature_options,
-        reviews: :user,
-        visits: :user,
-        favourites: :user,
-        admins: :user
-      )
-      .where(deleted_at: nil)
-      .find_by(params[:slug].present? ? {slug: params[:id]} : {id: params[:id].to_i})
-
-    render json: error_json(404), status: 404 unless @record
-  end
-
-  def set_campsite_by_current_user
+  def set_campsite
     @record = @current_user.administered_campsites
       .where(deleted_at: nil)
       .find_by(id: params[:id].to_i)

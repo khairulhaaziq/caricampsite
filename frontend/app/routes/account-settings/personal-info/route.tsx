@@ -1,4 +1,5 @@
 import { Link, useLoaderData } from '@remix-run/react';
+import { useEffect } from 'react';
 
 import { getInternalData } from '~/utils/loader';
 
@@ -6,7 +7,11 @@ export const loader = getInternalData({ path: '/account_settings/personal_info' 
 
 export default function PersonalInfoPage() {
   const loaderData = useLoaderData();
-  const name = loaderData;
+
+  useEffect(()=>{
+    if (loaderData)
+      console.log(loaderData);
+  }, []);
 
   return (
     <div className="flex justify-center px-6 sm:px-8 md:px-10 lg:px-14 xl:px-16 2xl:px-20 pt-4 pb-16">
@@ -27,8 +32,6 @@ export default function PersonalInfoPage() {
           <ListItem label="Phone Number" value={loaderData.phone_number || 'Not defined'} />
           <ListItem label="Legal name" value="Khairul Haaziq" />
         </div>
-
-        {JSON.stringify(loaderData)}
       </div>
     </div>
   );
