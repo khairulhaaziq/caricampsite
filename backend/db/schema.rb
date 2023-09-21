@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_09_21_065101) do
+ActiveRecord::Schema[7.0].define(version: 2023_09_21_104551) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -230,14 +230,14 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_21_065101) do
   end
 
   create_table "profile_infos", force: :cascade do |t|
-    t.bigint "account_settings_id", null: false
+    t.bigint "account_setting_id", null: false
     t.string "first_name"
     t.string "last_name"
     t.string "email"
     t.string "phone_number"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["account_settings_id"], name: "index_profile_infos_on_account_settings_id"
+    t.index ["account_setting_id"], name: "index_profile_infos_on_account_setting_id"
   end
 
   create_table "reviews", force: :cascade do |t|
@@ -294,7 +294,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_21_065101) do
   add_foreign_key "favourites", "campsites"
   add_foreign_key "favourites", "users"
   add_foreign_key "oauth_access_tokens", "oauth_applications", column: "application_id"
-  add_foreign_key "profile_infos", "account_settings", column: "account_settings_id"
+  add_foreign_key "profile_infos", "account_settings"
   add_foreign_key "reviews", "campsites"
   add_foreign_key "reviews", "users"
   add_foreign_key "visits", "campsites"
