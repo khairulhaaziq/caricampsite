@@ -20,7 +20,7 @@ import { User } from './modules/user/user.server';
 import { commitSession, getSession } from './utils/sessions.server';
 
 export const links: LinksFunction = () => [
-  { rel: 'preload', href: '/fonts/plusjakarta-cyrillic.woff2', as: 'font' },
+  { rel: 'preload', href: '/fonts/plusjakarta-latin.woff2', as: 'font' },
   { rel: 'stylesheet', href: styles },
   { rel: 'stylesheet', href: fontStyles },
   ...(cssBundleHref ? [{ rel: 'stylesheet', href: cssBundleHref }] : []),
