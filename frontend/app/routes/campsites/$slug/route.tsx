@@ -25,7 +25,7 @@ import { validator } from './schema';
 dayjs.extend(relativeTime);
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
-  return await Campsite.getCampsite(request, { slug: params.slug! });
+  return await Campsite.getCampsitePageData(request, { slug: params.slug! });
 };
 
 export default function CampsiteSlug() {

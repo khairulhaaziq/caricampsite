@@ -14,6 +14,10 @@ Rails.application.routes.draw do
     end
   end
 
+  namespace :internal do
+    resources :campsites, only: [:index, :show]
+  end
+
   namespace :auth do
     delete "/tokens", to: "authentication#logout"
     post "/tokens/register", to: "authentication#register"

@@ -10,11 +10,11 @@ import { useEffect } from 'react';
 import IconHeart from '~/components/icons/IconHeart';
 import IconStar from '~/components/icons/IconStar';
 import WithTopbar from '~/components/layouts/WithTopbar';
-import { getApiData } from '~/utils/loader';
+import { getInternalData } from '~/utils/loader';
 
 import { CategoryOption } from './campsites/new/types';
 
-export const loader = getApiData({ path: '/campsites' });
+export const loader = getInternalData({ path: '/campsites' });
 
 export default function Index() {
   const { data, meta } = useLoaderData();

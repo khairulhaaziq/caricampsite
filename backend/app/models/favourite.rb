@@ -6,12 +6,6 @@ class Favourite < ApplicationRecord
   belongs_to :user
 
   def delete_campsite_cache
-    collection_cache_keys = [
-      "/api/v1/campsites"
-    ]
-
-    collection_cache_keys.each do |collection_cache_key|
-      CacheDeleteService.new(collection_cache_key, true).process
-    end
+    Campsite.delete_cache
   end
 end

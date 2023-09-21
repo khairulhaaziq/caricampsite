@@ -1,4 +1,4 @@
-class CampsiteSerializer
+class Internal::CampsiteSerializer
   include JSONAPI::Serializer
 
   attributes(
@@ -9,26 +9,15 @@ class CampsiteSerializer
     :notes,
     :slug,
     :cover_image,
-    :status,
-    :is_verified,
     :social_links,
     :contacts,
     :campsite_fee,
     :campsite_address,
-    :campsite_location,
-    :attachments
+    :campsite_location
   )
-
-  attribute :visits do |obj|
-    obj.visits.map { |x| x.user }
-  end
 
   attribute :visits_users do |obj|
     obj.visits.map { |x| x.user.id }
-  end
-
-  attribute :favourites do |obj|
-    obj.favourites.map { |x| x.user }
   end
 
   attribute :favourites_users do |obj|
@@ -54,10 +43,6 @@ class CampsiteSerializer
   end
 
   attribute :amenity_options do |obj|
-    # obj.amenities.map { |x|
-    #   {**x.attributes.symbolize_keys, name: x.amenity_option.name} # demo spread
-    #   {**x.slice(:id), name: x.amenity_option.name} # demo selective
-    # }
     obj.amenity_options.map { |x| x.name }
   end
 
@@ -93,16 +78,4 @@ class CampsiteSerializer
   attribute :images do |obj|
     obj.attachments.map { |x| x.url }
   end
-
-  # attribute :campsite_address do |obj|
-  #   obj.campsite_address&.slice(:id)
-  # end
-
-  # attribute :campsite_fee do |obj|
-  #   obj.campsite_fee&.slice(:id)
-  # end
-
-  # attribute :campsite_location do |obj|
-  #   obj.campsite_location&.slice(:id)
-  # end
 end

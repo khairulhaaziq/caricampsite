@@ -11,11 +11,9 @@ class CampsiteFormSerializer
     :cover_image,
     :status,
     :is_verified,
-    # one
     :campsite_fee,
     :campsite_address,
     :campsite_location,
-    # many
     :attachments
   )
 
