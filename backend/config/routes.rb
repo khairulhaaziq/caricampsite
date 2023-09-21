@@ -1,5 +1,4 @@
 Rails.application.routes.draw do
-  resources :visits
   use_doorkeeper do
     skip_controllers :authorizations, :applications, :authorized_applications
   end
@@ -16,6 +15,9 @@ Rails.application.routes.draw do
 
   namespace :internal do
     resources :campsites, only: [:index, :show]
+    namespace :account_settings do
+      resource :personal_info, only: [:show, :update]
+    end
   end
 
   namespace :auth do
