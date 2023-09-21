@@ -13,18 +13,21 @@ import {
 import { useEffect } from 'react';
 import { toast, Toaster } from 'sonner';
 
+import fontStyles from '~/font.css';
 import styles from '~/tailwind.css';
 
 import { User } from './modules/user/user.server';
 import { commitSession, getSession } from './utils/sessions.server';
 
 export const links: LinksFunction = () => [
+  { rel: 'preload', href: '/fonts/plusjakarta-cyrillic.woff2', as: 'font' },
   { rel: 'stylesheet', href: styles },
+  { rel: 'stylesheet', href: fontStyles },
   ...(cssBundleHref ? [{ rel: 'stylesheet', href: cssBundleHref }] : []),
   {
     rel: 'stylesheet',
     href: 'https://unpkg.com/leaflet@1.9.3/dist/leaflet.css'
-  },
+  }
 ];
 
 export const loader = async ({ request, }: LoaderFunctionArgs) => {
@@ -78,18 +81,6 @@ export default function App() {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1" />
-        {/* custom font using google font */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link
-          rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossOrigin="anonymous"
-        />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
-          rel="stylesheet"
-        />
-        {/* end */}
         <Meta />
         <Links />
       </head>
