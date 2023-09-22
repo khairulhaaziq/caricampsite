@@ -1,9 +1,10 @@
 # syntax=docker/dockerfile:1
 FROM ruby:3.2.2-bullseye
 RUN apt-get update -qq && apt-get install -y postgresql-client libjemalloc2 && rm -rf /var/lib/apt/lists/*
-WORKDIR /myapp
-COPY Gemfile /myapp/Gemfile
-COPY Gemfile.lock /myapp/Gemfile.lock
+WORKDIR /app
+
+COPY --link Gemfile Gemfile.lock ./
+
 RUN bundle update --bundler
 RUN bundle install
 
@@ -15,5 +16,6 @@ ENTRYPOINT ["entrypoint.sh"]
 EXPOSE 3000
 
 # Configure the main process to run when running the image
-COPY . /myapp/
+COPY --link . .
+
 CMD ["./start.sh"]

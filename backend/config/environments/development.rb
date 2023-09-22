@@ -1,13 +1,7 @@
 require "active_support/core_ext/integer/time"
 
 Rails.application.configure do
-  # Settings specified here will take precedence over those in config/application.rb.
-  config.hosts = [
-    IPAddr.new("0.0.0.0/0"), # All IPv4 addresses.
-    IPAddr.new("::/0"),      # All IPv6 addresses.
-    "localhost",             # The localhost reserved domain.
-    ENV["PROCESS_TYPE"]   # Allow this to be addressed when running in containers via docker-compose.yml.
-  ]
+  config.hosts = []
 
   # In the development environment your application's code is reloaded any time
   # it changes. This slows down response time but is perfect for development

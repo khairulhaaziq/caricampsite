@@ -1,7 +1,5 @@
 # Set doorkeeper oauth default app
-if Doorkeeper::Application.count.zero?
-  Doorkeeper::Application.create(name: "remix-frontend", redirect_uri: "", scopes: "")
-end
+Doorkeeper::Application.find_or_create_by(name: "remix-frontend", redirect_uri: "", scopes: "")
 
 # Seed Example User
 User.create(
@@ -9,13 +7,13 @@ User.create(
   password: "Password123"
 )
 
-# Seed Users
-10.times do
-  User.create(
-    email: Faker::Internet.unique.email,
-    password: Faker::Internet.password
-  )
-end
+# # Seed Users
+# 10.times do
+#   User.create(
+#     email: Faker::Internet.unique.email,
+#     password: Faker::Internet.password
+#   )
+# end
 
 # Seed Features
 [
@@ -152,146 +150,146 @@ end
   AccessibilityFeatureOption.find_or_create_by(name: x)
 end
 
-# Seed Campsites
-20.times do
-  campsite = Campsite.new(
-    name: Faker::Lorem.words(number: 3).join(" "),
-    description: Faker::Lorem.paragraph,
-    direction_instructions: Faker::Lorem.sentence,
-    notes: Faker::Lorem.sentence,
-    images: 5.times.map { Faker::LoremFlickr.image },
-    cover_image: Faker::LoremFlickr.image,
-    status: [0, 1].sample, # Assuming 0 is for inactive and 1 is for active
-    is_verified: [true, false].sample,
-    social_links: {
-      facebook: Faker::Internet.url(host: "facebook.com"),
-      twitter: Faker::Internet.url(host: "twitter.com")
-    },
-    contacts: {
-      contact_name1: Faker::Name.name,
-      contact_mobile1: Faker::PhoneNumber.phone_number
-    }
-  )
+# # Seed Campsites
+# 20.times do
+#   campsite = Campsite.new(
+#     title: Faker::Lorem.words(number: 3).join(" "),
+#     description: Faker::Lorem.paragraph,
+#     direction_instructions: Faker::Lorem.sentence,
+#     notes: Faker::Lorem.sentence,
+#     images: 5.times.map { Faker::LoremFlickr.image },
+#     cover_image: Faker::LoremFlickr.image,
+#     status: [0, 1].sample, # Assuming 0 is for inactive and 1 is for active
+#     is_verified: [true, false].sample,
+#     social_links: {
+#       facebook: Faker::Internet.url(host: "facebook.com"),
+#       twitter: Faker::Internet.url(host: "twitter.com")
+#     },
+#     contacts: {
+#       contact_name1: Faker::Name.name,
+#       contact_mobile1: Faker::PhoneNumber.phone_number
+#     }
+#   )
 
-  # Seed Campsite Admins (Assuming each campsite has one admin)
+#   # Seed Campsite Admins (Assuming each campsite has one admin)
 
-  admin = CampsitesAdmin.new(
-    campsite: campsite,
-    user: User.all.sample
-  )
-  campsite.admins << admin
+#   admin = CampsitesAdmin.new(
+#     campsite: campsite,
+#     user: User.all.sample
+#   )
+#   campsite.admins << admin
 
-  if campsite.valid? && admin.valid?
-    ActiveRecord::Base.transaction do
-      campsite.save
-      admin.save
-    end
-  end
+#   if campsite.valid? && admin.valid?
+#     ActiveRecord::Base.transaction do
+#       campsite.save
+#       admin.save
+#     end
+#   end
 
-  # Seed Campsite Addresses
-  CampsiteAddress.create(
-    campsite: campsite,
-    addressLine1: Faker::Address.street_address,
-    addressLine2: Faker::Address.secondary_address,
-    city: Faker::Address.city,
-    state: Faker::Address.state,
-    country: "Malaysia",
-    postcode: Faker::Address.zip_code
-  )
+#   # Seed Campsite Addresses
+#   CampsiteAddress.create(
+#     campsite: campsite,
+#     addressLine1: Faker::Address.street_address,
+#     addressLine2: Faker::Address.secondary_address,
+#     city: Faker::Address.city,
+#     state: Faker::Address.state,
+#     country: "Malaysia",
+#     postcode: Faker::Address.zip_code
+#   )
 
-  # Seed Campsite Fees
-  CampsiteFee.create(
-    campsite: campsite,
-    currency: "MYR",
-    from: Faker::Number.decimal(l_digits: 2),
-    to: Faker::Number.decimal(l_digits: 2)
-  )
+#   # Seed Campsite Fees
+#   CampsiteFee.create(
+#     campsite: campsite,
+#     currency: "MYR",
+#     from: Faker::Number.decimal(l_digits: 2),
+#     to: Faker::Number.decimal(l_digits: 2)
+#   )
 
-  # Seed Campsite Locations
-  CampsiteLocation.create(
-    campsite: campsite,
-    latitude: Faker::Address.latitude,
-    longitude: Faker::Address.longitude
-  )
+#   # Seed Campsite Locations
+#   CampsiteLocation.create(
+#     campsite: campsite,
+#     latitude: Faker::Address.latitude,
+#     longitude: Faker::Address.longitude
+#   )
 
-  # Seed Campsite Features (Assign random features to the campsite)
-  rand(1..5).times do
-    CampsitesFeatureOption.create(
-      campsite: campsite,
-      feature_option: FeatureOption.all.sample
-    )
-  end
+#   # Seed Campsite Features (Assign random features to the campsite)
+#   rand(1..5).times do
+#     CampsitesFeatureOption.create(
+#       campsite: campsite,
+#       feature_option: FeatureOption.all.sample
+#     )
+#   end
 
-  rand(1..10).times do
-    CampsitesAmenityOption.create(
-      campsite: campsite,
-      amenity_option: AmenityOption.all.sample
-    )
-  end
+#   rand(1..10).times do
+#     CampsitesAmenityOption.create(
+#       campsite: campsite,
+#       amenity_option: AmenityOption.all.sample
+#     )
+#   end
 
-  rand(1..9).times do
-    CampsitesActivityOption.create(
-      campsite: campsite,
-      activity_option: ActivityOption.all.sample
-    )
-  end
+#   rand(1..9).times do
+#     CampsitesActivityOption.create(
+#       campsite: campsite,
+#       activity_option: ActivityOption.all.sample
+#     )
+#   end
 
-  rand(1..3).times do
-    CampsitesCategoryOption.create(
-      campsite: campsite,
-      category_option: CategoryOption.all.sample
-    )
-  end
+#   rand(1..3).times do
+#     CampsitesCategoryOption.create(
+#       campsite: campsite,
+#       category_option: CategoryOption.all.sample
+#     )
+#   end
 
-  rand(1..2).times do
-    CampsitesAccessibilityFeatureOption.create(
-      campsite: campsite,
-      accessibility_feature_option: AccessibilityFeatureOption.all.sample
-    )
-  end
+#   rand(1..2).times do
+#     CampsitesAccessibilityFeatureOption.create(
+#       campsite: campsite,
+#       accessibility_feature_option: AccessibilityFeatureOption.all.sample
+#     )
+#   end
 
-  # Seed Reviews (Assuming each campsite has at least one review)
-  rand(1..5).times do
-    Review.create(
-      campsite: campsite,
-      user: User.all.sample,
-      body: Faker::Lorem.paragraph,
-      images: 3.times.map { Faker::LoremFlickr.image },
-      rating: rand(1..5)
-    )
-  end
-end
+#   # Seed Reviews (Assuming each campsite has at least one review)
+#   rand(1..5).times do
+#     Review.create(
+#       campsite: campsite,
+#       user: User.all.sample,
+#       body: Faker::Lorem.paragraph,
+#       images: 3.times.map { Faker::LoremFlickr.image },
+#       rating: rand(1..5)
+#     )
+#   end
+# end
 
-# Seed User Profiles (Assuming each user has a profile)
-User.all.each do |user|
-  UserProfile.create(
-    user: user,
-    about: Faker::Lorem.sentence,
-    name: user.email.split("@").first.capitalize,
-    profile_picture: Faker::Avatar.image,
-    social_links: {
-      facebook: Faker::Internet.url(host: "facebook.com"),
-      twitter: Faker::Internet.url(host: "twitter.com")
-    }
-  )
-end
+# # Seed User Profiles (Assuming each user has a profile)
+# User.all.each do |user|
+#   UserProfile.create(
+#     user: user,
+#     about: Faker::Lorem.sentence,
+#     name: user.email.split("@").first.capitalize,
+#     profile_picture: Faker::Avatar.image,
+#     social_links: {
+#       facebook: Faker::Internet.url(host: "facebook.com"),
+#       twitter: Faker::Internet.url(host: "twitter.com")
+#     }
+#   )
+# end
 
-# Seed Favourites (Assuming users can have favorites)
-User.all.each do |user|
-  rand(1..5).times do
-    Favourite.create(
-      campsite: Campsite.all.sample,
-      user: user
-    )
-  end
-end
+# # Seed Favourites (Assuming users can have favorites)
+# User.all.each do |user|
+#   rand(1..5).times do
+#     Favourite.create(
+#       campsite: Campsite.all.sample,
+#       user: user
+#     )
+#   end
+# end
 
-# Seed Visits (Assuming users can have visits)
-User.all.each do |user|
-  rand(1..5).times do
-    Visit.create(
-      campsite: Campsite.all.sample,
-      user: user
-    )
-  end
-end
+# # Seed Visits (Assuming users can have visits)
+# User.all.each do |user|
+#   rand(1..5).times do
+#     Visit.create(
+#       campsite: Campsite.all.sample,
+#       user: user
+#     )
+#   end
+# end
