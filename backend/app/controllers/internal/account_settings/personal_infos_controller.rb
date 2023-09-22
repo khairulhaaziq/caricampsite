@@ -17,7 +17,7 @@ class Internal::AccountSettings::PersonalInfosController < ApplicationController
   private
 
   def set_personal_info_by_current_user
-    @personal_info = PersonalInfo.joins(account_setting: :user).find_by(users: {id: 1})
+    @personal_info = PersonalInfo.joins(account_setting: :user).find_by(users: {id: @current_user.id})
     render json: error_json(422, "personal_info not found"), status: :unprocessable_entity unless @personal_info
   end
 
