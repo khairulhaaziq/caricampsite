@@ -30,7 +30,7 @@ export default function SearchInput(){
       <div className="relative w-full rounded-full overflow-hidden border border-neutral-200 hover:border-neutral-400 focus-within:border-neutral-400 transition-all w-full max-w-[360px]">
         <input
           className="outline-none ring-0 text-sm h-11 pr-3 pl-[38px] w-full transition-all"
-          placeholder="Search merchant name"
+          placeholder="Search merchanss name"
           name="query"
           type="search"
           value={query ? query : ''}

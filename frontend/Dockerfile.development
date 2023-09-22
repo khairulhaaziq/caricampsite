@@ -1,0 +1,19 @@
+# syntax = docker/dockerfile:1
+FROM node:alpine
+# Remix app lives here
+WORKDIR /app
+# Set production environment
+ENV NODE_ENV="development"
+
+COPY package*.json .
+
+RUN npm install
+
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
+
+COPY . .
+EXPOSE 3100
+ENV PORT=3100
+CMD npm run dev

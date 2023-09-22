@@ -1,10 +1,11 @@
-# fly.toml app configuration file generated for caricampsite-frontend on 2023-09-22T07:35:41+08:00
+# fly.toml app configuration file generated for caricampsite-backend on 2023-09-22T07:14:17+08:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = "caricampsite-frontend"
+app = "caricampsite-backend"
 primary_region = "sin"
+console_command = "/rails/bin/rails console"
 
 [build]
 
@@ -15,3 +16,7 @@ primary_region = "sin"
   auto_start_machines = true
   min_machines_running = 0
   processes = ["app"]
+
+[[statics]]
+  guest_path = "/myapp/public"
+  url_prefix = "/"

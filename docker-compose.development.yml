@@ -16,6 +16,7 @@ services:
   backend:
     build:
       context: ./backend
+    working_dir: /myapp/backend
     environment:
       PROCESS_TYPE: backend
       EB_ENV: staging
@@ -35,12 +36,22 @@ services:
     stdin_open: true
     tty: true
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      dockerfile: ./Dockerfile.development
+    working_dir: /frontend/app
+    volumes:
+      - ./frontend:/frontend/app
     environment:
       PROCESS_TYPE: frontend
       API_BASE_URL: http://backend:3000/api/v1
+      AUTH_BASE_URL: http://backend:3000/auth
+      INTERNAL_BASE_URL: http://backend:3000/internal
+      SESSION_SECRET: dwd2rdfi3qjoq
+      WATCHPACK_POLLING: true # for hot reload purpose
+      CHOKIDAR_USEPOLLING: true # for hot reload purpose
     ports:
-      - "3001:3001"
+      - "3100:3100"
     depends_on:
       - backend
     stdin_open: true
