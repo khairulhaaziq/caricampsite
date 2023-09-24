@@ -2,6 +2,7 @@ class Campsite < ApplicationRecord
   include Filterable
 
   before_save :set_attachments_name
+  before_save :set_admin
   after_save :delete_cache
   before_destroy :delete_cache
 
@@ -66,15 +67,7 @@ class Campsite < ApplicationRecord
   before_validation :assign_slug, on: :create
   before_validation :assign_cover_image, on: :create
 
-  validates :title, presence: true
-  validates :description, presence: true
-  validates :slug, presence: true
   validates :slug, uniqueness: true
-  validate :images_not_empty
-  validates :cover_image, presence: true
-  # validates :campsite_fee, presence: true
-  # validates :campsite_address, presence: true
-  validates :admins, presence: true
 
   accepts_nested_attributes_for :campsite_fee, update_only: true
   accepts_nested_attributes_for :campsite_address, update_only: true

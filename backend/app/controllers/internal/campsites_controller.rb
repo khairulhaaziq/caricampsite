@@ -5,7 +5,7 @@ class Internal::CampsitesController < ApplicationController
     campsites = fetch_cache(request.fullpath) do
       records = Campsite
         .filter(filter_params)
-        .where(deleted_at: nil)
+        .where(deleted_at: nil, submission_status: Campsite.submission_statuses[:approved])
         .includes(
           :reviews,
           :campsite_fee,
