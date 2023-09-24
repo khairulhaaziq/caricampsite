@@ -2,7 +2,6 @@ class Campsite < ApplicationRecord
   include Filterable
 
   before_save :set_attachments_name
-  before_save :set_admin
   after_save :delete_cache
   before_destroy :delete_cache
 
