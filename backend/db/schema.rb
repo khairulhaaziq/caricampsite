@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_09_24_031856) do
+ActiveRecord::Schema[7.0].define(version: 2023_09_24_034932) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -121,6 +121,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_24_031856) do
     t.datetime "updated_at", null: false
     t.datetime "deleted_at"
     t.integer "submission_type"
+    t.integer "submission_status", default: 0
     t.index ["deleted_at"], name: "index_campsites_on_deleted_at"
     t.index ["slug"], name: "index_campsites_on_slug", unique: true
   end
