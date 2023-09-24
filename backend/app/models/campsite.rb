@@ -37,6 +37,12 @@ class Campsite < ApplicationRecord
     public: 1
   }, _prefix: :submission_type
 
+  enum submission_status: {
+    draft: 0,
+    pending_approval: 1,
+    approved: 2
+  }, _prefix: :submission_status
+
   has_one :campsite_fee
   has_one :campsite_address
   has_one :campsite_location
