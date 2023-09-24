@@ -32,6 +32,11 @@ class Campsite < ApplicationRecord
     closed: 3
   }, _prefix: :status
 
+  enum submission_type: {
+    owner: 0,
+    public: 1
+  }, _prefix: :submission_type
+
   has_one :campsite_fee
   has_one :campsite_address
   has_one :campsite_location
